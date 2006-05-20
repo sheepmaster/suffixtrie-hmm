@@ -30,10 +30,8 @@
 	double count = 0.0;
 	NSEnumerator* probsEnum = [probs objectEnumerator];
 	NSEnumerator* textEnum = [text objectEnumerator];
-	while (1) {
-		NSNumber* c = [textEnum nextObject];
-		Trie* child = nil;
-		if (!(c && (child = [trie childForChar:[c charValue]])) && (depth >= *minDepth)) break;
+	Trie* child;
+	while ((child = [trie childForChar:(NSNumber*)[textEnum nextObject]]) || (depth < *minDepth)) {
 		if (trie) count += [trie frequency];
 		depth++;
 		trie = child;
@@ -46,12 +44,13 @@
 
 - (double)pushChar:(char)c {
 	unsigned int depth = 0;
+	NSNumber* ch = [NSNumber numberWithChar:c];
 	double count2 = [self countInTrie:frequencies minDepth:&depth];
-	double count1 = [self countInTrie:[frequencies childForChar:c] minDepth:&depth];
+	double count1 = [self countInTrie:[frequencies childForChar:ch] minDepth:&depth];
 	
 	double p = count1/count2;
 	
-	[text insertObject:[NSNumber numberWithChar:c] atIndex:0];
+	[text insertObject:ch atIndex:0];
 	[probs insertObject:[NSNumber numberWithDouble:p] atIndex:0];
 	return -log(p);
 }

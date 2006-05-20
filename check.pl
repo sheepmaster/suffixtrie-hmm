@@ -6,20 +6,9 @@ use warnings;
 use Storable;
 use Term::ReadLine;
 
-use Tree;
+use Model;
 
-my $freqs;
-
-sub score {
-	my $word = shift;
-	my $prefix = '';
-	my $score = 0;
-	for (split(//, $word)) {
-		$score += $freqs->prob($_, $prefix);
-		$prefix .= $_;
-	}
-	return $score;
-}
+my $model;
 
 my %keys = (
 	'2' => [qw[a b c]], 
@@ -38,12 +27,13 @@ sub words_rec {
 	my @words;
 	for (@{$keys{shift()}}) {
 		my $word = $prefix.$_;
-		my $new_score = $score + $freqs->prob($_, $prefix);
+		my $new_score = $score + $model->push($_);
 		if (@_) {
 			push(@words, words_rec($word, $new_score, @_));
 		} else {
 			push(@words, [$word, $new_score]);
 		}
+		$model->pop;
 	}
 	return sort({ $a->[1] <=> $b->[1] } @words);
 }
@@ -59,7 +49,7 @@ unless (@ARGV) {
 	exit(1);
 }
 
-$freqs = retrieve shift;
+$model = new Model(retrieve shift);
 
 my $term = new Term::ReadLine 'Word score';
 my $prompt = "> ";
@@ -70,7 +60,8 @@ while ( defined ($_ = $term->readline($prompt)) ) {
 		$term->addhistory($number);
 	} else {
 		my ($word) = /([a-zA-Z]+)/;
-		print $out score(lc $word), "\n";
+		print $out $model->push(lc $word), "\n";
+		$model->pop(length $word);
 		$term->addhistory($word);
 	}
 }

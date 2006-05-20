@@ -18,7 +18,7 @@
 
 - (unsigned int)frequency;
 - (unsigned int)frequencySum;
-- (Trie*)childForChar:(const char)c;
+- (Trie*)childForChar:(NSNumber*)c;
 
 - (void)learnNgramFrom:(const char*)start to:(const char*)end;
 - (void)learnString:(NSString*)s;

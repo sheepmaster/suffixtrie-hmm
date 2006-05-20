@@ -70,8 +70,9 @@ static inline int charForIndex(int i) {
 	return freqSum;
 }
 
-- (Trie*)childForChar:(char)c {
-	return children[indexForChar(c)];
+- (Trie*)childForChar:(NSNumber*)c {
+	if (c == nil) return nil;
+	return children[indexForChar([c charValue])];
 }
 
 - (void)learnNgramFrom:(char*)start to:(char*)end {

@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Tree;
+use Trie;
 
 use Storable;
 use Getopt::Long;
@@ -18,7 +18,7 @@ unless (GetOptions(
 	exit(1);
 }
 
-my $freqs = $infile ? (retrieve $infile) : (new Tree());
+my $freqs = $infile ? (retrieve $infile) : (new Trie());
 
 while (<>) {
 	my $word;
