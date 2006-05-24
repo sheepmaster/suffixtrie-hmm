@@ -10,7 +10,13 @@
 
 
 @interface MyController : NSObject {
-
+	IBOutlet NSTextView* screen;
 }
+
+- (IBAction)keyPressed:(id)sender;
+- (IBAction)left:(id)sender;
+- (IBAction)right:(id)sender;
+- (IBAction)up:(id)sender;
+- (IBAction)down:(id)sender;
 
 @end

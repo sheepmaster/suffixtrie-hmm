@@ -82,11 +82,10 @@ static inline int charForIndex(int i) {
 		return;
 	}
 	int index = indexForChar(*end);
-	Trie* child = children[index];
-	if (child == nil) {
+	if (children[index] == nil) {
 		children[index] = [[Trie alloc] init];
 	}
-	[child learnNgramFrom:start to:(end-1)];
+	[children[index] learnNgramFrom:start to:(end-1)];
 }
 
 - (void)learnString:(NSString*)s {
