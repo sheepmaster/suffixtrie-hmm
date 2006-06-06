@@ -1,4 +1,4 @@
-package de.blacksheepsoftware.t9.test;
+package de.blacksheepsoftware.t9;
 
 import de.blacksheepsoftware.t9.*;
 import junit.framework.TestCase;
