@@ -8,9 +8,6 @@ public class AllTests {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test for de.blacksheepsoftware.t9");
 		//$JUnit-BEGIN$
-		suite.addTestSuite(TrieTest.class);
-		suite.addTestSuite(ModelTest.class);
-		suite.addTestSuite(TextTest.class);
 		//$JUnit-END$
 		return suite;
 	}

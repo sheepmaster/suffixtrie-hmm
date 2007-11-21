@@ -1,6 +1,7 @@
 package de.blacksheepsoftware.t9;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NumberKey {
 	
@@ -14,7 +15,7 @@ public class NumberKey {
 	private static final char[] wxyz = new char[]{'w', 'x', 'y', 'z'};
 	protected static final char[][] characters = new char[][]{abc, def, ghi, jkl, mno, pqrs, tuv, wxyz};
 	
-	protected static final Map numbers = new HashMap();
+	protected static final Map<Character, Integer> numbers = new HashMap<Character, Integer>();
 	
 	static {
 		numbers.put(new Character('a'), new Integer(2));
@@ -52,7 +53,7 @@ public class NumberKey {
 	}
 	
 	public NumberKey(Character c) {
-		number = ((Integer)numbers.get(c)).intValue();
+		number = numbers.get(c);
 	}
 	
 	public char[] characters() {
