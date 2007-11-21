@@ -1,5 +1,6 @@
 package de.blacksheepsoftware.common;
 
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
 /**
@@ -11,17 +12,35 @@ import java.util.NoSuchElementException;
 
 public class BinaryHeap implements PriorityQueue {
 
-    private Comparable[] heap;  // the heap
+    private Object[] heap;  // the heap
     private int size;           // number of items in the heap
+    private Comparator comp;
   
+    public static final Comparator naturalComp = new Comparator() {
+    	public int compare(Object o1, Object o2) {
+    		return ((Comparable)o1).compareTo(o2);
+    	}
+    };
+    
+    public static final Comparator reverseComp = new Comparator(){
+    	public int compare(Object o1, Object o2) {
+    		return ((Comparable)o2).compareTo(o1);
+    	}
+    };
+    
     /**
      * Constructs the binary heap.
      */
     public BinaryHeap() {
-        heap = new Comparable[1];
-        size = 0;
+       this(naturalComp);
     }
   
+    public BinaryHeap(Comparator comp) {
+    		this.comp = comp;
+    		heap = new Comparable[1];
+    		size = 0;
+    }
+    
     /**
      * Tests if the heap is empty.
      * @return true if empty, false otherwise.
@@ -42,16 +61,16 @@ public class BinaryHeap implements PriorityQueue {
      * Adds and item to the heap.
      * @param item the item to add.
      */
-    public void add(Comparable item) {
+    public void add(Object item) {
         // grow the heap if necessary
         if (size == heap.length) {
-            Comparable[] newHeap = new Comparable[2 * heap.length];
+        	Object[] newHeap = new Comparable[2 * heap.length];
             System.arraycopy(heap, 0, newHeap, 0, heap.length);
             heap = newHeap;
         }
         // find where to insert while rearranging the heap if necessary
         int parent, child = size++; // the next available slot in the heap
-        while (child > 0 && heap[parent = (child - 1) / 2].compareTo(item) < 0) {//SWITCHED SECOND >, USED TO BE <
+        while (child > 0 && comp.compare(heap[parent = (child - 1) / 2], item) < 0) {//SWITCHED SECOND >, USED TO BE <
             heap[child] = heap[parent];
             child = parent;
         }
@@ -63,25 +82,25 @@ public class BinaryHeap implements PriorityQueue {
      * @return an item of highest priority.
      * @exception NoSuchElementException if the heap is empty.
      */
-    public Comparable remove() {
+    public Object remove() {
         if (size == 0) {
             throw new NoSuchElementException();
         }
-        Comparable result = heap[0];   // to be returned
-        Comparable item = heap[--size]; // to be reinserted 
+        Object result = heap[0];   // to be returned
+        Object item = heap[--size]; // to be reinserted 
         int child, parent = 0; 
         while ((child = (2 * parent) + 1) < size) {
             // if there are two children, compare them
-            if (child + 1 < size && heap[child].compareTo(heap[child + 1]) < 0) {//SWITCHED SECOND >, USED TO BE <
+            if (child + 1 < size && comp.compare(heap[child], heap[child + 1]) < 0) {//SWITCHED SECOND >, USED TO BE <
                 ++child;
             }
             // compare item with the larger
-            if (item.compareTo(heap[child]) < 0) {
+            if (comp.compare(item, heap[child]) < 0) {
                 heap[parent] = heap[child];
                 parent = child;
             } else {
                 break;
-	    }
+            }
         }
         heap[parent] = item;
         return result;

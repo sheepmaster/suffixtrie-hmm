@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.t9;
 
-import de.blacksheepsoftware.t9.*;
 import junit.framework.TestCase;
 
 public class ModelTest extends TestCase {

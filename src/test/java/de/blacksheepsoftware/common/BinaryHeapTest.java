@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.common;
 
-import de.blacksheepsoftware.common.*;
 import junit.framework.TestCase;
 
 public class BinaryHeapTest extends TestCase {
@@ -8,6 +7,7 @@ public class BinaryHeapTest extends TestCase {
 	/*
 	 * Test method for 'de.blacksheepsoftware.common.BinaryHeap.add(Comparable)'
 	 */
+	
 	public void testAddRemove() {
 		PriorityQueue pq = new BinaryHeap();
 		pq.add(new Integer(23));

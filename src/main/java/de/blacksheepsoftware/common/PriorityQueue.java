@@ -31,12 +31,12 @@ public interface PriorityQueue {
      * Adds an item to the queue.
      * @param <code>item</code> the item to be added.
      */
-    public void add(Comparable item);
+    public void add(Object item);
 
     /**
      * Removes an item of highest priority from the queue.
      * @return an item of highest priority.
      * @exception NoSuchElementException if the queue is empty.
      */
-    public Comparable remove();
+    public Object remove();
 }

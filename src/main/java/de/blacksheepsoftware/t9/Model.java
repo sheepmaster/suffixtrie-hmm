@@ -89,4 +89,8 @@ public class Model {
 	public List text() {
 		return text;
 	}
+
+	public int length() {
+		return text.size();
+	}
 }

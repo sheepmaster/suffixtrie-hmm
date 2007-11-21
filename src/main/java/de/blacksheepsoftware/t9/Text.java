@@ -6,7 +6,7 @@ import de.blacksheepsoftware.common.*;
 
 public class Text {
 	
-	protected class Word implements Comparable {
+	protected static class Word implements Comparable {
 		protected Double score;
 		protected String string;
 		
@@ -15,9 +15,22 @@ public class Text {
 			this.string = string;
 		}
 
-		public int compareTo(Object o) {
-			if (o instanceof Word) {
-				return score.compareTo(((Word)o).score);
+		public int compareTo(Object other) {
+			if (other instanceof Word) {
+				return ((Word)other).score.compareTo(score);
+//				return score.compareTo(((Word)other).score);
+			} else {
+				throw new ClassCastException();
+			}
+		}
+	}
+	
+	protected static class CompList extends LinkedList implements Comparable {
+		private static final long serialVersionUID = 1L;
+
+		public int compareTo(Object other) {
+			if (other instanceof CompList) {
+				return ((Comparable)getFirst()).compareTo(((CompList)other).getFirst());
 			} else {
 				throw new ClassCastException();
 			}
@@ -35,20 +48,8 @@ public class Text {
 	protected String[] words = null;
 	protected int activeWord = 0;
 	
-	protected static CompList newCompList() {
-		return new CompList() {
-			public int compareTo(Object o) {
-				if (o instanceof CompList) {
-					return ((Comparable)getFirst()).compareTo(((CompList)o).getFirst());
-				} else {
-					throw new ClassCastException();
-				}
-			}
-		};
-	}
-	
 	protected static CompList merge(CompList[] list) {
-		CompList mergedList = newCompList();
+		CompList mergedList = new CompList();
 		PriorityQueue pq = new BinaryHeap();
 		for (int i=0; i<list.length; i++) {
 			pq.add(list[i]);
@@ -56,15 +57,17 @@ public class Text {
 		while (!pq.isEmpty()) {
 			CompList l = (CompList)pq.remove();
 			mergedList.add(l.removeFirst());
-			pq.add(l);
+			if (!l.isEmpty()) {
+				pq.add(l);
+			}
 		}
 		return mergedList;
 	}
 	
-	protected CompList words(Model model, List numbers, String word, double score) {
+	protected static CompList words(Model model, List numbers, String word, double score) {
 		NumberKey n = (NumberKey)numbers.remove(0);
 		if (numbers.isEmpty()) {
-			CompList l = newCompList();
+			CompList l = new CompList();
 			l.add(new Word(score, word));
 			return l;
 		} else {
@@ -98,23 +101,45 @@ public class Text {
 		}
 	}
 	
-	protected void finishWord() {
-		if ((words == null) || (words.length == 0)) {
+	protected void mergeWords() {
+		if (activeChunk == 0) {
 			return;
 		}
-		((Model)chunks.get(activeChunk-1)).push(words[activeWord]);
-		activeNumbers.clear();
+		Object next = chunks.get(activeChunk);
+		Object active = chunks.get(activeChunk-1);
+		if ((active instanceof Model) && (next instanceof Model)) {
+			((Model)active).push(((Model)next).toString());
+			chunks.remove(activeChunk);
+		}
+	}
+	
+	protected void finishWord() {
+		if ((words == null) || (words.length == 0) || (activeChunk == 0)) {
+			return;
+		}
+		Object active = chunks.get(activeChunk-1);
+		if (active instanceof Model) {
+			((Model)active).push(words[activeWord]);
+			activeNumbers.clear();
+			mergeWords();
+		}
 	}
 	
 	protected void activateWord() {
-		LinkedList l = new LinkedList();
-		Model model = (Model)chunks.get(activeChunk-1);
-		Iterator it = ((List)model.text()).iterator();
-		while (it.hasNext()) {
-			l.addFirst(new NumberKey((Character)it.next()));
+		if (activeChunk == 0) {
+			return;
 		}
-		model.pop(l.size());
-		activeNumbers.addAll(l);
+		Object active = chunks.get(activeChunk-1);
+		if (active instanceof Model) {
+			LinkedList l = new LinkedList();
+			Model model = (Model)active;
+			Iterator it = ((List)model.text()).iterator();
+			while (it.hasNext()) {
+				l.addFirst(new NumberKey((Character)it.next()));
+			}
+			model.pop(l.size());
+			activeNumbers.addAll(l);
+		}
 	}
 	
 	public void moveRight() {
@@ -126,7 +151,7 @@ public class Text {
 	}
 
 	public void moveLeft() {
-		finishWord();
+//		finishWord();
 		if (activeChunk > 0) {
 			activeChunk--;
 		}
@@ -143,14 +168,12 @@ public class Text {
 	
 	public void insertChar(char c) {
 		finishWord();
-		chunks.add(activeChunk, new Character(c));
-		activeChunk++;
+		chunks.add(activeChunk++, new Character(c));
 	}
 	
 	public void insertNumberKey(NumberKey n) {
 		if ((activeChunk == 0) || !(chunks.get(activeChunk-1) instanceof Model)) {
-			chunks.add(activeChunk, new Model(freqs));
-			activeChunk++;
+			chunks.add(activeChunk++, new Model(freqs));
 		}
 		activeNumbers.add(n);
 		calcWords();
@@ -161,22 +184,24 @@ public class Text {
 		if (activeChunk == 0) {
 			return;
 		}
-		activeChunk--;
-		Object o = chunks.get(activeChunk);
-		if (o instanceof Character) {
+		Object active = chunks.get(--activeChunk);
+		if (active instanceof Character) {
 			chunks.remove(activeChunk);
-			// TODO: merge two consecutive models
-		} else if (o instanceof Model) {
+			mergeWords();
+		} else if (active instanceof Model) {
 			if (activeNumbers.size() > 0) {
+				// active word
 				activeNumbers.removeLast();
 				String oldWord = words[activeWord];
 				calcWords();
 				activeWord = findWord(words, oldWord);
-				if (activeNumbers.size() == 0) {
-					chunks.remove(activeChunk);
-				}
 			} else {
-				((Model)o).pop();
+				// inactive word
+				((Model)active).pop();
+			}
+			// delete word if empty
+			if (((Model)active).length() == 0) {
+				chunks.remove(activeChunk);
 			}
 		}
 	}
