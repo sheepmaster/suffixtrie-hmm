@@ -90,10 +90,6 @@ public class Model implements Serializable {
         return m;
     }
     
-    protected void update(StateDistribution alpha, StateDistribution beta) {
-        
-    }
-    
     public class StateDistribution {
         protected final int longestSuffix;
         protected double[] stateProbabilities;
@@ -122,7 +118,7 @@ public class Model implements Serializable {
         }
         
         public void scale(double scalingFactor) {
-            for (int i = 0; i < stateProbabilities.length; i++) {
+            for (int i = 0; i < depth(); i++) {
                 stateProbabilities[i] *= scalingFactor;
             }
         }
@@ -135,17 +131,19 @@ public class Model implements Serializable {
             double[] newProbs = null;
             int newLongestSuffix = -1;
             int state = longestSuffix;
-            int depth = stateProbabilities.length;
+            int depth = depth();
             double p = 0;
             double currentProbability = 1;
             while (state != -1) {
                 if (depth > 0) {
+                    // the probability for being in the root state is zero, except for the starting distribution, where no character has been read yet.
                     currentProbability = stateProbabilities[depth-1];
                 }
                 p += currentProbability;
                 double smoothingValue = (m == null) ? 0 : currentProbability;
                 int t = transitions[state][character];
                 if ((t == -1) && (m != null)) {
+                    // if we are in training mode, add the missing state
                     t = addNode(state, character);
                     m.addNode(state, character);
                 }
@@ -165,10 +163,13 @@ public class Model implements Serializable {
             }
             return new StateDistribution(newLongestSuffix, newProbs);
         }
+
+        public int depth() {
+            return stateProbabilities.length;
+        }
         
-        protected StateDistribution beta(int character, StateDistribution oldBeta) {
-            int depth = stateProbabilities.length;
-            double[] newProbs = new double[depth];
+        public int[] states() {
+            int depth = depth();
             int[] states = new int[depth+1];
             int state = longestSuffix;
             int d = depth;
@@ -176,9 +177,16 @@ public class Model implements Serializable {
                 states[d] = state;
                 state = transitions[state][0];
             }
+            return states;
+        }
+        
+        protected StateDistribution beta(int character, StateDistribution oldBeta) {
+            int depth = depth();
+            double[] newProbs = new double[depth];
+            int[] states = states();
             double p = 0;
             for (int i=0; i<=depth; i++) {
-                double smoothing = (i > 0) ? stateProbabilities[i-1] : 0;
+                double smoothing = (i > 0) ? stateProbabilities[i-1] : 0; // the probability for being in the root state is zero
                 p = (p * (frequencies[states[i]][0]+smoothing/2) + oldBeta.stateProbabilities[i]*(frequencies[states[i]][character]+smoothing/2))/(frequencySums[states[i]]+smoothing);
                 if (i > 0) {
                     newProbs[i-1] = p;
@@ -207,10 +215,53 @@ public class Model implements Serializable {
             return p;
         }
         
+        protected void update(Model m, StateDistribution beta, int character) {
+            if (((character == -1) && beta.longestSuffix != 0) || (transitions[longestSuffix][character] != beta.longestSuffix)) {
+                throw new IllegalArgumentException("Invalid successor state");
+            }
+            double p = 0; // probability for entering the state; saved in incoming
+            int depth = depth();
+            int state = longestSuffix;
+            int[] states = new int[depth+1];
+            double[] incoming = new double[depth+1];
+            while (depth >= 0) {
+                if (depth > 0) {
+                    p += stateProbabilities[depth-1];
+                }
+                
+                incoming[depth] = p;
+                states[depth] = state;
+
+                depth--;
+                p *= frequencies[state][0]/frequencySums[state];
+                state = transitions[state][0];
+            }
+            p = 0; // probability for leaving the state
+            for (int i=0; i<states.length; i++) {
+                int s = states[i];
+                if (i > 0) {
+                    // p has still the value from the last iteration, i.e. the probability for leaving the *previous* state 
+                    double backCount = incoming[i] * frequencies[state][0]/frequencySums[state] * p;
+                    m.frequencies[s][0] += backCount;
+                    m.frequencySums[s] += backCount;
+                    p *= frequencies[s][0]/frequencySums[s];
+                }
+                
+                if (character != -1) {
+                    double q = frequencies[s][character]/frequencySums[s] * beta.stateProbabilities[i]; // probability for reading the character in this state
+                    p += q;
+                    
+                    double readCount = incoming[i] * q;
+                    m.frequencies[s][character] += readCount;
+                    m.frequencySums[s] += readCount;
+                }
+            }
+        }
+        
         protected StateDistribution learn(Model m, int[] word, int i) {
             if (i >= word.length) {
                 StateDistribution d = startingDistribution();
-                m.update(this, d);
+                update(m, d, -1); // final transition is back to root without reading a character
                 return d;
             }
             StateDistribution newAlpha = alpha(word[i], m);
@@ -218,7 +269,7 @@ public class Model implements Serializable {
             newAlpha.scale(scalingFactor);
             StateDistribution beta = newAlpha.learn(m, word, i+1);
             beta.scale(scalingFactor);
-            m.update(this, beta);
+            update(m, beta, word[i]);
             return beta(word[i], beta);
         }
 
