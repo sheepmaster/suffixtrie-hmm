@@ -103,7 +103,7 @@ public class Model implements Serializable {
             stateProbabilities = probabilities;
         }
         
-        public double getTotalProbability() {
+        public double totalProbability() {
             double total = 0;
             for (double p : stateProbabilities) {
                 total += p;
@@ -112,7 +112,7 @@ public class Model implements Serializable {
         }
         
         public double normalize() {
-            double normalizingFactor = 1/getTotalProbability();
+            double normalizingFactor = 1/totalProbability();
             scale(normalizingFactor);
             return Math.log(normalizingFactor);
         }
@@ -127,18 +127,31 @@ public class Model implements Serializable {
             return alpha(character, null);
         }
         
+        protected StateDistribution beta(int character, StateDistribution oldBeta) {
+            int depth = depth();
+            double[] newProbs = new double[depth];
+            int[] states = states();
+            double p = 0;
+            for (int i=0; i<=depth; i++) {
+                double smoothing = stateProbability(i);
+                p = (p * (frequencies[states[i]][0]+smoothing/2) + oldBeta.stateProbabilities[i]*(frequencies[states[i]][character]+smoothing/2))/(frequencySums[states[i]]+smoothing);
+                if (i > 0) {
+                    newProbs[i-1] = p;
+                }
+            }
+            
+            return new StateDistribution(longestSuffix, newProbs);
+        }
+
         protected StateDistribution alpha(int character, Model m) {
             double[] newProbs = null;
             int newLongestSuffix = -1;
             int state = longestSuffix;
             int depth = depth();
             double p = 0;
-            double currentProbability = 1;
             while (state != -1) {
-                if (depth > 0) {
-                    // the probability for being in the root state is zero, except for the starting distribution, where no character has been read yet.
-                    currentProbability = stateProbabilities[depth-1];
-                }
+                double currentProbability = stateProbability(depth);
+                
                 p += currentProbability;
                 double smoothingValue = (m == null) ? 0 : currentProbability;
                 int t = transitions[state][character];
@@ -157,17 +170,32 @@ public class Model implements Serializable {
                 depth--;
                 p *= (frequencies[state][0]+smoothingValue/2) / (frequencySums[state]+smoothingValue);
                 state = transitions[state][0];
-                if (depth == 0) {
-                    currentProbability = 0;
-                }
             }
             return new StateDistribution(newLongestSuffix, newProbs);
+        }
+
+        /**
+         * @param depth
+         * @return
+         */
+        public double stateProbability(int depth) {
+            if (depth > 0) {
+                return stateProbabilities[depth-1];
+            } else if (longestSuffix != 0) {
+                // the probability for being in the root state is zero, except for the starting distribution, where no character has been read yet.
+                return 0;
+            } else {
+                return 1;
+            }
         }
 
         public int depth() {
             return stateProbabilities.length;
         }
         
+        /**
+         * @return an array of possible states, starting with the root state.
+         */
         public int[] states() {
             int depth = depth();
             int[] states = new int[depth+1];
@@ -180,22 +208,6 @@ public class Model implements Serializable {
             return states;
         }
         
-        protected StateDistribution beta(int character, StateDistribution oldBeta) {
-            int depth = depth();
-            double[] newProbs = new double[depth];
-            int[] states = states();
-            double p = 0;
-            for (int i=0; i<=depth; i++) {
-                double smoothing = (i > 0) ? stateProbabilities[i-1] : 0; // the probability for being in the root state is zero
-                p = (p * (frequencies[states[i]][0]+smoothing/2) + oldBeta.stateProbabilities[i]*(frequencies[states[i]][character]+smoothing/2))/(frequencySums[states[i]]+smoothing);
-                if (i > 0) {
-                    newProbs[i-1] = p;
-                }
-            }
-            
-            return new StateDistribution(longestSuffix, newProbs);
-        }
-
         public StateDistribution read(int[] characters) {
             StateDistribution newDistribution = this;
             for (int c : characters) {
@@ -265,7 +277,7 @@ public class Model implements Serializable {
                 return d;
             }
             StateDistribution newAlpha = alpha(word[i], m);
-            double scalingFactor = 1/newAlpha.getTotalProbability();
+            double scalingFactor = 1/newAlpha.totalProbability();
             newAlpha.scale(scalingFactor);
             StateDistribution beta = newAlpha.learn(m, word, i+1);
             beta.scale(scalingFactor);
