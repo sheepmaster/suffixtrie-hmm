@@ -3,6 +3,8 @@ package de.blacksheepsoftware.t9;
 import java.util.HashMap;
 import java.util.Map;
 
+import apple.laf.ScaledImageIcon;
+
 public class NumberKey {
 	
 	private static final char[] abc = new char[]{'a', 'b', 'c'};
@@ -46,7 +48,7 @@ public class NumberKey {
 		numbers.put(new Character('z'), new Integer(9));
 	}
 	
-	protected int number;
+	protected final int number;
 	
 	public NumberKey(int number) {
 		this.number = number;
@@ -59,4 +61,14 @@ public class NumberKey {
 	public char[] characters() {
 		return characters[number-2];
 	}
+    
+    public static int[] intArrayForString(String s) {
+        String upperCase = s.toUpperCase();
+        int length = s.length();
+        int[] a = new int[length];
+        for (int i=0; i<a.length; i++) {
+            a[i] = upperCase.codePointAt(i) - 64;
+        }
+        return a;
+    }
 }
