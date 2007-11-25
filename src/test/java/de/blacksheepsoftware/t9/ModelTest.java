@@ -40,6 +40,7 @@ public class ModelTest extends TestCase {
         printWordPerplexity("foo");
         printWordPerplexity("bar");
         printWordPerplexity("foobar");
+        printWordPerplexity("zyx");
     }
 
     protected void printCompletionPerplexity(String prefix, String word) {

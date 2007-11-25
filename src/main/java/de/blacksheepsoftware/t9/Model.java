@@ -187,10 +187,10 @@ public class Model implements Serializable {
             int depth = depth();
             double p = 0;
             while (state != -1) {
-                double currentProbability = stateProbability(depth);
+                final double currentProbability = stateProbability(depth);
 
                 p += currentProbability;
-                double smoothingValue = (m == null) ? 0 : currentProbability;
+                final double smoothingValue = (m == null) ? 0 : currentProbability;
                 int t = transitions[state][character];
                 if ((t == -1) && (m != null)) {
                     // if we are in training mode, add the missing state
