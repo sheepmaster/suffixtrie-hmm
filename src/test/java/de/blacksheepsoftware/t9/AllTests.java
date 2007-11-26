@@ -9,6 +9,7 @@ public class AllTests {
 		TestSuite suite = new TestSuite("Test for de.blacksheepsoftware.t9");
 		//$JUnit-BEGIN$
         suite.addTestSuite(ModelTest.class);
+        suite.addTestSuite(TextTest.class);
         suite.addTestSuite(NumberKeyTest.class);
 		//$JUnit-END$
 		return suite;
