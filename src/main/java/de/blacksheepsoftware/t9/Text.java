@@ -1,9 +1,8 @@
 package de.blacksheepsoftware.t9;
 
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.Vector;
 
@@ -131,12 +130,29 @@ public class Text {
             if (activeNumbers.isEmpty()) {
                 activeNumbers.addAll(numberKeysInRange(cursorStart, cursorEnd));
             }
-            Model.StateDistribution dist = model.startingDistribution().read(NumberKey.intArrayForString(text.substring(findWordStart(cursorStart), cursorStart)));
-            // TODO
+            final Model.StateDistribution dist = model.startingDistribution().read(NumberKey.intArrayForString(text.substring(findWordStart(cursorStart), cursorStart)));
+            final Vector<Word> wordList = new Vector<Word>();
+            addWords(wordList, "", 0, dist, 0);
+            Collections.sort(wordList);
+            for (Word w : wordList) {
+                words.add(w.string);
+            }
         }
         return words;
     }
 
+    protected void addWords(List<Word> wordsWithScores, String prefix, double score, Model.StateDistribution dist, int i) {
+        if (i >= activeNumbers.size()) {
+            words.add(prefix);
+        } else {
+            for (char c : activeNumbers.get(i).characters()) {
+                final int tmp = NumberKey.intForChar(c);
+                Model.StateDistribution newDist = dist.read(tmp);
+                addWords(wordsWithScores, prefix+c, score+newDist.normalize(), newDist, i+1);
+            }
+        }
+    }
+    
     public void deleteChar() {
         if (cursorEnd == cursorStart) {
             if (cursorStart > 0) {
@@ -150,7 +166,7 @@ public class Text {
         }
     }
     
-    protected static class Word {
+    protected static class Word implements Comparable<Word> {
         protected double score;
         protected String string;
         
@@ -158,8 +174,12 @@ public class Text {
             this.score = score;
             this.string = string;
         }
+
+        public int compareTo(Word arg0) {
+            return Double.compare(score, arg0.score);
+        }
     }
-    
+/*    
     protected static final Comparator<List<Word>> wordListComparator = new Comparator<List<Word>>() {
         public int compare(List<Word> arg0, List<Word> arg1) {
             return Double.compare(arg0.get(0).score, arg1.get(0).score);
@@ -181,7 +201,7 @@ public class Text {
         }
         return mergedList;
     }
-/*
+
 	protected static class Word implements Comparable<Word> {
 		protected Double score;
 		protected String string;

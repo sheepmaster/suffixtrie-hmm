@@ -62,6 +62,10 @@ public class NumberKey {
 		return characters[number-2];
 	}
     
+    public static int intForChar(char c) {
+        return -1; // TODO
+    }
+    
     public static int[] intArrayForString(String s) {
         String upperCase = s.toUpperCase();
         int length = s.length();
