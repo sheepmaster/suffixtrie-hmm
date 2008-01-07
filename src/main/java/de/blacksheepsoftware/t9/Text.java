@@ -130,9 +130,10 @@ public class Text {
             if (activeNumbers.isEmpty()) {
                 activeNumbers.addAll(numberKeysInRange(cursorStart, cursorEnd));
             }
-            final Model.StateDistribution dist = model.startingDistribution().read(NumberKey.intArrayForString(text.substring(findWordStart(cursorStart), cursorStart)));
             final Vector<Word> wordList = new Vector<Word>();
-            addWords(wordList, "", 0, dist, 0);
+            final int[] prefix = NumberKey.intArrayForString(text.substring(findWordStart(cursorStart), cursorStart));
+            final Model.StateDistribution dist = model.startingDistribution().read(prefix);
+            addWords(wordList, new Word(dist), 0);
             Collections.sort(wordList);
             for (Word w : wordList) {
                 words.add(w.string);
@@ -141,14 +142,12 @@ public class Text {
         return words;
     }
 
-    protected void addWords(List<Word> wordsWithScores, String prefix, double score, Model.StateDistribution dist, int i) {
+    protected void addWords(List<Word> wordsWithScores, Word w, int i) {
         if (i >= activeNumbers.size()) {
-            words.add(prefix);
+            wordsWithScores.add(w.clearState());
         } else {
             for (char c : activeNumbers.get(i).characters()) {
-                final int tmp = NumberKey.intForChar(c);
-                Model.StateDistribution newDist = dist.read(tmp);
-                addWords(wordsWithScores, prefix+c, score+newDist.normalize(), newDist, i+1);
+                addWords(wordsWithScores, w.push(c), i+1);
             }
         }
     }
@@ -165,7 +164,7 @@ public class Text {
             words.clear();
         }
     }
-    
+  /*  
     protected static class Word implements Comparable<Word> {
         protected double score;
         protected String string;

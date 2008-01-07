@@ -3,8 +3,6 @@ package de.blacksheepsoftware.t9;
 import java.util.HashMap;
 import java.util.Map;
 
-import apple.laf.ScaledImageIcon;
-
 public class NumberKey {
 	
 	private static final char[] abc = new char[]{'a', 'b', 'c'};
