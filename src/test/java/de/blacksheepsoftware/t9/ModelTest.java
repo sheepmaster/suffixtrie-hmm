@@ -1,5 +1,8 @@
 package de.blacksheepsoftware.t9;
 
+import static de.blacksheepsoftware.t9.Model.BACK;
+import static de.blacksheepsoftware.t9.Model.BOTTOM;
+import static de.blacksheepsoftware.t9.Model.EPSILON;
 import junit.framework.TestCase;
 
 /**
@@ -15,7 +18,7 @@ public class ModelTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        model = new Model(26, 5);
+        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
         
         model.learn(NumberKey.intArrayForString("foo"));
         model.learn(NumberKey.intArrayForString("bar"));
@@ -61,22 +64,32 @@ public class ModelTest extends TestCase {
      * Test method for 'de.blacksheepsoftware.t9.Model.learn(int[])'
      */
     public void testLearn() {
-        for (int i=0; i<model.transitions.length; i++) {
-            if (i == 0) {
-                assertEquals(-1, model.transitions[i][0]);
-            } else if (i >= model.numNodes) {
+        assertEquals(BOTTOM, model.transitions[BOTTOM][BACK]);
+        for (int c=1; c<=model.numCharacters; c++) {
+            assertEquals(EPSILON, model.transitions[BOTTOM][c]);
+        }
+//        assertEquals(0, model.frequencies[BOTTOM][BACK]);
+        assertEquals(0.0, model.frequencySums[BOTTOM]);
+        for (int i=EPSILON; i<model.transitions.length; i++) {
+            if (i < model.numNodes) {
+                final int b = model.transitions[i][BACK];
+                assertEquals((i == EPSILON), (b == BOTTOM));
+
+                double freq = model.frequencies[i][BACK];
+                
+                for (int c=1; c<=model.numCharacters; c++) {
+                    freq += model.frequencies[i][c];
+                    final int t = model.transitions[i][c];
+                    if (t != BOTTOM) {
+                        assertEquals(model.transitions[t][BACK], model.transitions[b][c]);
+                    }
+                }
+                
+                assertEquals(model.frequencySums[i], freq, 0.0001);
+            } else {
                 assertNull(model.transitions[i]);
                 assertNull(model.frequencies[i]);
                 assertEquals(0.0, model.frequencySums[i]);
-            } else {
-                final int b = model.transitions[i][0];
-                assertFalse(b == -1);
-                for (int c=1; c<model.numCharacters; c++) {
-                    final int t = model.transitions[i][c];
-                    if (t != -1) {
-                        assertEquals(model.transitions[t][0], model.transitions[b][c]);
-                    }
-                }
             }
         }
     }

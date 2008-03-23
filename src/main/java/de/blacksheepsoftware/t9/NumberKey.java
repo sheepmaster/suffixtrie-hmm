@@ -18,32 +18,32 @@ public class NumberKey {
 	protected static final Map<Character, Integer> numbers = new HashMap<Character, Integer>();
 	
 	static {
-		numbers.put(new Character('a'), new Integer(2));
-		numbers.put(new Character('b'), new Integer(2));
-		numbers.put(new Character('c'), new Integer(2));
-		numbers.put(new Character('d'), new Integer(3));
-		numbers.put(new Character('e'), new Integer(3));
-		numbers.put(new Character('f'), new Integer(3));
-		numbers.put(new Character('g'), new Integer(4));
-		numbers.put(new Character('h'), new Integer(4));
-		numbers.put(new Character('i'), new Integer(4));
-		numbers.put(new Character('j'), new Integer(5));
-		numbers.put(new Character('k'), new Integer(5));
-		numbers.put(new Character('l'), new Integer(5));
-		numbers.put(new Character('m'), new Integer(6));
-		numbers.put(new Character('n'), new Integer(6));
-		numbers.put(new Character('o'), new Integer(6));
-		numbers.put(new Character('p'), new Integer(7));
-		numbers.put(new Character('q'), new Integer(7));
-		numbers.put(new Character('r'), new Integer(7));
-		numbers.put(new Character('s'), new Integer(7));
-		numbers.put(new Character('t'), new Integer(8));
-		numbers.put(new Character('u'), new Integer(8));
-		numbers.put(new Character('v'), new Integer(8));
-		numbers.put(new Character('w'), new Integer(9));
-		numbers.put(new Character('x'), new Integer(9));
-		numbers.put(new Character('y'), new Integer(9));
-		numbers.put(new Character('z'), new Integer(9));
+		numbers.put('a', 2);
+		numbers.put('b', 2);
+		numbers.put('c', 2);
+		numbers.put('d', 3);
+		numbers.put('e', 3);
+		numbers.put('f', 3);
+		numbers.put('g', 4);
+		numbers.put('h', 4);
+		numbers.put('i', 4);
+		numbers.put('j', 5);
+		numbers.put('k', 5);
+		numbers.put('l', 5);
+		numbers.put('m', 6);
+		numbers.put('n', 6);
+		numbers.put('o', 6);
+		numbers.put('p', 7);
+		numbers.put('q', 7);
+		numbers.put('r', 7);
+		numbers.put('s', 7);
+		numbers.put('t', 8);
+		numbers.put('u', 8);
+		numbers.put('v', 8);
+		numbers.put('w', 9);
+		numbers.put('x', 9);
+		numbers.put('y', 9);
+		numbers.put('z', 9);
 	}
 	
 	protected final int number;

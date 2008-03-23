@@ -57,6 +57,12 @@ public class Text {
         text.replace(cursorStart, cursorEnd, words().get(activeWord));
     }
 
+    protected void findActiveWord() {
+        if (activeWord == -1) {
+            activeWord = words().indexOf(text.substring(cursorStart, cursorEnd));
+        }
+    }
+
     public void moveDown() {
 //      if (cursorBegin == cursorEnd) {
 //      
@@ -67,16 +73,11 @@ public class Text {
 //      }
     }
     
-    protected void findActiveWord() {
-        if (activeWord == -1) {
-            activeWord = words().indexOf(text.substring(cursorStart, cursorEnd));
-        }
-    }
-
     public void moveUp() {
 //      if (cursorBegin == cursorEnd) {
 //      
 //      } else {
+        findActiveWord();
         activeWord = (activeWord - 1) % words().size();
         replaceActiveWord();
 //      }
@@ -132,7 +133,7 @@ public class Text {
             }
             final Vector<Word> wordList = new Vector<Word>();
             final int[] prefix = NumberKey.intArrayForString(text.substring(findWordStart(cursorStart), cursorStart));
-            final Model.StateDistribution dist = model.startingDistribution().read(prefix);
+            final StateDistribution dist = model.startingDistribution().read(prefix);
             addWords(wordList, new Word(dist), 0);
             Collections.sort(wordList);
             for (Word w : wordList) {
@@ -162,6 +163,7 @@ public class Text {
             text.deleteCharAt(cursorEnd--);
             activeNumbers.pop();
             words.clear();
+            activeWord = -1;
         }
     }
   /*  

@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.t9;
 
-import de.blacksheepsoftware.t9.Model.StateDistribution;
 
 
 /**
@@ -8,7 +7,7 @@ import de.blacksheepsoftware.t9.Model.StateDistribution;
  *
  */
 public class Word implements Comparable<Word>{
-    protected Model.StateDistribution state;
+    protected StateDistribution state;
     protected final String string;
     protected final double score;
     
