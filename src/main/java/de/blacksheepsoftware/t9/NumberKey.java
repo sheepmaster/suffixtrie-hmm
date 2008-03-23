@@ -1,9 +1,10 @@
 package de.blacksheepsoftware.t9;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
-public class NumberKey {
+public class NumberKey implements CharacterTemplate {
 	
 	private static final char[] abc = new char[]{'a', 'b', 'c'};
 	private static final char[] def = new char[]{'d', 'e', 'f'};
@@ -59,17 +60,18 @@ public class NumberKey {
 	public char[] characters() {
 		return characters[number-2];
 	}
-    
+
     public static int intForChar(char c) {
-        return -1; // TODO
+        final String s = String.valueOf(c);
+        return s.codePointAt(0) - 48;
     }
-    
+ 
     public static int[] intArrayForString(String s) {
-        String upperCase = s.toUpperCase();
+        String upperCase = s.toLowerCase(Locale.ENGLISH);
         int length = s.length();
         int[] a = new int[length];
         for (int i=0; i<a.length; i++) {
-            a[i] = upperCase.codePointAt(i) - 64;
+            a[i] = upperCase.codePointAt(i) - 48;
         }
         return a;
     }

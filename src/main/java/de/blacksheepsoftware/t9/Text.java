@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.t9;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
@@ -131,11 +130,9 @@ public class Text {
             if (activeNumbers.isEmpty()) {
                 activeNumbers.addAll(numberKeysInRange(cursorStart, cursorEnd));
             }
-            final Vector<Word> wordList = new Vector<Word>();
             final int[] prefix = NumberKey.intArrayForString(text.substring(findWordStart(cursorStart), cursorStart));
-            final StateDistribution dist = model.startingDistribution().read(prefix);
-            addWords(wordList, new Word(dist), 0);
-            Collections.sort(wordList);
+            final Word word = new Word(model.startingDistribution().read(prefix));
+            final List<Word> wordList = word.completions(activeNumbers);
             for (Word w : wordList) {
                 words.add(w.string);
             }
@@ -143,16 +140,6 @@ public class Text {
         return words;
     }
 
-    protected void addWords(List<Word> wordsWithScores, Word w, int i) {
-        if (i >= activeNumbers.size()) {
-            wordsWithScores.add(w.clearState());
-        } else {
-            for (char c : activeNumbers.get(i).characters()) {
-                addWords(wordsWithScores, w.push(c), i+1);
-            }
-        }
-    }
-    
     public void deleteChar() {
         if (cursorEnd == cursorStart) {
             if (cursorStart > 0) {

@@ -1,5 +1,9 @@
 package de.blacksheepsoftware.t9;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
+
 
 
 /**
@@ -34,12 +38,25 @@ public class Word implements Comparable<Word>{
         return score;
     }
     
-    public Word clearState() {
-        state = null;
-        return this;
-    }
-
     public int compareTo(Word arg0) {
         return Double.compare(score, arg0.score);
+    }
+
+    protected void addWords(List<Word> wordsWithScores, List<? extends CharacterTemplate> characters, int i) {
+        if (i >= characters.size()) {
+            state = null;
+            wordsWithScores.add(this);
+        } else {
+            for (char c : characters.get(i).characters()) {
+                push(c).addWords(wordsWithScores, characters, i+1);
+            }
+        }
+    }
+
+    public List<Word> completions(List<? extends CharacterTemplate> characters) {
+        final Vector<Word> wordList = new Vector<Word>();
+        addWords(wordList, characters, 0);
+        Collections.sort(wordList);
+        return wordList;
     }
 }
