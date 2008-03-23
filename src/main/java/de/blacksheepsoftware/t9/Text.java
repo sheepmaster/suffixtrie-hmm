@@ -3,7 +3,6 @@ package de.blacksheepsoftware.t9;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
-import java.util.Vector;
 
 public class Text {
     protected Model model;
@@ -117,22 +116,13 @@ public class Text {
         return index;
     }
     
-    protected List<NumberKey> numberKeysInRange(int start, int end) {
-        Vector<NumberKey> numberKeys = new Vector<NumberKey>();
-        for (int i = start; i < end; i++) {
-            numberKeys.add(new NumberKey(text.charAt(i)));
-        }
-        return numberKeys;
-    }
-    
     protected List<String> words() {
         if (words.isEmpty()) {
             if (activeNumbers.isEmpty()) {
-                activeNumbers.addAll(numberKeysInRange(cursorStart, cursorEnd));
+                activeNumbers.addAll(NumberKey.numberKeysForString(text.substring(cursorStart, cursorEnd)));
             }
             final int[] prefix = NumberKey.intArrayForString(text.substring(findWordStart(cursorStart), cursorStart));
-            final Word word = new Word(model.startingDistribution().read(prefix));
-            final List<Word> wordList = word.completions(activeNumbers);
+            final List<Word> wordList = Word.completions(model.startingDistribution().read(prefix), activeNumbers);
             for (Word w : wordList) {
                 words.add(w.string);
             }

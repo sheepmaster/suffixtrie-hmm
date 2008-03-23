@@ -1,8 +1,10 @@
 package de.blacksheepsoftware.t9;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Vector;
 
 public class NumberKey implements CharacterTemplate {
 	
@@ -53,7 +55,7 @@ public class NumberKey implements CharacterTemplate {
 		this.number = number;
 	}
 	
-	public NumberKey(Character c) {
+	public NumberKey(char c) {
 		number = numbers.get(c);
 	}
 	
@@ -61,17 +63,28 @@ public class NumberKey implements CharacterTemplate {
 		return characters[number-2];
 	}
 
+    protected static List<NumberKey> numberKeysForString(String s) {
+        final String lc = s.toLowerCase(Locale.ENGLISH);
+        
+        Vector<NumberKey> numberKeys = new Vector<NumberKey>();
+        
+        for (int i = 0; i < lc.length(); i++) {
+            numberKeys.add(new NumberKey(lc.charAt(i)));
+        }
+        return numberKeys;
+    }
+
     public static int intForChar(char c) {
         final String s = String.valueOf(c);
-        return s.codePointAt(0) - 48;
+        return s.codePointAt(0) - 96;
     }
  
     public static int[] intArrayForString(String s) {
-        String upperCase = s.toLowerCase(Locale.ENGLISH);
+        String lowerCase = s.toLowerCase(Locale.ENGLISH);
         int length = s.length();
         int[] a = new int[length];
         for (int i=0; i<a.length; i++) {
-            a[i] = upperCase.codePointAt(i) - 48;
+            a[i] = lowerCase.codePointAt(i) - 96;
         }
         return a;
     }

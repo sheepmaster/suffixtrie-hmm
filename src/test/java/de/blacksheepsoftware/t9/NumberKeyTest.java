@@ -16,5 +16,10 @@ public class NumberKeyTest extends TestCase {
     public void testIntArrayForString() {
         assertTrue(Arrays.equals(new int[]{1, 2, 3, 4}, NumberKey.intArrayForString("aBcD")));
     }
+    
+    public void testIntForChar() {
+        assertEquals(1, NumberKey.intForChar('a'));
+        assertEquals(26, NumberKey.intForChar('z'));
+    }
 
 }
