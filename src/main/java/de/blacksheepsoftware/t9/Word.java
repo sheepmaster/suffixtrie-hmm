@@ -1,9 +1,10 @@
 package de.blacksheepsoftware.t9;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Vector;
 
 /**
  * Represents a possible sequence of characters occurring in a model, along with
@@ -65,8 +66,7 @@ public class Word implements Comparable<Word> {
     }
 
     protected void addWords(PriorityQueue<Word> pq, List<? extends CharacterTemplate> characters, int number) {
-        final Word top = pq.peek();
-        if ((top != null) && (score > top.score)) {
+        if ((pq.size() >= number) && (score > pq.element().score)) {
             return;
         }
         final int length = string.length();
@@ -77,9 +77,19 @@ public class Word implements Comparable<Word> {
                 pq.remove();
             }
         } else {
-            for (char c : characters.get(length).characters()) {
-                push(c).addWords(pq, characters, number);
+            char[] cs = characters.get(length).characters();
+            Word[] words = new Word[cs.length];
+            for (int i = 0; i < words.length; i++) {
+                words[i] = push(cs[i]);
             }
+            Arrays.sort(words);
+            for (Word w : words) {
+                w.addWords(pq, characters, number);
+            }
+            /*
+             * for (char c : characters.get(length).characters()) {
+             * push(c).addWords(pq, characters, number); }
+             */
         }
     }
 
@@ -95,7 +105,7 @@ public class Word implements Comparable<Word> {
      *         the smallest score first.
      */
     public static List<Word> completions(StateDistribution d, List<? extends CharacterTemplate> characters) {
-        final Vector<Word> wordList = new Vector<Word>();
+        final ArrayList<Word> wordList = new ArrayList<Word>();
 
         final Word w = new Word(d);
         w.addWords(wordList, characters);
@@ -113,9 +123,9 @@ public class Word implements Comparable<Word> {
      *            A list of possible completion templates.
      * @param n
      *            The maximum number of word completions to return.
-     * @return A list of the {@code n} best possible completions of the
-     *         word resulting in the state distribution {@code d}, ordered by
-     *         their respective score, with the smallest score first.
+     * @return A list of the {@code n} best possible completions of the word
+     *         resulting in the state distribution {@code d}, ordered ascending
+     *         by their respective score.
      */
     public static List<Word> completions(StateDistribution d, List<? extends CharacterTemplate> characters, int n) {
         PriorityQueue<Word> pq = new PriorityQueue<Word>(n + 1, Collections.<Word> reverseOrder());
@@ -123,7 +133,7 @@ public class Word implements Comparable<Word> {
         final Word w = new Word(d);
         w.addWords(pq, characters, n);
 
-        final Vector<Word> words = new Vector<Word>(n);
+        final ArrayList<Word> words = new ArrayList<Word>(n);
         while (!pq.isEmpty()) {
             words.add(pq.remove());
         }

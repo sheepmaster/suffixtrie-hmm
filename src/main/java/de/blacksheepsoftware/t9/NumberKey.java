@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class NumberKey implements CharacterTemplate {
 	
@@ -16,37 +16,16 @@ public class NumberKey implements CharacterTemplate {
 	private static final char[] pqrs = new char[]{'p', 'q', 'r', 's'};
 	private static final char[] tuv = new char[]{'t', 'u', 'v'};
 	private static final char[] wxyz = new char[]{'w', 'x', 'y', 'z'};
-	protected static final char[][] characters = new char[][]{abc, def, ghi, jkl, mno, pqrs, tuv, wxyz};
+	private static final char[][] characters = new char[][]{abc, def, ghi, jkl, mno, pqrs, tuv, wxyz};
 	
 	protected static final Map<Character, Integer> numbers = new HashMap<Character, Integer>();
 	
 	static {
-		numbers.put('a', 2);
-		numbers.put('b', 2);
-		numbers.put('c', 2);
-		numbers.put('d', 3);
-		numbers.put('e', 3);
-		numbers.put('f', 3);
-		numbers.put('g', 4);
-		numbers.put('h', 4);
-		numbers.put('i', 4);
-		numbers.put('j', 5);
-		numbers.put('k', 5);
-		numbers.put('l', 5);
-		numbers.put('m', 6);
-		numbers.put('n', 6);
-		numbers.put('o', 6);
-		numbers.put('p', 7);
-		numbers.put('q', 7);
-		numbers.put('r', 7);
-		numbers.put('s', 7);
-		numbers.put('t', 8);
-		numbers.put('u', 8);
-		numbers.put('v', 8);
-		numbers.put('w', 9);
-		numbers.put('x', 9);
-		numbers.put('y', 9);
-		numbers.put('z', 9);
+	    for (int i=0; i<characters.length; i++) {
+	        for (char c : characters[i]) {
+	            numbers.put(c, i+2);
+	        }
+	    }
 	}
 	
 	protected final int number;
@@ -66,7 +45,7 @@ public class NumberKey implements CharacterTemplate {
     protected static List<NumberKey> numberKeysForString(String s) {
         final String lc = s.toLowerCase(Locale.ENGLISH);
         
-        Vector<NumberKey> numberKeys = new Vector<NumberKey>();
+        ArrayList<NumberKey> numberKeys = new ArrayList<NumberKey>();
         
         for (int i = 0; i < lc.length(); i++) {
             numberKeys.add(new NumberKey(lc.charAt(i)));

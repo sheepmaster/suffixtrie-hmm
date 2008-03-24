@@ -94,7 +94,16 @@ public class Model implements Serializable {
             throw new IllegalArgumentException("State " + parent + " already has a child with label " + label);
         }
         if (numNodes >= transitions.length) {
-            extend(transitions.length * 2);
+            if (transitions.length == Integer.MAX_VALUE) {
+                throw new OutOfMemoryError();
+            }
+            final int maxNodes;
+            if (transitions.length >= Integer.MAX_VALUE / 2) {
+                maxNodes = Integer.MAX_VALUE;
+            } else {
+                maxNodes = transitions.length << 1;
+            }
+            extend(maxNodes);
         }
         final int newNode = numNodes++;
         frequencies[newNode] = new double[numCharacters + 1];
