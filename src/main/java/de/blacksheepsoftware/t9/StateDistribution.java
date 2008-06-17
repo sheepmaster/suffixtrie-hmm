@@ -9,6 +9,8 @@ import java.io.Serializable;
 import de.blacksheepsoftware.t9.Model.Variant;
 
 public abstract class StateDistribution implements Serializable {
+    public static double LOG_2 = Math.log(2);
+    
     public static final int INVALID = -1;
     
     protected final Model model;
@@ -118,6 +120,10 @@ public abstract class StateDistribution implements Serializable {
         return newDistribution;
     }
 
+    /**
+     * @param word
+     * @return The perplexity (in <strong>bits</strong>) of {@code word}.
+     */
     public double perplexity(int[] word) {
         double p = 0;
         StateDistribution newDistribution = this;
@@ -125,7 +131,7 @@ public abstract class StateDistribution implements Serializable {
             newDistribution = newDistribution.read(c);
             p += newDistribution.normalize();
         }
-        return p;
+        return p / LOG_2;
     }
 
     protected abstract void update(Model m, StateDistribution beta, int character);
