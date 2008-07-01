@@ -1,6 +1,6 @@
 package de.blacksheepsoftware.t9;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -13,18 +13,48 @@ public class Text {
     protected int cursorEnd = 0;
     protected Stack<NumberKey> activeNumbers = new Stack<NumberKey>();
     protected int activeWord = -1;
-    protected List<String> words = new LinkedList<String>();
+    protected List<String> words = new ArrayList<String>();
     
     public Text(Model m) {
         model = m;
     }
     
+    public void check() {
+        assert cursorStart >= 0;
+        assert cursorEnd >= 0;
+        assert cursorStart <= text.length();
+        assert cursorEnd <= text.length();
+        final int selectionLength = cursorEnd - cursorStart;
+        assert selectionLength >= 0;
+        assert activeNumbers.size() == selectionLength;
+        assert activeWord < words.size();
+        assert ((activeWord < 0) == (words.isEmpty()));
+    }
+    
+    public String getContents() {
+        return text.toString();
+    }
+    
+    public int getCursorStart() {
+        return cursorStart;
+    }
+    
+    public int getCursorEnd() {
+        return cursorEnd;
+    }
+        
     public void moveRight() {
         if (cursorEnd == cursorStart) {
+            // nothing is selected
             cursorEnd = findWordEnd(cursorEnd);
-            if ((cursorEnd == cursorStart) && (cursorStart < text.length())) {
-                cursorStart++;
-                cursorEnd++;
+            if (cursorEnd == cursorStart) {
+                // to the right of the cursor there is no word, so move the cursor to the right
+                if (cursorStart < text.length()) {
+                    cursorStart++;
+                    cursorEnd++;
+                }
+            } else {
+                findActiveWord();
             }
         } else {
             cursorStart = cursorEnd;
@@ -34,10 +64,16 @@ public class Text {
 
     public void moveLeft() {
         if (cursorEnd == cursorStart) {
+            // nothing is selected
             cursorStart = findWordStart(cursorStart);
-            if ((cursorEnd == cursorStart) && (cursorEnd > 0)) {
-                cursorStart--;
-                cursorEnd--;
+            if (cursorEnd == cursorStart) {
+                // to the left of the cursor there is no word
+                if (cursorEnd > 0) {
+                    cursorStart--;
+                    cursorEnd--;
+                }
+            } else {
+                findActiveWord();
             }
         } else {
             cursorEnd = cursorStart;
@@ -76,16 +112,17 @@ public class Text {
 //      
 //      } else {
         findActiveWord();
-        activeWord = (activeWord - 1) % words().size();
+        final int size = words().size();
+        activeWord = (activeWord + size - 1) % size;
         replaceActiveWord();
 //      }
     }
     
     public void insertChar(char c) {
-        if (activeWord > 0) {
+//        if (activeWord > 0) {
             cursorStart = cursorEnd;
             finishWord();
-        }
+//        }
         text.insert(cursorStart++, c);
         cursorEnd++;
     }
@@ -131,17 +168,17 @@ public class Text {
     }
 
     public void deleteChar() {
+        if (cursorEnd == 0) {
+            return;
+        }
         if (cursorEnd == cursorStart) {
-            if (cursorStart > 0) {
-                cursorStart--;
-                text.deleteCharAt(cursorEnd--);
-            }
+            cursorStart--;
         } else {
-            text.deleteCharAt(cursorEnd--);
             activeNumbers.pop();
             words.clear();
             activeWord = -1;
         }
+        text.deleteCharAt(--cursorEnd);
     }
   /*  
     protected static class Word implements Comparable<Word> {

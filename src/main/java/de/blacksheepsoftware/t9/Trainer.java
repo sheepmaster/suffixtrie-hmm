@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.t9;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;

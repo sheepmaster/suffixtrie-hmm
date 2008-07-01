@@ -9,6 +9,8 @@ import java.io.Serializable;
 import de.blacksheepsoftware.t9.Model.Variant;
 
 public abstract class StateDistribution implements Serializable {
+    private static final long serialVersionUID = -366668114489984302L;
+
     public static double LOG_2 = Math.log(2);
     
     public static final int INVALID = -1;
