@@ -12,7 +12,8 @@ public class Text {
     protected int cursorStart = 0;
     protected int cursorEnd = 0;
     protected Stack<NumberKey> activeNumbers = new Stack<NumberKey>();
-    protected int activeWord = -1;
+    protected boolean wordSelected = false;
+    protected int activeWord = 0;
     protected List<String> words = new ArrayList<String>();
     
     public Text(Model m) {
@@ -21,14 +22,15 @@ public class Text {
     
     public void check() {
         assert cursorStart >= 0;
-        assert cursorEnd >= 0;
         assert cursorStart <= text.length();
+        assert cursorEnd >= 0;
         assert cursorEnd <= text.length();
         final int selectionLength = cursorEnd - cursorStart;
         assert selectionLength >= 0;
         assert activeNumbers.size() == selectionLength;
         assert activeWord < words.size();
-        assert ((activeWord < 0) == (words.isEmpty()));
+        assert activeWord >= 0;
+        assert (wordSelected || (activeWord == 0)); // if no word is selected, the "active" word is the first
     }
     
     public String getContents() {
@@ -83,8 +85,7 @@ public class Text {
 
     protected void finishWord() {
         activeNumbers.clear();
-        words.clear();
-        activeWord = -1;
+        deselectWord();
     }
     
     protected void replaceActiveWord() {
@@ -92,8 +93,9 @@ public class Text {
     }
 
     protected void findActiveWord() {
-        if (activeWord == -1) {
+        if (!wordSelected) {
             activeWord = words().indexOf(text.substring(cursorStart, cursorEnd));
+            wordSelected = true;
         }
     }
 
@@ -128,13 +130,12 @@ public class Text {
     }
     
     public void insertNumberKey(NumberKey n) {
-        if (activeWord > 0) {
+        if (wordSelected) {
             cursorStart = cursorEnd;
             finishWord();
         }
         activeNumbers.push(n);
-        words.clear();
-        activeWord = 0;
+        deselectWord();
         replaceActiveWord();
         cursorEnd++;
     }
@@ -171,14 +172,18 @@ public class Text {
         if (cursorEnd == 0) {
             return;
         }
-        if (cursorEnd == cursorStart) {
+        text.deleteCharAt(--cursorEnd);
+        if (cursorEnd < cursorStart) {
             cursorStart--;
         } else {
             activeNumbers.pop();
             words.clear();
-            activeWord = -1;
+            if (wordSelected) {
+                findActiveWord();
+            } else {
+                replaceActiveWord();
+            }
         }
-        text.deleteCharAt(--cursorEnd);
     }
   /*  
     protected static class Word implements Comparable<Word> {
@@ -417,4 +422,13 @@ public class Text {
 		return s.toString();
 	}
 */
+
+    /**
+     * 
+     */
+    protected void deselectWord() {
+        words.clear();
+        wordSelected = false;
+        activeWord = 0;
+    }
 }

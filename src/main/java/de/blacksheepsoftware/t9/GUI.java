@@ -5,7 +5,9 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,8 +23,6 @@ import javax.swing.JTextArea;
 public class GUI extends JApplet implements ActionListener {
 
     protected JTextArea textArea;
-    
-    protected Model model;
     
     protected Text text;
     
@@ -53,25 +53,42 @@ public class GUI extends JApplet implements ActionListener {
             textArea.setSelectionEnd(cursorEnd);
         }
         textArea.requestFocusInWindow();
+//        System.err.println("text: \""+text.getContents()+"\"; wordSelected: "+text.wordSelected+"; activeWord: "+text.activeWord);
     }
     
     public void init() {
+        final String modelName = getParameter("model");
+
         try {
-            final URL modelURL = new URL(getDocumentBase(), getParameter("model"));
+            InputStream stream;
+            try {
+                stream = new URL(getDocumentBase(), modelName).openStream();
+            } catch (FileNotFoundException e) {
+                stream = ClassLoader.getSystemResourceAsStream(modelName);
+            }
             
-            final ObjectInputStream ois = new ObjectInputStream(modelURL.openStream());
+            if (stream == null) {
+                return;
+            }
             
-            model = (Model)ois.readObject();
-            text = new Text(model);
+            final ObjectInputStream ois = new ObjectInputStream(stream);
+            
+            final Model model = (Model)ois.readObject();
             ois.close();
+            
+            text = new Text(model);
             
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            return;
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            return;
         }
+        
         
         
         textArea = new JTextArea(10, 5);
