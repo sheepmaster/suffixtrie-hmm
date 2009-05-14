@@ -63,11 +63,12 @@ public class GUI extends JApplet implements ActionListener {
             InputStream stream;
             try {
                 stream = new URL(getDocumentBase(), modelName).openStream();
-            } catch (FileNotFoundException e) {
-                stream = ClassLoader.getSystemResourceAsStream(modelName);
+            } catch (IOException e) {
+                stream = getClass().getResourceAsStream(modelName);
             }
             
             if (stream == null) {
+                System.err.println("Couldn't load model \""+modelName+"\"");
                 return;
             }
             
