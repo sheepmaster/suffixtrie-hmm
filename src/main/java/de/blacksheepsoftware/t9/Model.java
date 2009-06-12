@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Model implements Serializable {
     public enum Variant {
-        COMPLETE_BACKLINKS, 
+        COMPLETE_BACKLINKS,
         PARTIAL_BACKLINKS
     }
 
@@ -23,38 +23,42 @@ public class Model implements Serializable {
 
     protected final StateDistribution startingDistribution;
 
+    protected final UpdateStrategy updateStrategy;
+
     protected static final int DEFAULT_NODES = 16;
-    
+
     public static final int BACK = 0;
-    
+
     public static final int BOTTOM = 0;
     public static final int EPSILON = 1;
 
-    public Model(int numCharacters, Variant variant) {
-        this(numCharacters, DEFAULT_NODES, variant);
+    public Model(int numCharacters, Variant variant, UpdateStrategy strategy) {
+        this(numCharacters, DEFAULT_NODES, variant, strategy);
     }
 
-    public Model(int numCharacters, int maxNodes, Variant variant) {
+    public Model(int numCharacters, int maxNodes, Variant variant, UpdateStrategy strategy) {
         this.numCharacters = numCharacters;
         this.frequencies = new double[maxNodes][];
         this.frequencySums = new double[maxNodes];
         this.transitions = new int[maxNodes][];
-        
+
         transitions[BOTTOM] = new int[numCharacters+1];
         Arrays.fill(transitions[BOTTOM], EPSILON);
         transitions[BOTTOM][BACK] = BOTTOM;
- 
+
         transitions[EPSILON] = new int[numCharacters+1];
         frequencies[EPSILON] = new double[numCharacters+1];
         Arrays.fill(frequencies[EPSILON], 1);
         frequencies[EPSILON][BACK] = 0;
         frequencySums[EPSILON] = numCharacters;
-        
+
         startingDistribution = StateDistribution.create(this, variant);
+
+        updateStrategy = strategy;
     }
 
     public Model(Model m) {
-        this(m.numCharacters, m.transitions.length, m.startingDistribution.getVariant());
+        this(m.numCharacters, m.transitions.length, m.startingDistribution.getVariant(), m.updateStrategy);
         numNodes = m.numNodes;
         for (int i = 1; i < numNodes; i++) {
             transitions[i] = m.transitions[i].clone();
@@ -82,11 +86,11 @@ public class Model implements Serializable {
     }
 
     public double perplexity(int[] word) {
-        return startingDistribution().perplexity(word);
+        return startingDistribution.perplexity(word);
     }
 
     public double perplexity(int[] word, int[] prefix) {
-        return startingDistribution().read(prefix).perplexity(word);
+        return startingDistribution.read(prefix).perplexity(word);
     }
 
     protected int addNode(int parent, int label) {
@@ -108,7 +112,7 @@ public class Model implements Serializable {
         final int newNode = numNodes++;
         frequencies[newNode] = new double[numCharacters + 1];
         transitions[newNode] = new int[numCharacters + 1];
- //       Arrays.fill(transitions[newNode], -1);
+        //       Arrays.fill(transitions[newNode], -1);
         transitions[parent][label] = newNode;
         final int back = transitions[parent][BACK];
         int t = transitions[back][label];
@@ -121,7 +125,7 @@ public class Model implements Serializable {
 
     public void learn(int[] word) {
         final Model m = new Model(this);
-        startingDistribution().learn(m, word, 0);
+        updateStrategy.learn(m, startingDistribution, word);
         this.frequencies = m.frequencies;
         this.frequencySums = m.frequencySums;
     }

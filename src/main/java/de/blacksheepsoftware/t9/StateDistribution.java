@@ -1,8 +1,8 @@
 package de.blacksheepsoftware.t9;
 
-import static de.blacksheepsoftware.t9.Model.EPSILON;
-import static de.blacksheepsoftware.t9.Model.BOTTOM;
 import static de.blacksheepsoftware.t9.Model.BACK;
+import static de.blacksheepsoftware.t9.Model.BOTTOM;
+import static de.blacksheepsoftware.t9.Model.EPSILON;
 
 import java.io.Serializable;
 
@@ -12,9 +12,9 @@ public abstract class StateDistribution implements Serializable {
     private static final long serialVersionUID = -366668114489984302L;
 
     public static double LOG_2 = Math.log(2);
-    
+
     public static final int INVALID = -1;
-    
+
     protected final Model model;
 
     protected final int longestSuffix;
@@ -22,10 +22,10 @@ public abstract class StateDistribution implements Serializable {
     protected double[] stateProbabilities;
 
     public static StateDistribution create(Model model, Variant v) {
-        if (v == Variant.PARTIAL_BACKLINKS) {
+        if (v.equals(Variant.PARTIAL_BACKLINKS)) {
             return new PartialBacklinksVariant(model, EPSILON, new double[0]);
         } else {
-            return null; // TODO
+            throw new IllegalArgumentException("Variant not implemented");
         }
     }
 
@@ -63,7 +63,7 @@ public abstract class StateDistribution implements Serializable {
         return Math.log(normalizingFactor);
     }
 
-    public void scale(double scalingFactor) {
+    protected void scale(double scalingFactor) {
         for (int i = 0; i < depth(); i++) {
             stateProbabilities[i] *= scalingFactor;
         }
@@ -145,20 +145,6 @@ public abstract class StateDistribution implements Serializable {
         }
     }
 
-    protected StateDistribution learn(Model m, int[] word, int i) {
-        if (i > word.length) {
-            return this;
-        }
-        final int c = (i < word.length) ? word[i] : INVALID;
-        final StateDistribution newAlpha = alpha(m, c);
-        final double scalingFactor = 1 / newAlpha.totalProbability();
-        newAlpha.scale(scalingFactor);
-        final StateDistribution beta = newAlpha.learn(m, word, i + 1);
-        beta.scale(scalingFactor);
-        update(m, beta, c);
-        return beta(beta, c);
-    }
-
     public static class PartialBacklinksVariant extends StateDistribution {
 
         private static final long serialVersionUID = 1L;
@@ -187,7 +173,7 @@ public abstract class StateDistribution implements Serializable {
                     p += oldBeta.stateProbabilities[i] * (model.frequencies[state][character] + smoothing / 2);
                 }
                 p /= (model.frequencySums[state] + smoothing);
-                // p = (p * (frequencies[state][0] + smoothing / 2) 
+                // p = (p * (frequencies[state][0] + smoothing / 2)
                 // + oldBeta.stateProbabilities[i] * (frequencies[state][character] + smoothing / 2))
                 // / (frequencySums[state] + smoothing);
                 if (i > 0) {
@@ -227,11 +213,11 @@ public abstract class StateDistribution implements Serializable {
                         newLongestSuffix = t;
                     }
                     newProbs[depth] = p * (model.frequencies[state][character] + smoothingValue / 2)
-                            / (model.frequencySums[state] + smoothingValue);
+                    / (model.frequencySums[state] + smoothingValue);
                 }
                 depth--;
                 p *= (model.frequencies[state][BACK] + smoothingValue / 2)
-                        / (model.frequencySums[state] + smoothingValue);
+                / (model.frequencySums[state] + smoothingValue);
                 state = model.transitions[state][BACK];
             }
             return copy(newLongestSuffix, newProbs);
@@ -255,7 +241,7 @@ public abstract class StateDistribution implements Serializable {
 
                     depth--;
                     p *= (model.frequencies[state][BACK] + currentProbability / 2)
-                            / (model.frequencySums[state] + currentProbability);
+                    / (model.frequencySums[state] + currentProbability);
                     state = model.transitions[state][BACK];
                 }
             }
@@ -267,7 +253,7 @@ public abstract class StateDistribution implements Serializable {
                     // p has still the value from the last iteration, i.e. the
                     // probability for leaving the *next* state
                     p *= (model.frequencies[state][BACK] + currentProbability / 2)
-                            / (model.frequencySums[state] + currentProbability);
+                    / (model.frequencySums[state] + currentProbability);
                     final double backCount = incoming[i] * p;
                     m.frequencies[state][BACK] += backCount;
                     m.frequencySums[state] += backCount;
@@ -276,7 +262,7 @@ public abstract class StateDistribution implements Serializable {
                 if (character != INVALID) {
                     // probability for reading the character in this state
                     final double q = (model.frequencies[state][character] + currentProbability / 2)
-                            / (model.frequencySums[state] + currentProbability) * beta.stateProbabilities[i];
+                    / (model.frequencySums[state] + currentProbability) * beta.stateProbabilities[i];
                     p += q;
 
                     final double readCount = incoming[i] * q;

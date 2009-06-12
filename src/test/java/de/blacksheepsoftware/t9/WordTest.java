@@ -12,15 +12,15 @@ import junit.framework.TestCase;
 public class WordTest extends TestCase {
 
     protected Model model;
-    
+
     /**
      * @param name
      */
     public WordTest(String name) {
         super(name);
-        
-        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
-        
+
+        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS, new LinearUpdateStrategy());
+
         model.learn(NumberKey.intArrayForString("foo"));
         model.learn(NumberKey.intArrayForString("bar"));
         model.learn(NumberKey.intArrayForString("baz"));
@@ -34,7 +34,7 @@ public class WordTest extends TestCase {
      */
     public void testCompletions() {
         List<Word> completions = Word.completions(model.startingDistribution(), NumberKey.numberKeysForString("bar"));
-        
+
         System.err.println("Completions for \"bar\": "+Arrays.toString(completions.toArray()));
     }
 

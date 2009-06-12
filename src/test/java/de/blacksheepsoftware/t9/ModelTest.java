@@ -12,14 +12,15 @@ import junit.framework.TestCase;
 public class ModelTest extends TestCase {
 
     protected Model model;
-    
+
     /*
      * @see TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
-        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
-        
+        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS, new LinearUpdateStrategy());
+
         model.learn(NumberKey.intArrayForString("foo"));
         model.learn(NumberKey.intArrayForString("bar"));
         model.learn(NumberKey.intArrayForString("baz"));
@@ -32,10 +33,10 @@ public class ModelTest extends TestCase {
     protected void printWordPerplexity(String word) {
         final double perplexity = model.perplexity(NumberKey.intArrayForString(word));
         assertFalse("perplexity is not a number", Double.isNaN(perplexity));
-//        assertFalse(Double.isInfinite(perplexity));
+        //        assertFalse(Double.isInfinite(perplexity));
         System.err.println("perplexity for \""+word+"\": "+perplexity);
     }
-    
+
     /*
      * Test method for 'de.blacksheepsoftware.t9.Model.perplexity(int[])'
      */
@@ -51,7 +52,7 @@ public class ModelTest extends TestCase {
         assertFalse("perplexity is not a number", Double.isNaN(perplexity));
         System.err.println("perplexity for \""+word+"\" after \""+prefix+"\": "+perplexity);
     }
-    
+
     /*
      * Test method for 'de.blacksheepsoftware.t9.Model.perplexity(int[], int[])'
      */
@@ -68,7 +69,7 @@ public class ModelTest extends TestCase {
         for (int c=1; c<=model.numCharacters; c++) {
             assertEquals(EPSILON, model.transitions[BOTTOM][c]);
         }
-//        assertEquals(0, model.frequencies[BOTTOM][BACK]);
+        //        assertEquals(0, model.frequencies[BOTTOM][BACK]);
         assertEquals(0.0, model.frequencySums[BOTTOM]);
         for (int i=EPSILON; i<model.transitions.length; i++) {
             if (i < model.numNodes) {
@@ -76,7 +77,7 @@ public class ModelTest extends TestCase {
                 assertEquals((i == EPSILON), (b == BOTTOM));
 
                 double freq = model.frequencies[i][BACK];
-                
+
                 for (int c=1; c<=model.numCharacters; c++) {
                     freq += model.frequencies[i][c];
                     final int t = model.transitions[i][c];
@@ -84,7 +85,7 @@ public class ModelTest extends TestCase {
                         assertEquals(model.transitions[t][BACK], model.transitions[b][c]);
                     }
                 }
-                
+
                 assertEquals(model.frequencySums[i], freq, 0.0001);
             } else {
                 assertNull(model.transitions[i]);
