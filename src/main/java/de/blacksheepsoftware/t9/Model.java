@@ -125,7 +125,7 @@ public class Model implements Serializable {
 
     public void learn(int[] word) {
         final Model m = new Model(this);
-        updateStrategy.learn(m, startingDistribution, word);
+        updateStrategy.learn(m, word, startingDistribution, startingDistribution, 0, word.length+1);
         this.frequencies = m.frequencies;
         this.frequencySums = m.frequencySums;
     }
