@@ -119,10 +119,10 @@ public class Model implements Serializable {
         return newNode;
     }
 
-    protected static final LinearUpdateStrategy LINEAR_STRATEGY = new LinearUpdateStrategy();
+    protected static final UpdateStrategy DEFAULT_STRATEGY = new HybridUpdateStrategy();
 
     public void learn(int[] word) {
-        learn(word, LINEAR_STRATEGY);
+        learn(word, DEFAULT_STRATEGY);
     }
 
     public void learn(int[] word, UpdateStrategy updateStrategy) {

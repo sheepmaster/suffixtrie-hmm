@@ -21,7 +21,7 @@ public class WordTest extends TestCase {
 
         model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
 
-        final UpdateStrategy strategy = new LinearUpdateStrategy();
+        final UpdateStrategy strategy = new HybridUpdateStrategy();
         model.learn(NumberKey.intArrayForString("foo"), strategy);
         model.learn(NumberKey.intArrayForString("bar"), strategy);
         model.learn(NumberKey.intArrayForString("baz"), strategy);
