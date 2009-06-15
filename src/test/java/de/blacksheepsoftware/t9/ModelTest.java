@@ -19,7 +19,7 @@ public class ModelTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS, new LinearUpdateStrategy());
+        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
 
         model.learn(NumberKey.intArrayForString("foo"));
         model.learn(NumberKey.intArrayForString("bar"));

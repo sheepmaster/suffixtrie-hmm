@@ -31,16 +31,16 @@ public class UpdateStrategyTest extends TestCase {
     public void testUpdateStrategy() {
         final String[] words = {"foo", "bar", "baz", "blurp", "abracadabra", "hokuspokus"};
 
-        final Model model1 = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS, new LinearUpdateStrategy());
+        final Model model1 = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
 
         for (String w : words) {
-            model1.learn(NumberKey.intArrayForString(w));
+            model1.learn(NumberKey.intArrayForString(w), new LinearUpdateStrategy());
         }
 
-        final Model model2 = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS, new DivideAndConquerUpdateStrategy());
+        final Model model2 = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
 
         for (String w : words) {
-            model2.learn(NumberKey.intArrayForString(w));
+            model2.learn(NumberKey.intArrayForString(w), new DivideAndConquerUpdateStrategy());
         }
 
         assertTrue(Arrays.deepEquals(model1.transitions, model2.transitions));

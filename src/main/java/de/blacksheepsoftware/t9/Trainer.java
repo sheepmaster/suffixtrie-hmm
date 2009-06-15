@@ -63,7 +63,7 @@ public class Trainer {
 
         List<int[]> testingWords = readWords(r2);
 
-        Model model = new Model(26, Model.Variant.PARTIAL_BACKLINKS, new LinearUpdateStrategy());
+        Model model = new Model(26, Model.Variant.PARTIAL_BACKLINKS);
 
         final int totalLength = totalLength(testingWords);
 

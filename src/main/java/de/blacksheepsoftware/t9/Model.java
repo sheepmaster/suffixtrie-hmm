@@ -23,8 +23,6 @@ public class Model implements Serializable {
 
     protected final StateDistribution startingDistribution;
 
-    protected final UpdateStrategy updateStrategy;
-
     protected static final int DEFAULT_NODES = 16;
 
     public static final int BACK = 0;
@@ -32,11 +30,11 @@ public class Model implements Serializable {
     public static final int BOTTOM = 0;
     public static final int EPSILON = 1;
 
-    public Model(int numCharacters, Variant variant, UpdateStrategy strategy) {
-        this(numCharacters, DEFAULT_NODES, variant, strategy);
+    public Model(int numCharacters, Variant variant) {
+        this(numCharacters, DEFAULT_NODES, variant);
     }
 
-    public Model(int numCharacters, int maxNodes, Variant variant, UpdateStrategy strategy) {
+    public Model(int numCharacters, int maxNodes, Variant variant) {
         this.numCharacters = numCharacters;
         this.frequencies = new double[maxNodes][];
         this.frequencySums = new double[maxNodes];
@@ -53,12 +51,10 @@ public class Model implements Serializable {
         frequencySums[EPSILON] = numCharacters;
 
         startingDistribution = StateDistribution.create(this, variant);
-
-        updateStrategy = strategy;
     }
 
     public Model(Model m) {
-        this(m.numCharacters, m.transitions.length, m.startingDistribution.getVariant(), m.updateStrategy);
+        this(m.numCharacters, m.transitions.length, m.startingDistribution.getVariant());
         numNodes = m.numNodes;
         for (int i = 1; i < numNodes; i++) {
             transitions[i] = m.transitions[i].clone();
@@ -123,7 +119,13 @@ public class Model implements Serializable {
         return newNode;
     }
 
+    protected static final LinearUpdateStrategy LINEAR_STRATEGY = new LinearUpdateStrategy();
+
     public void learn(int[] word) {
+        learn(word, LINEAR_STRATEGY);
+    }
+
+    public void learn(int[] word, UpdateStrategy updateStrategy) {
         final Model m = new Model(this);
         updateStrategy.learn(m, word, startingDistribution, startingDistribution, 0, word.length+1);
         this.frequencies = m.frequencies;
