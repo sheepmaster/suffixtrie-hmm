@@ -32,8 +32,8 @@ public class UpdateStrategyTest extends TestCase {
         final Model model2 = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
 
         for (String w : words) {
-            model1.learn(NumberKey.intArrayForString(w), Integer.MAX_VALUE);
-            model2.learn(NumberKey.intArrayForString(w), 0);
+            model1.learn(NumberKey.intArrayForString(w), Integer.MAX_VALUE, Integer.MAX_VALUE);
+            model2.learn(NumberKey.intArrayForString(w), Integer.MAX_VALUE, 0);
         }
 
         assertTrue(Arrays.deepEquals(model1.transitions, model2.transitions));

@@ -70,12 +70,12 @@ public abstract class StateDistribution implements Serializable {
     }
 
     public StateDistribution read(int character) {
-        return alpha(null, character);
+        return alpha(null, character, Integer.MAX_VALUE);
     }
 
     protected abstract StateDistribution beta(StateDistribution alpha, int character);
 
-    protected abstract StateDistribution alpha(Model m, int character);
+    protected abstract StateDistribution alpha(Model m, int character, int maxDepth);
 
     /**
      * @param depth
@@ -187,7 +187,7 @@ public abstract class StateDistribution implements Serializable {
         }
 
         @Override
-        protected StateDistribution alpha(Model m, int character) {
+        protected StateDistribution alpha(Model m, int character, int maxDepth) {
             if (character == INVALID) {
                 return model.startingDistribution();
             }
@@ -202,7 +202,7 @@ public abstract class StateDistribution implements Serializable {
                 p += currentProbability;
                 final double smoothingValue = (m == null) ? 0 : currentProbability;
                 int t = model.transitions[state][character];
-                if ((t == BOTTOM) && (m != null)) {
+                if ((t == BOTTOM) && (m != null) && (depth < maxDepth)) {
                     // if we are in training mode, add the missing state
                     t = model.addNode(state, character);
                     m.addNode(state, character);
