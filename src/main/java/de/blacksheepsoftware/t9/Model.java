@@ -119,16 +119,75 @@ public class Model implements Serializable {
         return newNode;
     }
 
-    protected static final UpdateStrategy DEFAULT_STRATEGY = new HybridUpdateStrategy();
+    /**
+     * Uses a divide-and-conquer approach to reduce the memory footprint from
+     * <i>O(n)</i> to <i>O(log n)</i>, for an increase in runtime from
+     * <i>O(n)</i> to <i>O(n log n)</i>.
+     * 
+     * @see #learnStep(int[], StateDistribution, StateDistribution, int, int, int)
+     */
+    private StateDistribution learn(int[] word, StateDistribution alpha_start, StateDistribution beta_end, int start, int end, int linearThreshold) {
+        final int diff = end - start;
+        if (diff > linearThreshold) {
+            final int mid = start + diff / 2;
+            StateDistribution alpha_mid = alpha_start;
+            for (int i = start; i < mid; i++) {
+                assert i < word.length;
+                alpha_mid = alpha_mid.alpha(this, word[i]);
+                alpha_mid.normalize();
+            }
+            final StateDistribution beta_mid = learnStep(word, alpha_mid, beta_end, mid, end, linearThreshold);
 
-    public void learn(int[] word) {
-        learn(word, DEFAULT_STRATEGY);
+            return (start >= mid) ? beta_mid : learnStep(word, alpha_start, beta_mid, start, mid, linearThreshold);
+        } else {
+            return learnStep(word, alpha_start, beta_end, start, end, linearThreshold);
+        }
     }
 
-    public void learn(int[] word, UpdateStrategy updateStrategy) {
+    /**
+     * <p>
+     * Updates this model with the inferred state transitions when
+     * reading {@code word} from index {@code i} to {@code j}.
+     * </p>
+     * 
+     * <p>
+     * It is assumed that {@code word} ends with a sentinel character ({@code
+     * StateDistribution.INVALID}), which means that the last transition has to
+     * end in the epsilon state.
+     * </p>
+     * 
+     * @param word The word to learn.
+     * @param alpha_i alpha[i], i.e. the forward message at index {@code i}.
+     * @param beta_j beta[j], i.e. the backwards message at index {@code j}.
+     * @param i The start index.
+     * @param j The end index.
+     * @return beta[i], i.e. the backwards message at index {@code i};
+     * 
+     * @see #learn(int[], StateDistribution, StateDistribution, int, int, int)
+     */
+    private StateDistribution learnStep(int[] word, StateDistribution alpha_i, StateDistribution beta_j, int i, int j, int linearThreshold) {
+        final int c = (i < word.length) ? word[i] : StateDistribution.INVALID;
+        final StateDistribution alpha_i1 = alpha_i.alpha(this, c);
+        final double scalingFactor = 1 / alpha_i1.totalProbability();
+        alpha_i1.scale(scalingFactor);
+        final StateDistribution beta_i1 = (i + 1 >= j) ? beta_j : learn(word, alpha_i1, beta_j, i + 1, j, linearThreshold);
+        beta_i1.scale(scalingFactor);
+        alpha_i.update(this, beta_i1, c);
+        final StateDistribution beta_i = alpha_i.beta(beta_i1, c);
+        return beta_i;
+    }
+
+    public void learn(int[] word, int linearThreshold) {
         final Model m = new Model(this);
-        updateStrategy.learn(m, word, startingDistribution, startingDistribution, 0, word.length+1);
+        m.learn(word, startingDistribution, startingDistribution, 0, word.length+1, linearThreshold);
         this.frequencies = m.frequencies;
         this.frequencySums = m.frequencySums;
     }
+
+    protected static final int DEFAULT_THRESHOLD = 127;
+
+    public void learn(int[] word) {
+        learn(word, DEFAULT_THRESHOLD);
+    }
+
 }
