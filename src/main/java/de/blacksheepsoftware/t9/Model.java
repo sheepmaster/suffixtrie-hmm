@@ -3,7 +3,7 @@ package de.blacksheepsoftware.t9;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class Model implements Serializable {
+public class Model extends Learnable implements Serializable {
     public enum Variant {
         COMPLETE_BACKLINKS,
         PARTIAL_BACKLINKS
@@ -61,6 +61,16 @@ public class Model implements Serializable {
             frequencies[i] = m.frequencies[i].clone();
             frequencySums[i] = m.frequencySums[i];
         }
+    }
+
+    protected Model copyForBatch() {
+        final Model newModel = new Model(numCharacters, transitions.length, startingDistribution.getVariant());
+        newModel.numNodes = numNodes;
+        for (int i = 1; i < newModel.numNodes; i++) {
+            newModel.transitions[i] = transitions[i].clone();
+            newModel.frequencies[i] = new double[numCharacters+1];
+        }
+        return newModel;
     }
 
     protected void extend(int maxNodes) {
@@ -126,7 +136,7 @@ public class Model implements Serializable {
      * 
      * @see #learnStep(int[], StateDistribution, StateDistribution, int, int, int, int)
      */
-    private StateDistribution learn(int[] word, StateDistribution alpha_start, StateDistribution beta_end, int start, int end, int maxDepth, int linearThreshold) {
+    protected StateDistribution learn(int[] word, StateDistribution alpha_start, StateDistribution beta_end, int start, int end, int maxDepth, int linearThreshold) {
         final int diff = end - start;
         if (diff > linearThreshold) {
             final int mid = start + diff / 2;
@@ -178,23 +188,15 @@ public class Model implements Serializable {
         return beta_i;
     }
 
-    public void learn(int[] word, int maxDepth, int linearThreshold) {
-        final Model m = new Model(this);
-        m.learn(word, startingDistribution, startingDistribution, 0, word.length+1, maxDepth, linearThreshold);
+    protected void copyFrequenciesFrom(final Model m) {
         this.frequencies = m.frequencies;
         this.frequencySums = m.frequencySums;
     }
 
-    protected static final int DEFAULT_THRESHOLD = 127;
-
-    public void learn(int[] word, int maxDepth) {
-        learn(word, maxDepth, DEFAULT_THRESHOLD);
-    }
-
-    protected static final int DEFAULT_MAXIMUM_DEPTH = Integer.MAX_VALUE;
-
-    public void learn(int[] word) {
-        learn(word, DEFAULT_MAXIMUM_DEPTH);
+    public void learn(int[] word, int maxDepth, int linearThreshold) {
+        final Model m = new Model(this);
+        m.learn(word, startingDistribution, startingDistribution, 0, word.length+1, maxDepth, linearThreshold);
+        copyFrequenciesFrom(m);
     }
 
 }
