@@ -65,11 +65,11 @@
       <print-info-key name="OOScaleDocumentToFitPageWidth" type="boolean">true</print-info-key>
     </print-info>
   </settings>
-  <editor content-size="{595, 648}" scroll-position="{0, 684}">
+  <editor content-size="{700, 721}" scroll-position="{0, 944}">
     <drawer palette-height="167"/>
-    <selected-rows ids="pdEQMsRYTFj"/>
+    <selected-rows ids="hbPhvd5e8OR"/>
     <selected-columns ids="jFqHUGd_Dg1"/>
-    <selected-characters range="{0, 0}"/>
+    <selected-characters range="{0, 4}"/>
   </editor>
   <columns>
     <column id="dTpN3JwYpBn" type="text" width="18" minimum-width="18" maximum-width="18" text-export-width="1" is-note-column="yes">
@@ -86,7 +86,7 @@
         </text>
       </title>
     </column>
-    <column id="jFqHUGd_Dg1" type="text" width="559" minimum-width="13" maximum-width="1000000" text-export-width="72" is-outline-column="yes">
+    <column id="jFqHUGd_Dg1" type="text" width="664" minimum-width="13" maximum-width="1000000" text-export-width="72" is-outline-column="yes">
       <title>
         <text>
           <p>
@@ -820,7 +820,7 @@
                       <lit>⇒</lit>
                     </run>
                     <run>
-                      <lit> smoothing</lit>
+                      <lit> smoothing (pseudo-counts)</lit>
                     </run>
                   </p>
                 </text>
@@ -880,7 +880,7 @@
         </text>
       </values>
       <children>
-        <item id="ebqCzlD0wOX">
+        <item id="ebqCzlD0wOX" expanded="yes">
           <values>
             <text>
               <p>
@@ -890,6 +890,19 @@
               </p>
             </text>
           </values>
+          <children>
+            <item id="fUq4oYYQS3X">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Batch learning</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+          </children>
         </item>
         <item id="lknR8qNJzVN" expanded="yes">
           <values>
@@ -961,6 +974,360 @@
                   </p>
                 </text>
               </values>
+            </item>
+          </children>
+        </item>
+        <item id="atc2E_rI0hc" expanded="yes">
+          <values>
+            <text>
+              <p>
+                <run>
+                  <lit>Substring searches</lit>
+                </run>
+              </p>
+            </text>
+          </values>
+          <children>
+            <item id="hKDAegtkCbX">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Similar to local (instead of global alignments)</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+            <item id="bAFwsHOIyHa">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Calculate max-sum contiguous subsequence on character distances in sequence (using base model)</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+          </children>
+        </item>
+      </children>
+    </item>
+    <item id="bSSzzONyRs-" expanded="yes">
+      <values>
+        <text>
+          <p>
+            <run>
+              <lit>Space/time complexity</lit>
+            </run>
+          </p>
+        </text>
+      </values>
+      <children>
+        <item id="d5VeHRABO1u" expanded="yes">
+          <values>
+            <text>
+              <p>
+                <run>
+                  <lit>Space for model</lit>
+                </run>
+              </p>
+            </text>
+          </values>
+          <children>
+            <item id="gCPStObGQia">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>For m sequences of length n: </lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="font-italic">yes</value>
+                      </style>
+                      <lit>O(n</lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="baseline-superscript">1</value>
+                        <value key="font-italic">yes</value>
+                        <value key="font-size">10</value>
+                      </style>
+                      <lit>2</lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="font-italic">yes</value>
+                      </style>
+                      <lit> m)</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+            <item id="j2Ji2ms6RyU">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>In practice (limited </lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="font-italic">yes</value>
+                      </style>
+                      <lit>n</lit>
+                    </run>
+                    <run>
+                      <lit>): </lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="font-italic">yes</value>
+                      </style>
+                      <lit>o(m)</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+          </children>
+        </item>
+        <item id="gzzbv0_R6rS" expanded="yes">
+          <values>
+            <text>
+              <p>
+                <run>
+                  <lit>Space for training</lit>
+                </run>
+              </p>
+            </text>
+          </values>
+          <children>
+            <item id="aFyOfx6qFci">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Online: </lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="font-italic">yes</value>
+                      </style>
+                      <lit>O(d n)</lit>
+                    </run>
+                    <run>
+                      <lit> (</lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="font-italic">yes</value>
+                      </style>
+                      <lit>n</lit>
+                    </run>
+                    <run>
+                      <lit>: length of sequence, </lit>
+                    </run>
+                    <run>
+                      <style>
+                        <value key="font-italic">yes</value>
+                      </style>
+                      <lit>d</lit>
+                    </run>
+                    <run>
+                      <lit>: maximum length of state vector during training; equiv to n, but see below)</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+          </children>
+        </item>
+        <item id="hbPhvd5e8OR">
+          <values>
+            <text>
+              <p>
+                <run>
+                  <lit>Time</lit>
+                </run>
+              </p>
+            </text>
+          </values>
+        </item>
+        <item id="n_m25jHnYio" expanded="yes">
+          <values>
+            <text>
+              <p>
+                <run>
+                  <lit>Optimizations for long sequences</lit>
+                </run>
+              </p>
+            </text>
+          </values>
+          <children>
+            <item id="og5Yh4DpO7Q" expanded="yes">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Restrict number of states in model</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+              <children>
+                <item id="lc3TPeVMYvl">
+                  <values>
+                    <text>
+                      <p>
+                        <run>
+                          <lit>define maximum depth </lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>d </lit>
+                        </run>
+                        <run>
+                          <lit>in trie</lit>
+                        </run>
+                      </p>
+                    </text>
+                  </values>
+                </item>
+                <item id="dDYoWn3jdKu">
+                  <values>
+                    <text>
+                      <p>
+                        <run>
+                          <lit>Number of states: expected </lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>o(d</lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="baseline-superscript">1</value>
+                            <value key="font-italic">yes</value>
+                            <value key="font-size">10</value>
+                          </style>
+                          <lit>2</lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit> n)</lit>
+                        </run>
+                      </p>
+                    </text>
+                  </values>
+                </item>
+              </children>
+            </item>
+            <item id="jZ9g8bnn2Jd" expanded="yes">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Space/time tradeoff</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+              <children>
+                <item id="gUbrt7STLkQ">
+                  <values>
+                    <text>
+                      <p>
+                        <run>
+                          <lit>Linear training: </lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>O(d n)</lit>
+                        </run>
+                        <run>
+                          <lit> intermediate space, </lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>O(d n)</lit>
+                        </run>
+                        <run>
+                          <lit> time (</lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>n</lit>
+                        </run>
+                        <run>
+                          <lit>: length of sequence)</lit>
+                        </run>
+                      </p>
+                    </text>
+                  </values>
+                </item>
+                <item id="b5QJ3WScG7h">
+                  <values>
+                    <text>
+                      <p>
+                        <run>
+                          <lit>Divide-and-conquer approach: </lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>O(d log n)</lit>
+                        </run>
+                        <run>
+                          <lit> space, </lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>O(d n log n)</lit>
+                        </run>
+                        <run>
+                          <lit> time</lit>
+                        </run>
+                      </p>
+                    </text>
+                  </values>
+                </item>
+                <item id="j3i7d0WnQkx">
+                  <values>
+                    <text>
+                      <p>
+                        <run>
+                          <lit>Fall back to linear training for small </lit>
+                        </run>
+                        <run>
+                          <style>
+                            <value key="font-italic">yes</value>
+                          </style>
+                          <lit>n</lit>
+                        </run>
+                      </p>
+                    </text>
+                  </values>
+                </item>
+              </children>
             </item>
           </children>
         </item>
