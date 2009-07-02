@@ -3,7 +3,7 @@ package de.blacksheepsoftware.t9;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class Model extends Learnable implements Serializable {
+public class Model extends Trainable implements Serializable {
     public enum Variant {
         COMPLETE_BACKLINKS,
         PARTIAL_BACKLINKS
@@ -53,8 +53,11 @@ public class Model extends Learnable implements Serializable {
         startingDistribution = StateDistribution.create(this, variant);
     }
 
-    public Model(Model m) {
+    protected Model(Model m) {
         this(m.numCharacters, m.transitions.length, m.startingDistribution.getVariant());
+    }
+
+    protected void deepCopyFrequenciesFrom(Model m) {
         numNodes = m.numNodes;
         for (int i = 1; i < numNodes; i++) {
             transitions[i] = m.transitions[i].clone();
@@ -63,14 +66,18 @@ public class Model extends Learnable implements Serializable {
         }
     }
 
-    protected Model copyForBatch() {
-        final Model newModel = new Model(numCharacters, transitions.length, startingDistribution.getVariant());
-        newModel.numNodes = numNodes;
-        for (int i = 1; i < newModel.numNodes; i++) {
-            newModel.transitions[i] = transitions[i].clone();
-            newModel.frequencies[i] = new double[numCharacters+1];
+    protected void copyTransitionsFrom(Model m) {
+        //        final Model newModel = new Model(numCharacters, transitions.length, startingDistribution.getVariant());
+        numNodes = m.numNodes;
+        for (int i = 1; i < numNodes; i++) {
+            transitions[i] = m.transitions[i].clone();
+            frequencies[i] = new double[numCharacters+1];
         }
-        return newModel;
+    }
+
+    protected void copyFrequenciesFrom(final Model m) {
+        this.frequencies = m.frequencies;
+        this.frequencySums = m.frequencySums;
     }
 
     protected void extend(int maxNodes) {
@@ -188,13 +195,10 @@ public class Model extends Learnable implements Serializable {
         return beta_i;
     }
 
-    protected void copyFrequenciesFrom(final Model m) {
-        this.frequencies = m.frequencies;
-        this.frequencySums = m.frequencySums;
-    }
-
+    @Override
     public void learn(int[] word, int maxDepth, int linearThreshold) {
         final Model m = new Model(this);
+        m.deepCopyFrequenciesFrom(this);
         m.learn(word, startingDistribution, startingDistribution, 0, word.length+1, maxDepth, linearThreshold);
         copyFrequenciesFrom(m);
     }

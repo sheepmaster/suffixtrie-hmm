@@ -4,7 +4,7 @@ package de.blacksheepsoftware.t9;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class BatchTrainer extends Learnable {
+public class BatchTrainer extends Trainable {
 
     protected Model model;
 
@@ -26,7 +26,8 @@ public class BatchTrainer extends Learnable {
 
     protected void replaceModel(Model m) {
         model = m;
-        newModel = m.copyForBatch();
+        newModel = new Model(m);
+        newModel.copyTransitionsFrom(m);
     }
 
     public Model getModel() {

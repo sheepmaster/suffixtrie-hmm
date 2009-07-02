@@ -4,7 +4,7 @@ package de.blacksheepsoftware.t9;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public abstract class Learnable {
+public abstract class Trainable {
 
     protected static final int DEFAULT_THRESHOLD = 127;
 

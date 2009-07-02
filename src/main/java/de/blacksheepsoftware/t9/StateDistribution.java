@@ -166,7 +166,7 @@ public abstract class StateDistribution implements Serializable {
             int[] states = states();
             double p = 0;
             for (int i = 0; i <= depth; i++) {
-                final double smoothing = stateProbability(i);
+                final double smoothing = stateProbability(i); // beta is only used for learning, so smoothing is always used.
                 final int state = states[i];
                 p *= (model.frequencies[state][BACK] + smoothing / 2);
                 if (character != -1) {
