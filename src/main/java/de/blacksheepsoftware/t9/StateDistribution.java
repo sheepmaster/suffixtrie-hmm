@@ -11,7 +11,7 @@ import de.blacksheepsoftware.t9.Model.Variant;
 public abstract class StateDistribution implements Serializable {
     private static final long serialVersionUID = -366668114489984302L;
 
-    public static double LOG_2 = Math.log(2);
+    public static final double LOG_2 = Math.log(2);
 
     public static final int INVALID = -1;
 
@@ -69,7 +69,7 @@ public abstract class StateDistribution implements Serializable {
         }
     }
 
-    public StateDistribution read(int character) {
+    public StateDistribution successor(int character) {
         return alpha(null, character, Integer.MAX_VALUE);
     }
 
@@ -113,10 +113,10 @@ public abstract class StateDistribution implements Serializable {
         return states;
     }
 
-    public StateDistribution read(int[] characters) {
+    public StateDistribution successor(int[] characters) {
         StateDistribution newDistribution = this;
         for (int c : characters) {
-            newDistribution = newDistribution.read(c);
+            newDistribution = newDistribution.successor(c);
             newDistribution.normalize();
         }
         return newDistribution;
@@ -130,7 +130,7 @@ public abstract class StateDistribution implements Serializable {
         double p = 0;
         StateDistribution newDistribution = this;
         for (final int c : word) {
-            newDistribution = newDistribution.read(c);
+            newDistribution = newDistribution.successor(c);
             p += newDistribution.normalize();
         }
         return p / LOG_2;

@@ -103,7 +103,7 @@ public class Model extends Trainable implements Serializable {
     }
 
     public double perplexity(int[] word, int[] prefix) {
-        return startingDistribution.read(prefix).perplexity(word);
+        return startingDistribution.successor(prefix).perplexity(word);
     }
 
     protected int addNode(int parent, int label) {
