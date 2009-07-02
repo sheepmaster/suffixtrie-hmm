@@ -21,6 +21,12 @@ public abstract class StateDistribution implements Serializable {
 
     protected double[] stateProbabilities;
 
+    protected StateDistribution(Model m, int suffix, double[] probabilities) {
+        model = m;
+        longestSuffix = suffix;
+        stateProbabilities = probabilities;
+    }
+
     public static StateDistribution create(Model model, Variant v) {
         if (v.equals(Variant.PARTIAL_BACKLINKS)) {
             return new PartialBacklinksVariant(model, EPSILON, new double[0]);
@@ -29,15 +35,28 @@ public abstract class StateDistribution implements Serializable {
         }
     }
 
+    protected abstract StateDistribution copy(int suffix, double[] probabilities);
+
     protected abstract Variant getVariant();
 
-    protected StateDistribution(Model m, int suffix, double[] probabilities) {
-        model = m;
-        longestSuffix = suffix;
-        stateProbabilities = probabilities;
+    public int depth() {
+        return stateProbabilities.length;
     }
 
-    protected abstract StateDistribution copy(int suffix, double[] probabilities);
+    /**
+     * @return an array of possible states, starting with the root state.
+     */
+    public int[] states() {
+        int depth = depth();
+        int[] states = new int[depth + 1];
+        int state = longestSuffix;
+        int d = depth;
+        while (d >= 0) {
+            states[d--] = state;
+            state = model.transitions[state][BACK];
+        }
+        return states;
+    }
 
     public double totalProbability() {
         // if (stateProbabilities.length == 0) {
@@ -69,14 +88,6 @@ public abstract class StateDistribution implements Serializable {
         }
     }
 
-    public StateDistribution successor(int character) {
-        return alpha(null, character, Integer.MAX_VALUE);
-    }
-
-    protected abstract StateDistribution beta(StateDistribution alpha, int character);
-
-    protected abstract StateDistribution alpha(Model m, int character, int maxDepth);
-
     /**
      * @param depth
      * @return
@@ -94,23 +105,8 @@ public abstract class StateDistribution implements Serializable {
         }
     }
 
-    public int depth() {
-        return stateProbabilities.length;
-    }
-
-    /**
-     * @return an array of possible states, starting with the root state.
-     */
-    public int[] states() {
-        int depth = depth();
-        int[] states = new int[depth + 1];
-        int state = longestSuffix;
-        int d = depth;
-        while (d >= 0) {
-            states[d--] = state;
-            state = model.transitions[state][BACK];
-        }
-        return states;
+    public StateDistribution successor(int character) {
+        return alpha(null, character, Integer.MAX_VALUE);
     }
 
     public StateDistribution successor(int[] characters) {
@@ -135,6 +131,10 @@ public abstract class StateDistribution implements Serializable {
         }
         return p / LOG_2;
     }
+
+    protected abstract StateDistribution beta(StateDistribution alpha, int character);
+
+    protected abstract StateDistribution alpha(Model m, int character, int maxDepth);
 
     protected abstract void update(Model m, StateDistribution beta, int character);
 
