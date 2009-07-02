@@ -98,11 +98,11 @@ public class Model extends Trainable implements Serializable {
         return startingDistribution;
     }
 
-    public double perplexity(int[] word) {
+    public double perplexity(Iterable<Integer> word) {
         return startingDistribution.perplexity(word);
     }
 
-    public double perplexity(int[] word, int[] prefix) {
+    public double perplexity(Iterable<Integer> word, Iterable<Integer> prefix) {
         return startingDistribution.successor(prefix).perplexity(word);
     }
 

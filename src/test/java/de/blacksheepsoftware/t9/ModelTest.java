@@ -31,7 +31,7 @@ public class ModelTest extends TestCase {
     }
 
     protected void printWordPerplexity(String word) {
-        final double perplexity = model.perplexity(NumberKey.intArrayForString(word));
+        final double perplexity = model.perplexity(NumberKey.characterSequenceForString(word));
         assertFalse("perplexity is not a number", Double.isNaN(perplexity));
         //        assertFalse(Double.isInfinite(perplexity));
         System.err.println("perplexity for \""+word+"\": "+perplexity);
@@ -48,7 +48,7 @@ public class ModelTest extends TestCase {
     }
 
     protected void printCompletionPerplexity(String prefix, String word) {
-        final double perplexity = model.perplexity(NumberKey.intArrayForString(word), NumberKey.intArrayForString(prefix));
+        final double perplexity = model.perplexity(NumberKey.characterSequenceForString(word), NumberKey.characterSequenceForString(prefix));
         assertFalse("perplexity is not a number", Double.isNaN(perplexity));
         System.err.println("perplexity for \""+word+"\" after \""+prefix+"\": "+perplexity);
     }

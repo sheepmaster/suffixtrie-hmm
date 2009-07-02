@@ -5,9 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -15,8 +14,8 @@ import java.util.List;
  */
 public class Trainer {
 
-    public static List<int[]> readWords(LineNumberReader r) throws IOException {
-        List<int[]> words = new ArrayList<int[]>();
+    protected static List<int[]> readWords(LineNumberReader r) throws IOException {
+        List<int[]> words = new Vector<int[]>();
 
         while (r.ready()) {
             words.add(NumberKey.intArrayForString(r.readLine()));
@@ -25,7 +24,7 @@ public class Trainer {
         return words;
     }
 
-    public static int totalLength(Collection<int[]> words) {
+    public static int totalLength(Iterable<int[]> words) {
         int l = 0;
 
         for (int[] w : words) {
@@ -35,11 +34,11 @@ public class Trainer {
         return l;
     }
 
-    public static double totalPerplexity(Model m, Collection<int[]> words) {
+    public static double totalPerplexity(Model m, Iterable<int[]> words) {
         double t = 0;
 
         for (int[] w : words) {
-            t += m.perplexity(w);
+            t += m.perplexity(NumberKey.intArrayList(w));
         }
 
         return t;
