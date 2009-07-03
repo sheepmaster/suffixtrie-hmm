@@ -165,16 +165,22 @@ public abstract class StateDistribution implements Serializable {
             int[] states = states();
             double p = 0;
             for (int i = 0; i <= depth; i++) {
-                final double smoothing = stateProbability(i); // beta is only used for learning, so smoothing is always used.
                 final int state = states[i];
-                p *= (model.frequencies[state][BACK] + smoothing / 2);
-                if (character != -1) {
-                    p += oldBeta.stateProbabilities[i] * (model.frequencies[state][character] + smoothing / 2);
+                // beta is only used for learning, so smoothing is always used.
+                final double transitionPseudoCount;
+                final double backPseudoCount;
+                if (state == EPSILON) {
+                    transitionPseudoCount = 1;
+                    backPseudoCount = 0;
+                } else {
+                    transitionPseudoCount = stateProbability(i) / 2;
+                    backPseudoCount = transitionPseudoCount;
                 }
-                p /= (model.frequencySums[state] + smoothing);
-                // p = (p * (frequencies[state][0] + smoothing / 2)
-                // + oldBeta.stateProbabilities[i] * (frequencies[state][character] + smoothing / 2))
-                // / (frequencySums[state] + smoothing);
+                p *= (model.frequencies[state][BACK] + backPseudoCount);
+                if (character != -1) {
+                    p += oldBeta.stateProbabilities[i] * (model.frequencies[state][character] + transitionPseudoCount);
+                }
+                p /= (model.frequencySums[state] + backPseudoCount + transitionPseudoCount);
                 if (i > 0) {
                     newProbs[i - 1] = p;
                 } else if (character == -1) {
@@ -199,7 +205,18 @@ public abstract class StateDistribution implements Serializable {
                 final double currentProbability = stateProbability(depth);
 
                 p += currentProbability;
-                final double smoothingValue = (m == null) ? 0 : currentProbability;
+                final double transitionPseudoCount;
+                final double backPseudoCount;
+                if (m == null) {
+                    transitionPseudoCount = 0;
+                    backPseudoCount = 0;
+                } else if (state == EPSILON) {
+                    transitionPseudoCount = 1;
+                    backPseudoCount = 0;
+                } else {
+                    transitionPseudoCount = currentProbability / 2;
+                    backPseudoCount = transitionPseudoCount;
+                }
                 int t = model.transitions[state][character];
                 if ((t == BOTTOM) && (m != null) && (depth < maxDepth)) {
                     // if we are in training mode, add the missing state
@@ -211,12 +228,12 @@ public abstract class StateDistribution implements Serializable {
                         newProbs = new double[depth + 1];
                         newLongestSuffix = t;
                     }
-                    newProbs[depth] = p * (model.frequencies[state][character] + smoothingValue / 2)
-                    / (model.frequencySums[state] + smoothingValue);
+                    newProbs[depth] = p * (model.frequencies[state][character] + transitionPseudoCount)
+                    / (model.frequencySums[state] + transitionPseudoCount + backPseudoCount);
                 }
                 depth--;
-                p *= (model.frequencies[state][BACK] + smoothingValue / 2)
-                / (model.frequencySums[state] + smoothingValue);
+                p *= (model.frequencies[state][BACK] + backPseudoCount)
+                / (model.frequencySums[state] + transitionPseudoCount + backPseudoCount);
                 state = model.transitions[state][BACK];
             }
             if (newProbs == null) {
@@ -238,12 +255,22 @@ public abstract class StateDistribution implements Serializable {
                     final double currentProbability = stateProbability(depth);
                     p += currentProbability;
 
+                    final double transitionPseudoCount;
+                    final double backPseudoCount;
+                    if (state == EPSILON) {
+                        transitionPseudoCount = 1;
+                        backPseudoCount = 0;
+                    } else {
+                        transitionPseudoCount = currentProbability / 2;
+                        backPseudoCount = transitionPseudoCount;
+                    }
+
                     incoming[depth] = p;
                     states[depth] = state;
 
                     depth--;
-                    p *= (model.frequencies[state][BACK] + currentProbability / 2)
-                    / (model.frequencySums[state] + currentProbability);
+                    p *= (model.frequencies[state][BACK] + backPseudoCount)
+                    / (model.frequencySums[state] + transitionPseudoCount + backPseudoCount);
                     state = model.transitions[state][BACK];
                 }
             }
@@ -251,11 +278,21 @@ public abstract class StateDistribution implements Serializable {
             for (int i = 0; i < states.length; i++) {
                 final int state = states[i];
                 final double currentProbability = stateProbability(i);
+                final double transitionPseudoCount;
+                final double backPseudoCount;
+                if (state == EPSILON) {
+                    transitionPseudoCount = 1;
+                    backPseudoCount = 0;
+                } else {
+                    transitionPseudoCount = currentProbability / 2;
+                    backPseudoCount = transitionPseudoCount;
+                }
+
                 if (i > 0) {
                     // p has still the value from the last iteration, i.e. the
                     // probability for leaving the *next* state
-                    p *= (model.frequencies[state][BACK] + currentProbability / 2)
-                    / (model.frequencySums[state] + currentProbability);
+                    p *= (model.frequencies[state][BACK] + backPseudoCount)
+                    / (model.frequencySums[state] + backPseudoCount + transitionPseudoCount);
                     final double backCount = incoming[i] * p;
                     m.frequencies[state][BACK] += backCount;
                     m.frequencySums[state] += backCount;
@@ -263,8 +300,8 @@ public abstract class StateDistribution implements Serializable {
 
                 if (character != INVALID) {
                     // probability for reading the character in this state
-                    final double q = (model.frequencies[state][character] + currentProbability / 2)
-                    / (model.frequencySums[state] + currentProbability) * beta.stateProbabilities[i];
+                    final double q = (model.frequencies[state][character] + transitionPseudoCount)
+                    / (model.frequencySums[state] + backPseudoCount + transitionPseudoCount) * beta.stateProbabilities[i];
                     p += q;
 
                     final double readCount = incoming[i] * q;

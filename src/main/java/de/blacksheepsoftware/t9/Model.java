@@ -47,11 +47,6 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         transitions[EPSILON] = new int[numCharacters+1];
         frequencies[EPSILON] = new double[numCharacters+1];
 
-        // set transition frequencies from epsilon to one
-        Arrays.fill(frequencies[EPSILON], 1);
-        frequencies[EPSILON][BACK] = 0;
-        frequencySums[EPSILON] = numCharacters;
-
         startingDistribution = StateDistribution.create(this, variant);
     }
 

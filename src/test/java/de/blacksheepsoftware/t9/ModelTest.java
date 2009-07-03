@@ -85,7 +85,7 @@ public class ModelTest extends TestCase {
         checkOutputDistribution("foo");
         checkOutputDistribution("bar");
         checkOutputDistribution("foobar");
-        checkOutputDistribution("zyx");
+        //        checkOutputDistribution("zyx");
     }
 
     protected double transitionProbability(int state, int c) {
