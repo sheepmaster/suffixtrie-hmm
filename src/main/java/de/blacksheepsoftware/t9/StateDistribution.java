@@ -59,10 +59,9 @@ public abstract class StateDistribution implements Serializable {
     }
 
     public double totalProbability() {
-        // if (stateProbabilities.length == 0) {
-        // throw new IllegalArgumentException();
-        // return 1;
-        // }
+        //        if (stateProbabilities.length == 0) {
+        //            return 1.0;
+        //        }
         double total = 0;
         for (double p : stateProbabilities) {
             total += p;
@@ -191,7 +190,7 @@ public abstract class StateDistribution implements Serializable {
             if (character == INVALID) {
                 return model.startingDistribution();
             }
-            double[] newProbs = new double[0];
+            double[] newProbs = null;
             int newLongestSuffix = BOTTOM;
             int state = longestSuffix;
             int depth = depth();
@@ -208,7 +207,7 @@ public abstract class StateDistribution implements Serializable {
                     m.addNode(state, character);
                 }
                 if (t != BOTTOM) {
-                    if (newProbs.length == 0) {
+                    if (newProbs == null) {
                         newProbs = new double[depth + 1];
                         newLongestSuffix = t;
                     }
@@ -219,6 +218,9 @@ public abstract class StateDistribution implements Serializable {
                 p *= (model.frequencies[state][BACK] + smoothingValue / 2)
                 / (model.frequencySums[state] + smoothingValue);
                 state = model.transitions[state][BACK];
+            }
+            if (newProbs == null) {
+                newProbs = new double[0];
             }
             return copy(newLongestSuffix, newProbs);
         }
