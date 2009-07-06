@@ -1,6 +1,9 @@
-package de.blacksheepsoftware.t9;
+package de.blacksheepsoftware.hmm;
 
 import java.util.Arrays;
+
+import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.t9.NumberKey;
 
 import junit.framework.TestCase;
 

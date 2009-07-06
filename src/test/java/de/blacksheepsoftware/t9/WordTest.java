@@ -3,6 +3,8 @@ package de.blacksheepsoftware.t9;
 import java.util.Arrays;
 import java.util.List;
 
+import de.blacksheepsoftware.hmm.Model;
+
 import junit.framework.TestCase;
 
 /**

@@ -1,5 +1,8 @@
 package de.blacksheepsoftware.t9;
 
+import de.blacksheepsoftware.hmm.BatchTrainerTest;
+import de.blacksheepsoftware.hmm.ModelTest;
+import de.blacksheepsoftware.hmm.UpdateStrategyTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

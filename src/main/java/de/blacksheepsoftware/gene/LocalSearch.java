@@ -1,4 +1,8 @@
-package de.blacksheepsoftware.t9;
+package de.blacksheepsoftware.gene;
+
+import de.blacksheepsoftware.hmm.SequenceIterable;
+import de.blacksheepsoftware.hmm.SequenceIterator;
+
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>

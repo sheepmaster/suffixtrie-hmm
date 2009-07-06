@@ -15,6 +15,8 @@ import javax.swing.JApplet;
 import javax.swing.JButton;
 import javax.swing.JTextArea;
 
+import de.blacksheepsoftware.hmm.Model;
+
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *

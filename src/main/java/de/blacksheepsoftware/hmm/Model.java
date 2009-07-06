@@ -1,7 +1,8 @@
-package de.blacksheepsoftware.t9;
+package de.blacksheepsoftware.hmm;
 
 import java.io.Serializable;
 import java.util.Arrays;
+
 
 public class Model extends Trainable implements SequenceIterable, Serializable {
     public enum Variant {
@@ -202,6 +203,13 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         m.deepCopyFrequenciesFrom(this);
         m.learn(word, startingDistribution, startingDistribution, 0, word.length+1, maxDepth, linearThreshold);
         copyFrequenciesFrom(m);
+    }
+
+    /**
+     * @return
+     */
+    public int numStates() {
+        return numNodes;
     }
 
 }

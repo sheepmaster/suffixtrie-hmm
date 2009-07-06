@@ -1,8 +1,11 @@
-package de.blacksheepsoftware.t9;
+package de.blacksheepsoftware.hmm;
 
-import static de.blacksheepsoftware.t9.Model.BACK;
-import static de.blacksheepsoftware.t9.Model.BOTTOM;
-import static de.blacksheepsoftware.t9.Model.EPSILON;
+import static de.blacksheepsoftware.hmm.Model.BACK;
+import static de.blacksheepsoftware.hmm.Model.BOTTOM;
+import static de.blacksheepsoftware.hmm.Model.EPSILON;
+import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.StateDistribution;
+import de.blacksheepsoftware.t9.NumberKey;
 import junit.framework.TestCase;
 
 /**

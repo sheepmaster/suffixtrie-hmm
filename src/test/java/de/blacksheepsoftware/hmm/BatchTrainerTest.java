@@ -1,5 +1,7 @@
-package de.blacksheepsoftware.t9;
+package de.blacksheepsoftware.hmm;
 
+import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.t9.NumberKey;
 import junit.framework.TestCase;
 
 /**
@@ -24,7 +26,7 @@ public class BatchTrainerTest extends TestCase {
     }
 
     /**
-     * Test method for {@link de.blacksheepsoftware.t9.BatchTrainer#learn(int[], int, int)}.
+     * Test method for {@link de.blacksheepsoftware.hmm.BatchTrainer#learn(int[], int, int)}.
      */
     public void testLearn() {
         final Model m = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);

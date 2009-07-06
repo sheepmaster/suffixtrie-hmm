@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 
+import de.blacksheepsoftware.hmm.StateDistribution;
+
 /**
  * Represents a possible sequence of characters occurring in a model, along with
  * the associated state distribution and total score.

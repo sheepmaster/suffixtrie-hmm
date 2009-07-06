@@ -1,12 +1,12 @@
-package de.blacksheepsoftware.t9;
+package de.blacksheepsoftware.hmm;
 
-import static de.blacksheepsoftware.t9.Model.BACK;
-import static de.blacksheepsoftware.t9.Model.BOTTOM;
-import static de.blacksheepsoftware.t9.Model.EPSILON;
+import static de.blacksheepsoftware.hmm.Model.BACK;
+import static de.blacksheepsoftware.hmm.Model.BOTTOM;
+import static de.blacksheepsoftware.hmm.Model.EPSILON;
 
 import java.io.Serializable;
 
-import de.blacksheepsoftware.t9.Model.Variant;
+import de.blacksheepsoftware.hmm.Model.Variant;
 
 public abstract class StateDistribution implements Serializable {
     private static final long serialVersionUID = -366668114489984302L;

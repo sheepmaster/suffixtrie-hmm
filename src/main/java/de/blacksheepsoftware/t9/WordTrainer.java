@@ -8,13 +8,15 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Vector;
 
+import de.blacksheepsoftware.hmm.Model;
+
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public final class Trainer {
+public final class WordTrainer {
 
-    private Trainer() {
+    private WordTrainer() {
         // empty constructor to prevent instantiation
     }
 
@@ -75,7 +77,7 @@ public final class Trainer {
 
             double avgPerplexity = totalPerplexity(model, testingWords) / totalLength;
 
-            System.out.println(model.numNodes+"\t"+avgPerplexity);
+            System.out.println(model.numStates()+"\t"+avgPerplexity);
             //            System.err.print(".");
         }
 
