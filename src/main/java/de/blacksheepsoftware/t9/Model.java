@@ -3,7 +3,7 @@ package de.blacksheepsoftware.t9;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public class Model extends Trainable implements Serializable {
+public class Model extends Trainable implements SequenceIterable, Serializable {
     public enum Variant {
         COMPLETE_BACKLINKS,
         PARTIAL_BACKLINKS
@@ -104,6 +104,10 @@ public class Model extends Trainable implements Serializable {
 
     public double perplexity(Iterable<Integer> word, Iterable<Integer> prefix) {
         return startingDistribution.successor(prefix).perplexity(word);
+    }
+
+    public SequenceIterator sequenceIterator() {
+        return new StateDistributionIterator(startingDistribution);
     }
 
     protected int addNode(int parent, int label) {
