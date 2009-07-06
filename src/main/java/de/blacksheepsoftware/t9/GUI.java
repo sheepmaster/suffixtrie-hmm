@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -22,25 +21,27 @@ import javax.swing.JTextArea;
  */
 public class GUI extends JApplet implements ActionListener {
 
+    private static final long serialVersionUID = 1L;
+
     protected JTextArea textArea;
-    
+
     protected Text text;
-    
+
     protected class NumberKeyListener implements ActionListener {
 
         protected NumberKey numberKey;
-        
+
         public NumberKeyListener(NumberKey numberKey) {
             this.numberKey = numberKey;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             text.insertNumberKey(numberKey);
             update();
         }
-        
+
     }
-    
+
     protected void update() {
         text.check();
         textArea.setText(text.getContents());
@@ -53,9 +54,10 @@ public class GUI extends JApplet implements ActionListener {
             textArea.setSelectionEnd(cursorEnd);
         }
         textArea.requestFocusInWindow();
-//        System.err.println("text: \""+text.getContents()+"\"; wordSelected: "+text.wordSelected+"; activeWord: "+text.activeWord);
+        //        System.err.println("text: \""+text.getContents()+"\"; wordSelected: "+text.wordSelected+"; activeWord: "+text.activeWord);
     }
-    
+
+    @Override
     public void init() {
         final String modelName = getParameter("model");
 
@@ -66,19 +68,19 @@ public class GUI extends JApplet implements ActionListener {
             } catch (IOException e) {
                 stream = getClass().getResourceAsStream(modelName);
             }
-            
+
             if (stream == null) {
                 System.err.println("Couldn't load model \""+modelName+"\"");
                 return;
             }
-            
+
             final ObjectInputStream ois = new ObjectInputStream(stream);
-            
+
             final Model model = (Model)ois.readObject();
             ois.close();
-            
+
             text = new Text(model);
-            
+
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return;
@@ -89,21 +91,21 @@ public class GUI extends JApplet implements ActionListener {
             e.printStackTrace();
             return;
         }
-        
-        
-        
+
+
+
         textArea = new JTextArea(10, 5);
         textArea.setLineWrap(true);
-//        textArea.setEditable(false);
-        
+        //        textArea.setEditable(false);
+
         setLayout(new BorderLayout());
         add(textArea, BorderLayout.NORTH);
         Container c = new Container();
         add(c, BorderLayout.SOUTH);
         c.setLayout(new GridLayout(5, 3));
-        
+
         c.add(new JButton("")).setEnabled(false);
-        
+
         JButton bUp = new JButton("\u2191");
         bUp.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -112,7 +114,7 @@ public class GUI extends JApplet implements ActionListener {
             }
         });
         c.add(bUp);
-        
+
         JButton bDel = new JButton("\u232b");
         bDel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +123,7 @@ public class GUI extends JApplet implements ActionListener {
             }
         });
         c.add(bDel);
-        
+
         JButton bLeft = new JButton("\u2190");
         bLeft.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -130,7 +132,7 @@ public class GUI extends JApplet implements ActionListener {
             }
         });
         c.add(bLeft);
-        
+
         JButton bDown = new JButton("\u2193");
         bDown.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -139,7 +141,7 @@ public class GUI extends JApplet implements ActionListener {
             }
         });
         c.add(bDown);
-        
+
         JButton bRight = new JButton("\u2192");
         bRight.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -148,17 +150,17 @@ public class GUI extends JApplet implements ActionListener {
             }
         });
         c.add(bRight);
-        
-        
+
+
         JButton b1 = new JButton("_");
         b1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 text.insertChar(' ');
                 update();
-            }  
+            }
         });
         c.add(b1);
-        
+
         final JButton b2 = new JButton("abc");
         b2.addActionListener(new NumberKeyListener(new NumberKey(2)));
         c.add(b2);
@@ -185,7 +187,7 @@ public class GUI extends JApplet implements ActionListener {
         c.add(b9);
     }
 
-    
+
     public void actionPerformed(ActionEvent e) {
         // TODO Auto-generated method stub
         System.err.println(e);
