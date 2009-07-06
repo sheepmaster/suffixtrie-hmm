@@ -12,7 +12,11 @@ import java.util.Vector;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class Trainer {
+public final class Trainer {
+
+    private Trainer() {
+        // empty constructor to prevent instantiation
+    }
 
     protected static List<int[]> readWords(LineNumberReader r) throws IOException {
         List<int[]> words = new Vector<int[]>();

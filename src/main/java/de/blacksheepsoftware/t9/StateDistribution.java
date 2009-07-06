@@ -137,7 +137,7 @@ public abstract class StateDistribution implements Serializable {
 
     protected abstract void update(Model m, StateDistribution beta, int character);
 
-    protected void checkExpectedSuffix(StateDistribution beta, int character) throws IllegalArgumentException {
+    protected void checkExpectedSuffix(StateDistribution beta, int character) {
         final int expectedLongestSuffix = (character == INVALID) ? EPSILON : model.transitions[longestSuffix][character];
         if (beta.longestSuffix != expectedLongestSuffix) {
             throw new IllegalArgumentException("Invalid successor state");

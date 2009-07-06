@@ -92,8 +92,8 @@ public class ModelTest extends TestCase {
         if (state == BOTTOM) {
             return 0.0;
         }
-        return (model.frequencies[state][c] +
-                model.frequencies[state][BACK] * outputProbability(model.transitions[state][BACK], c))
+        return (model.frequencies[state][c] + model.frequencies[state][BACK]
+                * outputProbability(model.transitions[state][BACK], c))
                 / model.frequencySums[state];
     }
 

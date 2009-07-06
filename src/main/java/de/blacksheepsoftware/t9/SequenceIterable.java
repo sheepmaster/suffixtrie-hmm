@@ -6,6 +6,6 @@ package de.blacksheepsoftware.t9;
  */
 public interface SequenceIterable {
 
-    public SequenceIterator sequenceIterator();
+    SequenceIterator sequenceIterator();
 
 }

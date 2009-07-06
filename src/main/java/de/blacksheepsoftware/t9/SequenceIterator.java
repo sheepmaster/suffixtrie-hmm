@@ -6,6 +6,6 @@ package de.blacksheepsoftware.t9;
  */
 public interface SequenceIterator {
 
-    public double score(int character);
+    double score(int character);
 
 }
