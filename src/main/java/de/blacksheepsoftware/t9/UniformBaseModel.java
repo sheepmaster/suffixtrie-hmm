@@ -8,21 +8,22 @@ public class UniformBaseModel implements SequenceIterable {
 
     private static final double LOG_2 = Math.log(2);
 
-    protected final double score;
+    protected final SequenceIterator sequenceIterator;
 
     public UniformBaseModel(int numChars) {
-        score = Math.log(numChars)/LOG_2;
+        final double score = Math.log(numChars)/LOG_2;
+        sequenceIterator = new SequenceIterator() {
+            public double score(int character) {
+                return score;
+            }
+        };
     }
 
     /**
      * {@inheritDoc}
      */
     public SequenceIterator sequenceIterator() {
-        return new SequenceIterator() {
-            public double score(int character) {
-                return score;
-            }
-        };
+        return sequenceIterator;
     }
 
 
