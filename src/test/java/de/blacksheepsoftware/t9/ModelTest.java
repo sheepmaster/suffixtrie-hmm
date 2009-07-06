@@ -71,7 +71,7 @@ public class ModelTest extends TestCase {
             double outputProbability = 0.0;
             int[] states = dist.states();
             for (int d=dist.depth(); d >= 0; d--) {
-                outputProbability += dist.stateProbability(d) * transitionProbability(states[d], c);
+                outputProbability += dist.stateProbability(d) * outputProbability(states[d], c);
             }
             assertEquals(outputProbability, totalOutputProbability, 0.001);
             totalProbability += totalOutputProbability;
@@ -88,26 +88,13 @@ public class ModelTest extends TestCase {
         //        checkOutputDistribution("zyx");
     }
 
-    protected double transitionProbability(int state, int c) {
+    protected double outputProbability(int state, int c) {
         if (state == BOTTOM) {
             return 0.0;
         }
-        final double p = model.frequencies[state][c];
-
-        return (p + model.frequencies[state][BACK] * transitionProbability(model.transitions[state][BACK], c))
-        / model.frequencySums[state];
-    }
-
-    protected double transitionProbabilitySum(int state) {
-        if (state == BOTTOM) {
-            return 42;
-        }
-        double p = 0.0;
-        for (int c=1; c<=model.numCharacters; c++) {
-            p += model.frequencies[state][c];
-        }
-        p += model.frequencies[state][BACK] * transitionProbabilitySum(model.transitions[state][BACK]);
-        return p/model.frequencySums[state];
+        return (model.frequencies[state][c] +
+                model.frequencies[state][BACK] * outputProbability(model.transitions[state][BACK], c))
+                / model.frequencySums[state];
     }
 
     /*
@@ -130,7 +117,7 @@ public class ModelTest extends TestCase {
                 double p = 0.0;
 
                 for (int c=1; c<=model.numCharacters; c++) {
-                    p += transitionProbability(i, c);
+                    p += outputProbability(i, c);
                     freq += model.frequencies[i][c];
                     final int t = model.transitions[i][c];
                     if (t != BOTTOM) {
@@ -140,7 +127,6 @@ public class ModelTest extends TestCase {
 
                 assertEquals(freq, model.frequencySums[i], 0.0001);
                 assertEquals(1.0, p, 0.01);
-                assertEquals(1.0, transitionProbabilitySum(i), 0.01);
             } else {
                 assertNull(model.transitions[i]);
                 assertNull(model.frequencies[i]);
