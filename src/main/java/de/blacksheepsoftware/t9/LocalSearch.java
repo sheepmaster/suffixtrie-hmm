@@ -23,6 +23,7 @@ public class LocalSearch {
                 sum = 0;
                 startIndex = endIndex;
                 modelIterator = model.sequenceIterator();
+                baseModelIterator = baseModel.sequenceIterator();
             }
             if (sum > maxSum) {
                 maxSum = sum;
