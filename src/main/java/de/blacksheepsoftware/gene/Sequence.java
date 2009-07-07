@@ -20,10 +20,10 @@ public class Sequence implements Iterable<Integer> {
     protected final Map<Character,Integer> alphabetMap = new HashMap<Character, Integer>();
     protected final Pattern symbolPattern;
 
-    public Sequence(String identifier, String contents, String alphabet) {
+    public Sequence(String identifier, String contents, String alph) {
         this.identifier = identifier;
         this.contents = contents;
-        this.alphabet = alphabet;
+        this.alphabet = alph.toUpperCase();
 
         if (!alphabet.matches("[a-zA-Z]+")) {
             throw new IllegalArgumentException();
@@ -65,7 +65,7 @@ public class Sequence implements Iterable<Integer> {
         public Integer next() {
             if (hasNext()) {
                 foundMatch = false;
-                return alphabetMap.get(matcher.group().charAt(0));
+                return alphabetMap.get(matcher.group().toUpperCase().charAt(0));
             } else {
                 throw new NoSuchElementException();
             }
