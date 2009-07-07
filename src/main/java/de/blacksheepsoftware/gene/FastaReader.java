@@ -13,14 +13,12 @@ import java.util.regex.Pattern;
  */
 public class FastaReader {
 
-    protected static final String DNA_ALPHABET = "ACGT";
-    protected static final String AMINOACIDS_ALPHABET = "ACDEFGHIKLPQRSTUVWY";
-
-
     protected static final Pattern headerPattern = Pattern.compile(">\\s*(\\S+)(?:\\s+(.*))?");
 
     public static List<Sequence> sequencesInFile(BufferedReader r) throws IOException {
         final Vector<Sequence> sequences = new Vector<Sequence>();
+
+        Alphabet lastAlphabet = null;
 
         String line = r.readLine();
         while (line != null) {
@@ -31,13 +29,20 @@ public class FastaReader {
             final String identifier = m.group(1);
             final String description = m.group(2);
 
-            final String alphabet;
+            final Alphabet alphabet;
             if (description.endsWith("dna")) {
-                alphabet = DNA_ALPHABET;
+                alphabet = Alphabet.DNA;
             } else if (description.endsWith("ami")) {
-                alphabet = AMINOACIDS_ALPHABET;
+                alphabet = Alphabet.AMINO_ACIDS;
             } else {
-                throw new FileFormatException("unknown sequence type for \""+identifier+"\"");
+                throw new FileFormatException("Unknown sequence type for \""+identifier+"\"");
+            }
+            if (lastAlphabet != null) {
+                if (alphabet != lastAlphabet) {
+                    throw new FileFormatException("All sequences must be of the same type");
+                }
+            } else {
+                lastAlphabet = alphabet;
             }
 
             StringBuffer content = new StringBuffer();

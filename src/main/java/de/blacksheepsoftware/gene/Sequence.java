@@ -1,11 +1,8 @@
 package de.blacksheepsoftware.gene;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -15,24 +12,12 @@ public class Sequence implements Iterable<Integer> {
 
     protected final String identifier;
     protected final String contents;
-    protected final String alphabet;
+    protected final Alphabet alphabet;
 
-    protected final Map<Character,Integer> alphabetMap = new HashMap<Character, Integer>();
-    protected final Pattern symbolPattern;
-
-    public Sequence(String identifier, String contents, String alph) {
+    public Sequence(String identifier, String contents, Alphabet alphabet) {
         this.identifier = identifier;
         this.contents = contents;
-        this.alphabet = alph.toUpperCase();
-
-        if (!alphabet.matches("[a-zA-Z]+")) {
-            throw new IllegalArgumentException();
-        }
-        symbolPattern = Pattern.compile("["+alphabet+"]", Pattern.CASE_INSENSITIVE);
-
-        for (int i=0; i<alphabet.length(); i++) {
-            alphabetMap.put(alphabet.charAt(i), i+1);
-        }
+        this.alphabet = alphabet;
     }
 
     /**
@@ -42,13 +27,17 @@ public class Sequence implements Iterable<Integer> {
         return new SequenceIterator();
     }
 
+    public Alphabet getAlphabet() {
+        return alphabet;
+    }
+
     private class SequenceIterator implements Iterator<Integer> {  // TODO: better name
 
-        public SequenceIterator() {
+        protected SequenceIterator() {
             // nothing to do
         }
 
-        protected final Matcher matcher = symbolPattern.matcher(contents);
+        protected final Matcher matcher = alphabet.getSymbolPattern().matcher(contents);
 
         protected boolean foundMatch = false;
 
@@ -65,7 +54,7 @@ public class Sequence implements Iterable<Integer> {
         public Integer next() {
             if (hasNext()) {
                 foundMatch = false;
-                return alphabetMap.get(matcher.group().toUpperCase().charAt(0));
+                return alphabet.indexOfSymbol(matcher.group().charAt(0));
             } else {
                 throw new NoSuchElementException();
             }
