@@ -35,7 +35,7 @@ public class FastaReader {
             } else if (description.endsWith("ami")) {
                 alphabet = Alphabet.AMINO_ACIDS;
             } else {
-                throw new FileFormatException("Unknown sequence type for \""+identifier+"\"");
+                throw new FileFormatException("Unknown sequence type for \""+identifier+"\" ("+description+")");
             }
             if (lastAlphabet != null) {
                 if (alphabet != lastAlphabet) {

@@ -31,6 +31,13 @@ public class Sequence implements Iterable<Integer> {
         return alphabet;
     }
 
+    /**
+     * @return
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
     private class SequenceIterator implements Iterator<Integer> {  // TODO: better name
 
         protected SequenceIterator() {

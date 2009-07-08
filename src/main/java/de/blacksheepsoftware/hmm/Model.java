@@ -212,4 +212,11 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         return numNodes;
     }
 
+    /**
+     * @return
+     */
+    public int numCharacters() {
+        return numCharacters;
+    }
+
 }

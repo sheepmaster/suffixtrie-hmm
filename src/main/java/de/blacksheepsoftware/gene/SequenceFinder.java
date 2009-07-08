@@ -3,31 +3,29 @@ package de.blacksheepsoftware.gene;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 import java.io.SequenceInputStream;
 import java.util.List;
 import java.util.Vector;
 
 import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.UniformBaseModel;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class SequenceTrainer {
-
-    protected static final int MAX_DEPTH = 16;
+public class SequenceFinder {
 
     /**
      * @param args
      */
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.err.println("Usage: java "+SequenceTrainer.class.getName()+" <HMM file> <FASTA files...>");
+            System.err.println("Usage: java "+SequenceFinder.class.getName()+" <HMM file> <FASTA files...>");
             System.exit(1);
         }
         String hmmFileName = args[0];
@@ -48,22 +46,27 @@ public class SequenceTrainer {
         BufferedReader r = new BufferedReader(new InputStreamReader(input));
 
         try {
+            Model model = (Model)new ObjectInputStream(new FileInputStream(hmmFileName)).readObject();
+
             final List<Sequence> sequences = FastaReader.sequencesInFile(r);
 
             if (sequences.isEmpty()) {
                 System.err.println("Warning: No sequences found");
                 return;
             }
-            Alphabet alphabet = sequences.get(0).getAlphabet();
-            Model model = new Model(alphabet.numberOfCharacters(), Model.Variant.PARTIAL_BACKLINKS);
 
+            final UniformBaseModel baseModel = new UniformBaseModel(model.numCharacters());
             for (Sequence s : sequences) {
-                model.learn(IntArray.forList(s), MAX_DEPTH);
+                final LocalSearch search = new LocalSearch(model, baseModel, s);
+                final double score = search.sum();
+                if (score > 0) {
+                    System.out.println("Found match for sequence "+s.getIdentifier()+": from "+search.startIndex()+" to "+search.endIndex()+" (score "+score+")");
+                }
             }
 
-            new ObjectOutputStream(new FileOutputStream(hmmFileName)).writeObject(model);
-
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
