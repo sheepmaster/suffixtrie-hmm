@@ -137,8 +137,24 @@ public abstract class StateDistribution implements Serializable {
 
     protected abstract void update(Model m, StateDistribution beta, int character);
 
+    protected int successorState(int state, int character) {
+        final int newState = model.transitions[state][character];
+        if (newState != BOTTOM) {
+            return newState;
+        } else if (state == EPSILON) {
+            return EPSILON;
+        } else {
+            return successorState(model.transitions[state][BACK], character);
+        }
+    }
+
     protected void checkExpectedSuffix(StateDistribution beta, int character) {
-        final int expectedLongestSuffix = (character == INVALID) ? EPSILON : model.transitions[longestSuffix][character];
+        final int expectedLongestSuffix;
+        if (character == INVALID) {
+            expectedLongestSuffix = EPSILON;
+        } else {
+            expectedLongestSuffix = successorState(longestSuffix, character);
+        }
         if (beta.longestSuffix != expectedLongestSuffix) {
             throw new IllegalArgumentException("Invalid successor state");
         }
@@ -177,7 +193,7 @@ public abstract class StateDistribution implements Serializable {
                     backPseudoCount = transitionPseudoCount;
                 }
                 p *= (model.frequencies[state][BACK] + backPseudoCount);
-                if (character != -1) {
+                if (i < oldBeta.stateProbabilities.length) {
                     p += oldBeta.stateProbabilities[i] * (model.frequencies[state][character] + transitionPseudoCount);
                 }
                 p /= (model.frequencySums[state] + backPseudoCount + transitionPseudoCount);
@@ -298,7 +314,7 @@ public abstract class StateDistribution implements Serializable {
                     m.frequencySums[state] += backCount;
                 }
 
-                if (character != INVALID) {
+                if (i < beta.stateProbabilities.length) {
                     // probability for reading the character in this state
                     final double q = (model.frequencies[state][character] + transitionPseudoCount)
                     / (model.frequencySums[state] + backPseudoCount + transitionPseudoCount) * beta.stateProbabilities[i];

@@ -3,10 +3,8 @@ package de.blacksheepsoftware.hmm;
 import static de.blacksheepsoftware.hmm.Model.BACK;
 import static de.blacksheepsoftware.hmm.Model.BOTTOM;
 import static de.blacksheepsoftware.hmm.Model.EPSILON;
-import de.blacksheepsoftware.hmm.Model;
-import de.blacksheepsoftware.hmm.StateDistribution;
-import de.blacksheepsoftware.t9.NumberKey;
 import junit.framework.TestCase;
+import de.blacksheepsoftware.t9.NumberKey;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -95,8 +93,8 @@ public class ModelTest extends TestCase {
         if (state == BOTTOM) {
             return 0.0;
         }
-        return (model.frequencies[state][c] + model.frequencies[state][BACK]
-                * outputProbability(model.transitions[state][BACK], c))
+        return (model.frequencies[state][c] + model.frequencies[state][BACK] *
+                outputProbability(model.transitions[state][BACK], c))
                 / model.frequencySums[state];
     }
 
@@ -136,6 +134,18 @@ public class ModelTest extends TestCase {
                 assertEquals(0.0, model.frequencySums[i], 0.0001);
             }
         }
+    }
+
+    public void testLearnLongSequence() {
+        final Model newModel = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
+
+        final int maxDepth = 4;
+        newModel.learn(NumberKey.intArrayForString("foo"), maxDepth);
+        newModel.learn(NumberKey.intArrayForString("bar"), maxDepth);
+        newModel.learn(NumberKey.intArrayForString("baz"), maxDepth);
+        newModel.learn(NumberKey.intArrayForString("blurp"), maxDepth);
+        newModel.learn(NumberKey.intArrayForString("abracadabra"), maxDepth);
+        newModel.learn(NumberKey.intArrayForString("hokuspokus"), maxDepth);
     }
 
 }

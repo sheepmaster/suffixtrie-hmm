@@ -20,7 +20,7 @@ import de.blacksheepsoftware.hmm.Model;
  */
 public class SequenceTrainer {
 
-    protected static final int MAX_DEPTH = 16;
+    protected static final int MAX_DEPTH = 8;
 
     /**
      * @param args

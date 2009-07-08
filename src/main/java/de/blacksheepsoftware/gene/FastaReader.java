@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  */
 public class FastaReader {
 
-    protected static final Pattern headerPattern = Pattern.compile(">\\s*(\\S+)(?:\\s+(.*))?");
+    protected static final Pattern headerPattern = Pattern.compile("^>\\s*(\\S+)(?:\\s+(.*))?");
 
     public static List<Sequence> sequencesInFile(BufferedReader r) throws IOException {
         final Vector<Sequence> sequences = new Vector<Sequence>();
