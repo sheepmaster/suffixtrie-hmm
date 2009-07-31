@@ -65,11 +65,9 @@
       <print-info-key name="OOScaleDocumentToFitPageWidth" type="boolean">true</print-info-key>
     </print-info>
   </settings>
-  <editor content-size="{700, 721}" scroll-position="{0, 944}">
+  <editor content-size="{700, 721}" scroll-position="{0, 1001}">
     <drawer palette-height="167"/>
-    <selected-rows ids="hbPhvd5e8OR"/>
-    <selected-columns ids="jFqHUGd_Dg1"/>
-    <selected-characters range="{0, 4}"/>
+    <selected-rows ids="lga5aFQFSIz"/>
   </editor>
   <columns>
     <column id="dTpN3JwYpBn" type="text" width="18" minimum-width="18" maximum-width="18" text-export-width="1" is-note-column="yes">
@@ -1403,6 +1401,41 @@
                   <p>
                     <run>
                       <lit>Rank among possible T9-completions?</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+          </children>
+        </item>
+        <item id="lga5aFQFSIz" expanded="yes">
+          <values>
+            <text>
+              <p>
+                <run>
+                  <lit>Evaluation</lit>
+                </run>
+              </p>
+            </text>
+          </values>
+          <children>
+            <item id="liuLZXqVlEg">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Precision/Recall on whole database</lit>
+                    </run>
+                  </p>
+                </text>
+              </values>
+            </item>
+            <item id="nW7WvyziNmi">
+              <values>
+                <text>
+                  <p>
+                    <run>
+                      <lit>Avg. perplexity (or log-odds?) on previously unknown sequences</lit>
                     </run>
                   </p>
                 </text>
