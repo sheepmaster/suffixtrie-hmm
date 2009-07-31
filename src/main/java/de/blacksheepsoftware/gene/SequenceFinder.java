@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.SequenceInputStream;
-import java.util.List;
 import java.util.Vector;
 
 import de.blacksheepsoftware.hmm.Model;
@@ -48,19 +47,21 @@ public class SequenceFinder {
         try {
             Model model = (Model)new ObjectInputStream(new FileInputStream(hmmFileName)).readObject();
 
-            final List<Sequence> sequences = FastaReader.sequencesInFile(r);
-
-            if (sequences.isEmpty()) {
-                System.err.println("Warning: No sequences found");
-                return;
-            }
+            FastaReader reader = new FastaReader(r);
 
             final UniformBaseModel baseModel = new UniformBaseModel(model.numCharacters());
-            for (Sequence s : sequences) {
+
+            System.out.println("sequence id\tfrom\tto\tscore");
+
+            Sequence s;
+            while ((s = reader.readSequence()) != null) {
+                if (s.getAlphabet().numberOfCharacters() != model.numCharacters()) {
+                    throw new FileFormatException("Sequence doesn't fit to model");
+                }
                 final LocalSearch search = new LocalSearch(model, baseModel, s);
                 final double score = search.sum() / Math.log(2);
                 if (score > 0) {
-                    System.out.println("Found match for sequence "+s.getIdentifier()+": from "+search.startIndex()+" to "+search.endIndex()+" (score "+score+")");
+                    System.out.println(s.getIdentifier()+"\t"+search.startIndex()+"\t"+search.endIndex()+"\t"+score);
                 }
             }
 

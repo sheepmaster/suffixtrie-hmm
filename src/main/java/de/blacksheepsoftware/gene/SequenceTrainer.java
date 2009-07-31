@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.SequenceInputStream;
-import java.util.List;
 import java.util.Vector;
 
 import de.blacksheepsoftware.hmm.Model;
@@ -48,20 +47,36 @@ public class SequenceTrainer {
         BufferedReader r = new BufferedReader(new InputStreamReader(input));
 
         try {
-            final List<Sequence> sequences = FastaReader.sequencesInFile(r);
+            FastaReader fasta = new FastaReader(r);
+            Sequence s = fasta.readSequence();
 
-            if (sequences.isEmpty()) {
+            if (s == null) {
                 System.err.println("Warning: No sequences found");
                 return;
             }
-            Alphabet alphabet = sequences.get(0).getAlphabet();
+            Alphabet alphabet = s.getAlphabet();
             Model model = new Model(alphabet.numberOfCharacters(), Model.Variant.PARTIAL_BACKLINKS);
 
-            for (Sequence s : sequences) {
+            int seqNo = 0;
+
+            while (true) {
                 model.learn(IntArray.forList(s), MAX_DEPTH);
+                System.err.print(".");
+                seqNo++;
+                if (seqNo % 80 == 0) {
+                    System.err.println();
+                }
+                s = fasta.readSequence();
+                if (s == null) {
+                    break;
+                }
+                if (s.getAlphabet() != alphabet) {
+                    throw new FileFormatException("All sequences must be of the same type");
+                }
             }
 
             new ObjectOutputStream(new FileOutputStream(hmmFileName)).writeObject(model);
+            System.err.println();
 
         } catch (IOException e) {
             e.printStackTrace();
