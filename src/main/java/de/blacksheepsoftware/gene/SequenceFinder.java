@@ -58,7 +58,7 @@ public class SequenceFinder {
             final UniformBaseModel baseModel = new UniformBaseModel(model.numCharacters());
             for (Sequence s : sequences) {
                 final LocalSearch search = new LocalSearch(model, baseModel, s);
-                final double score = search.sum();
+                final double score = search.sum() / Math.log(2);
                 if (score > 0) {
                     System.out.println("Found match for sequence "+s.getIdentifier()+": from "+search.startIndex()+" to "+search.endIndex()+" (score "+score+")");
                 }
