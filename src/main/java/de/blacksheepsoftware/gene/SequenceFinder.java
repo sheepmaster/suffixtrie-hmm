@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.SequenceInputStream;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.UniformBaseModel;
@@ -45,7 +46,7 @@ public class SequenceFinder {
         BufferedReader r = new BufferedReader(new InputStreamReader(input));
 
         try {
-            Model model = (Model)new ObjectInputStream(new FileInputStream(hmmFileName)).readObject();
+            Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
 
             FastaReader reader = new FastaReader(r);
 

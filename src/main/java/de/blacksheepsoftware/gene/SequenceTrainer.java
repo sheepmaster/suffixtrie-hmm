@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.SequenceInputStream;
 import java.util.Vector;
+import java.util.zip.GZIPOutputStream;
 
 import de.blacksheepsoftware.hmm.Model;
 
@@ -75,7 +76,9 @@ public class SequenceTrainer {
                 }
             }
 
-            new ObjectOutputStream(new FileOutputStream(hmmFileName)).writeObject(model);
+            final ObjectOutputStream output = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hmmFileName)));
+            output.writeObject(model);
+            output.close();
             System.err.println();
 
         } catch (IOException e) {
