@@ -1,12 +1,12 @@
 package de.blacksheepsoftware.t9;
 
-import java.util.AbstractList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.RandomAccess;
 import java.util.Vector;
+
+import de.blacksheepsoftware.hmm.IntArrayList;
 
 
 public class NumberKey implements CharacterTemplate {
@@ -69,61 +69,6 @@ public class NumberKey implements CharacterTemplate {
             a[i] = lowerCase.codePointAt(i) - 96;
         }
         return a;
-    }
-
-    private static class IntArrayList extends AbstractList<Integer>
-    implements RandomAccess, java.io.Serializable {
-        private static final long serialVersionUID = 2357281897136237691L;
-        private final int[] a;
-
-        IntArrayList(int[] array) {
-            if (array==null) {
-                throw new NullPointerException();
-            }
-            a = array;
-        }
-
-        @Override
-        public int size() {
-            return a.length;
-        }
-
-        @Override
-        public Object[] toArray() {
-            throw new UnsupportedOperationException();
-        }
-
-        public int[] toIntArray() {
-            return a.clone();
-        }
-
-        @Override
-        public Integer get(int index) {
-            return a[index];
-        }
-
-        public int set(int index, int element) {
-            final int oldValue = a[index];
-            a[index] = element;
-            return oldValue;
-        }
-
-        @Override
-        public int indexOf(Object o) {
-            if (o!=null) {
-                for (int i=0; i<a.length; i++) {
-                    if (o.equals(a[i])) {
-                        return i;
-                    }
-                }
-            }
-            return -1;
-        }
-
-        @Override
-        public boolean contains(Object o) {
-            return indexOf(o) != -1;
-        }
     }
 
     public static Iterable<Integer> intArrayList(int[] array) {

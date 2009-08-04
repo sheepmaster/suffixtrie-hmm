@@ -12,6 +12,7 @@ import java.io.SequenceInputStream;
 import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
 
+import de.blacksheepsoftware.hmm.IntArrayList;
 import de.blacksheepsoftware.hmm.Model;
 
 /**
@@ -61,7 +62,7 @@ public class SequenceTrainer {
             int seqNo = 0;
 
             while (true) {
-                model.learn(IntArray.forList(s), MAX_DEPTH);
+                model.learn(IntArrayList.forList(s), MAX_DEPTH);
                 System.err.print(".");
                 seqNo++;
                 if (seqNo % 80 == 0) {
