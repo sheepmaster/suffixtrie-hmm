@@ -7,8 +7,14 @@ package de.blacksheepsoftware.gene;
  */
 public class IntArray {
 
+    protected static final int DEFAULT_LIST_LENGTH = 16;
+
     public static int[] forList(Iterable<Integer> list) {
-        int[] array = new int[16];
+        return forList(list, DEFAULT_LIST_LENGTH);
+    }
+
+    public static int[] forList(Iterable<Integer> list, int length) {
+        int[] array = new int[length];
         int numItems = 0;
         for (int i : list) {
             if (numItems >= array.length) {
@@ -25,10 +31,13 @@ public class IntArray {
             array[numItems] = i;
             numItems++;
         }
-        final int[] newArray = new int[numItems];
-        System.arraycopy(array, 0, newArray, 0, numItems);
+        if (array.length != numItems) {
+            final int[] newArray = new int[numItems];
+            System.arraycopy(array, 0, newArray, 0, numItems);
+            array = newArray;
+        }
 
-        return newArray;
+        return array;
     }
 
 }
