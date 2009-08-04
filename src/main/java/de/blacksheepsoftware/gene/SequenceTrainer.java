@@ -62,7 +62,7 @@ public class SequenceTrainer {
             int seqNo = 0;
 
             while (true) {
-                model.learn(IntArrayList.forList(s), MAX_DEPTH);
+                model.learn(IntArrayList.forList(s, s.length()), MAX_DEPTH);
                 System.err.print(".");
                 seqNo++;
                 if (seqNo % 80 == 0) {

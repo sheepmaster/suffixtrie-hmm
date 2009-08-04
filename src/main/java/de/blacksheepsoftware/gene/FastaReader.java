@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  */
 public class FastaReader {
 
-    protected static final Pattern headerPattern = Pattern.compile("^>\\s*(\\S+)(?:\\s+(.*))?");
+    protected static final Pattern headerPattern = Pattern.compile("^>\\s*(\\S+)\\s+(\\d+)\\s+bp\\s+(.*)");
 
     protected final BufferedReader r;
 
@@ -28,18 +28,21 @@ public class FastaReader {
         }
         Matcher m = headerPattern.matcher(line);
         if (!m.matches()) {
-            throw new FileFormatException("Sequence header must start with \">\"");
+            throw new FileFormatException("Invalid sequence header");
         }
         final String identifier = m.group(1);
-        final String description = m.group(2);
+        final String basePairs = m.group(2);
+        final String sequenceType = m.group(3);
+
+        final int length = Integer.parseInt(basePairs);
 
         final Alphabet alphabet;
-        if (description.endsWith("dna")) {
+        if (sequenceType.endsWith("dna")) {
             alphabet = Alphabet.DNA;
-        } else if (description.endsWith("ami")) {
+        } else if (sequenceType.endsWith("ami")) {
             alphabet = Alphabet.AMINO_ACIDS;
         } else {
-            throw new FileFormatException("Unknown sequence type for \""+identifier+"\" ("+description+")");
+            throw new FileFormatException("Unknown sequence type for \""+identifier+"\" ("+sequenceType+")");
         }
 
         StringBuffer content = new StringBuffer();
@@ -50,7 +53,7 @@ public class FastaReader {
             }
             content.append(line);
         }
-        return new Sequence(identifier, content.toString(), alphabet);
+        return new Sequence(identifier, content.toString(), alphabet, length);
     }
 
 }

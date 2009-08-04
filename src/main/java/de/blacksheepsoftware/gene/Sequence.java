@@ -13,11 +13,13 @@ public class Sequence implements Iterable<Integer> {
     protected final String identifier;
     protected final String contents;
     protected final Alphabet alphabet;
+    protected final int length;
 
-    public Sequence(String identifier, String contents, Alphabet alphabet) {
+    public Sequence(String identifier, String contents, Alphabet alphabet, int length) {
         this.identifier = identifier;
         this.contents = contents;
         this.alphabet = alphabet;
+        this.length = length;
     }
 
     /**
@@ -36,6 +38,10 @@ public class Sequence implements Iterable<Integer> {
      */
     public String getIdentifier() {
         return identifier;
+    }
+
+    public int length() {
+        return length;
     }
 
     private class SequenceIterator implements Iterator<Integer> {  // TODO: better name

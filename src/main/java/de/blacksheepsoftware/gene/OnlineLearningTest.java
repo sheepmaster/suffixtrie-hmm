@@ -21,7 +21,7 @@ public class OnlineLearningTest {
         List<Iterable<Integer>> testSequences = new ArrayList<Iterable<Integer>>();
         Sequence s;
         while ((s = r.readSequence()) != null) {
-            testSequences.add(new IntArrayList(s));
+            testSequences.add(new IntArrayList(s, s.length()));
         }
         return testSequences;
     }
@@ -57,7 +57,7 @@ public class OnlineLearningTest {
             while (true) {
                 double newPerplexity = model.perplexity(trainingSequence);
 
-                model.learn(IntArrayList.forList(trainingSequence), MAX_DEPTH);
+                model.learn(IntArrayList.forList(trainingSequence, trainingSequence.length()), MAX_DEPTH);
 
                 double posteriorPerplexity = model.perplexity(trainingSequence);
 
