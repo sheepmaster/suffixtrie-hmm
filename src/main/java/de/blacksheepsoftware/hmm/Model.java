@@ -219,4 +219,19 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         return numCharacters;
     }
 
+    /**
+     * @param oldModel
+     * @param newModel
+     * @return
+     */
+    public static double parameterDifference(Model oldModel, Model newModel) {
+        double diff = 0;
+        for (int i=1; i<oldModel.numNodes; i++) {
+            for (int j=0; j<oldModel.numCharacters; j++) {
+                diff += Math.abs(oldModel.frequencies[i][j] - newModel.frequencies[i][j]);
+            }
+        }
+        return diff;
+    }
+
 }

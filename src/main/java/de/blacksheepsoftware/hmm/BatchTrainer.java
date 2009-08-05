@@ -21,8 +21,10 @@ public class BatchTrainer extends Trainable {
         newModel.learn(w, startingDistribution, startingDistribution, 0, w.length+1, maxDepth, linearThreshold);
     }
 
-    public void finishBatch() {
+    public Model finishBatch() {
+        final Model m = newModel;
         replaceModel(newModel);
+        return m;
     }
 
     protected void replaceModel(Model m) {

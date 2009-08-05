@@ -6,7 +6,7 @@ package de.blacksheepsoftware.hmm;
  */
 public abstract class Trainable {
 
-    protected static final int DEFAULT_THRESHOLD = 127;
+    protected static final int DEFAULT_THRESHOLD = 255;
 
     protected abstract void learn(int[] word, int maxDepth, int defaultThreshold);
 
