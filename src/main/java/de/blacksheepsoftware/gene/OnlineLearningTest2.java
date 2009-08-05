@@ -13,7 +13,7 @@ import de.blacksheepsoftware.hmm.Model;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class OnlineLearningTest {
+public class OnlineLearningTest2 {
 
     protected static final int MAX_DEPTH = 8;
 
@@ -21,10 +21,8 @@ public class OnlineLearningTest {
         List<List<Integer>> testSequences = new ArrayList<List<Integer>>();
         Sequence s;
         while ((s = r.readSequence()) != null) {
-            System.out.print(s.getIdentifier()+"\t");
             testSequences.add(new IntArrayList(s, s.length()));
         }
-        System.out.println();
         return testSequences;
     }
 
@@ -33,7 +31,7 @@ public class OnlineLearningTest {
      */
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.err.println("Usage: java "+OnlineLearningTest.class.getName()+" <training sequences> <test sequences>");
+            System.err.println("Usage: java "+OnlineLearningTest2.class.getName()+" <training sequences> <test sequences>");
             System.exit(1);
         }
         final String trainingFilename = args[0];
@@ -58,14 +56,21 @@ public class OnlineLearningTest {
             Alphabet alphabet = trainingSequence.getAlphabet();
             Model model = new Model(alphabet.numberOfCharacters(), Model.Variant.PARTIAL_BACKLINKS);
 
+            System.out.println("Avg. perplexity of new word before learning\t...after learning\tAvg. perplexity of test set");
 
             while (true) {
+                double newPerplexity = model.perplexity(trainingSequence)/trainingSequence.length();
+
                 model.learn(IntArrayList.forList(trainingSequence, trainingSequence.length()), MAX_DEPTH);
 
-                for (List<Integer> s : testSequences) {
-                    System.out.print((model.perplexity(s)/s.size())+"\t");
+                double posteriorPerplexity = model.perplexity(trainingSequence)/trainingSequence.length();
+
+                double testPerplexity = 0;
+                for (Iterable<Integer> s : testSequences) {
+                    testPerplexity += model.perplexity(s);
                 }
-                System.out.println();
+                testPerplexity /= totalLength;
+                System.out.println(newPerplexity+"\t"+posteriorPerplexity+"\t"+testPerplexity);
 
                 trainingSequence = trainingReader.readSequence();
                 if (trainingSequence == null) {
