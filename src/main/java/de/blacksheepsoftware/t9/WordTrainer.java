@@ -33,16 +33,6 @@ public final class WordTrainer {
         return words;
     }
 
-    public static int totalLength(Iterable<Sequence> words) {
-        int l = 0;
-
-        for (Sequence w : words) {
-            l += w.length();
-        }
-
-        return l;
-    }
-
     public static double totalPerplexity(Model m, Iterable<Sequence> words) {
         double t = 0;
 
@@ -59,7 +49,7 @@ public final class WordTrainer {
      */
     public static void main(String[] args) throws IOException {
         if (args.length < 3) {
-            System.err.println("Usage: java de.blacksheepsoftware.t9.Trainer <training file> <testing file> <output file>");
+            System.err.println("Usage: java "+WordTrainer.class+" <training file> <testing file> <output file>");
             System.exit(1);
         }
 
@@ -73,7 +63,7 @@ public final class WordTrainer {
 
         Model model = new Model(Alphabet.ABC, Model.Variant.PARTIAL_BACKLINKS);
 
-        final int totalLength = totalLength(testingWords);
+        final int totalLength = Sequence.totalLength(testingWords);
 
         for (Sequence w : trainingWords) {
             model.learn(w);

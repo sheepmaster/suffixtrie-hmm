@@ -1,7 +1,6 @@
 package de.blacksheepsoftware.hmm;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 
@@ -57,7 +56,7 @@ public class Sequence implements Iterable<Integer> {
     /**
      * @param sequences
      */
-    public static int totalLength(List<Sequence> sequences) {
+    public static int totalLength(Iterable<Sequence> sequences) {
         int totalLength = 0;
         for (Sequence s : sequences) {
             totalLength += s.length();
