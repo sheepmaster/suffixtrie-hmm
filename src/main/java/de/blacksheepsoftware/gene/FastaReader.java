@@ -55,9 +55,9 @@ public class FastaReader {
         }
 
         StringBuffer content = new StringBuffer();
-        while (r.ready()) {
+        while (true) {
             line = r.readLine();
-            if (line.startsWith(">")) {
+            if ((line == null) || line.startsWith(">")) {
                 break;
             }
             content.append(line);
