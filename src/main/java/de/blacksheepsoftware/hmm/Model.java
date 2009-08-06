@@ -252,11 +252,11 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         }
         double diff = 0;
         for (int i=1; i<numNodes; i++) {
-            for (int j=0; j<numCharacters; j++) {
-                diff += Math.abs(frequencies[i][j] - otherModel.frequencies[i][j]);
+            for (int j=0; j<=numCharacters; j++) {
+                diff += Math.abs(frequencies[i][j]/frequencySums[i] - otherModel.frequencies[i][j]/otherModel.frequencySums[i]);
             }
         }
-        return diff;
+        return diff / (numNodes * (numCharacters+1));
     }
 
 }

@@ -87,7 +87,7 @@ public class BatchLearningTest {
 
                 System.out.println(testPerplexity+"\t"+parameterDifference);
 
-                if (parameterDifference < 0.01 * model.numStates()) {
+                if (parameterDifference < 0.0005) {
                     break;
                 }
 
