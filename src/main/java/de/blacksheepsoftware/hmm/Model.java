@@ -230,14 +230,17 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
 
     /**
      * @param oldModel
-     * @param newModel
+     * @param otherModel
      * @return
      */
-    public static double parameterDifference(Model oldModel, Model newModel) {
+    public double parameterDifference(Model otherModel) {
+        if (otherModel.numCharacters != numCharacters || otherModel.numNodes != numNodes) {
+            throw new IllegalArgumentException();
+        }
         double diff = 0;
-        for (int i=1; i<oldModel.numNodes; i++) {
-            for (int j=0; j<oldModel.numCharacters; j++) {
-                diff += Math.abs(oldModel.frequencies[i][j] - newModel.frequencies[i][j]);
+        for (int i=1; i<numNodes; i++) {
+            for (int j=0; j<numCharacters; j++) {
+                diff += Math.abs(frequencies[i][j] - otherModel.frequencies[i][j]);
             }
         }
         return diff;

@@ -102,7 +102,7 @@ public class BatchLearningTest {
                 }
                 final Model newModel = trainer.finishBatch();
 
-                final double parameterDifference = Model.parameterDifference(oldModel, newModel);
+                final double parameterDifference = oldModel.parameterDifference(newModel);
 
                 System.out.println(testPerplexity+"\t"+parameterDifference);
 
