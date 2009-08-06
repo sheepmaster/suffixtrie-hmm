@@ -2,8 +2,13 @@ package de.blacksheepsoftware.gene;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import de.blacksheepsoftware.hmm.Alphabet;
+import de.blacksheepsoftware.hmm.Sequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -22,8 +27,12 @@ public class FastaReader {
         line = r.readLine();
     }
 
+    public boolean ready() {
+        return (line != null);
+    }
+
     public Sequence readSequence() throws IOException {
-        if (line == null) {
+        if (!ready()) {
             return null;
         }
         Matcher m = headerPattern.matcher(line);
@@ -46,14 +55,22 @@ public class FastaReader {
         }
 
         StringBuffer content = new StringBuffer();
-        while (true) {
+        while (r.ready()) {
             line = r.readLine();
-            if (line == null || line.startsWith(">")) {
+            if (line.startsWith(">")) {
                 break;
             }
             content.append(line);
         }
         return new Sequence(identifier, content.toString(), alphabet, length);
+    }
+
+    public List<Sequence> readAllSequences() throws IOException {
+        List<Sequence> testSequences = new ArrayList<Sequence>();
+        while (ready()) {
+            testSequences.add(readSequence());
+        }
+        return testSequences;
     }
 
 }

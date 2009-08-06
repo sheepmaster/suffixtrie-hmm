@@ -12,8 +12,9 @@ import java.io.SequenceInputStream;
 import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
 
-import de.blacksheepsoftware.hmm.IntArrayList;
+import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.Sequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -57,12 +58,12 @@ public class SequenceTrainer {
                 return;
             }
             Alphabet alphabet = s.getAlphabet();
-            Model model = new Model(alphabet.numberOfCharacters(), Model.Variant.PARTIAL_BACKLINKS);
+            Model model = new Model(alphabet, Model.Variant.PARTIAL_BACKLINKS);
 
             int seqNo = 0;
 
             while (true) {
-                model.learn(IntArrayList.forList(s, s.length()), MAX_DEPTH);
+                model.learn(s, MAX_DEPTH);
                 System.err.print(".");
                 seqNo++;
                 if (seqNo % 80 == 0) {

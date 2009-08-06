@@ -2,10 +2,8 @@ package de.blacksheepsoftware.hmm;
 
 import java.util.Arrays;
 
-import de.blacksheepsoftware.hmm.Model;
-import de.blacksheepsoftware.t9.NumberKey;
-
 import junit.framework.TestCase;
+import de.blacksheepsoftware.t9.NumberKey;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -31,12 +29,12 @@ public class UpdateStrategyTest extends TestCase {
     public void testUpdateStrategy() {
         final String[] words = {"foo", "bar", "baz", "blurp", "abracadabra", "hokuspokus"};
 
-        final Model model1 = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
-        final Model model2 = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
+        final Model model1 = new Model(Alphabet.ABC, 5, Model.Variant.PARTIAL_BACKLINKS);
+        final Model model2 = new Model(Alphabet.ABC, 5, Model.Variant.PARTIAL_BACKLINKS);
 
         for (String w : words) {
-            model1.learn(NumberKey.intArrayForString(w), Integer.MAX_VALUE, Integer.MAX_VALUE);
-            model2.learn(NumberKey.intArrayForString(w), Integer.MAX_VALUE, 0);
+            model1.learn(NumberKey.sequenceForWord(w), Integer.MAX_VALUE, Integer.MAX_VALUE);
+            model2.learn(NumberKey.sequenceForWord(w), Integer.MAX_VALUE, 0);
         }
 
         assertTrue(Arrays.deepEquals(model1.transitions, model2.transitions));

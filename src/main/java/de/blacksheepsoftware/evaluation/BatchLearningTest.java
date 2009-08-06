@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.blacksheepsoftware.gene.Alphabet;
 import de.blacksheepsoftware.gene.FastaReader;
 import de.blacksheepsoftware.gene.FileFormatException;
-import de.blacksheepsoftware.gene.Sequence;
+import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.BatchTrainer;
-import de.blacksheepsoftware.hmm.IntArrayList;
 import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.Sequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -21,23 +20,6 @@ import de.blacksheepsoftware.hmm.Model;
 public class BatchLearningTest {
     protected static final int MAX_DEPTH = 8;
 
-    public static List<List<Integer>> readAllSequences(FastaReader r) throws IOException {
-        List<List<Integer>> testSequences = new ArrayList<List<Integer>>();
-        Sequence s;
-        while ((s = r.readSequence()) != null) {
-            testSequences.add(new IntArrayList(s, s.length()));
-        }
-        return testSequences;
-    }
-
-    public static List<int[]> readTrainingSequences(FastaReader r) throws IOException {
-        List<int[]> testSequences = new ArrayList<int[]>();
-        Sequence s;
-        while ((s = r.readSequence()) != null) {
-            testSequences.add(IntArrayList.forList(s, s.length()));
-        }
-        return testSequences;
-    }
     /**
      * @param args
      */
@@ -53,13 +35,13 @@ public class BatchLearningTest {
             final FastaReader trainingReader = new FastaReader(new BufferedReader(new FileReader(trainingFilename)));
             final FastaReader testReader = new FastaReader(new BufferedReader(new FileReader(testFilename)));
 
-            List<List<Integer>> testSequences = readAllSequences(testReader);
+            List<Sequence> testSequences = testReader.readAllSequences();
             int totalLength = 0;
-            for (List<Integer> s : testSequences) {
-                totalLength += s.size();
+            for (Sequence s : testSequences) {
+                totalLength += s.length();
             }
 
-            List<int[]> trainingSequences = new ArrayList<int[]>();
+            List<Sequence> trainingSequences = new ArrayList<Sequence>();
 
             Sequence trainingSequence = trainingReader.readSequence();
 
@@ -68,13 +50,12 @@ public class BatchLearningTest {
                 return;
             }
             Alphabet alphabet = trainingSequence.getAlphabet();
-            Model model = new Model(alphabet.numberOfCharacters(), Model.Variant.PARTIAL_BACKLINKS);
+            Model model = new Model(alphabet, Model.Variant.PARTIAL_BACKLINKS);
 
             while (true) {
-                final int[] list = IntArrayList.forList(trainingSequence, trainingSequence.length());
-                model.learn(list, MAX_DEPTH);
+                model.learn(trainingSequence, MAX_DEPTH);
 
-                trainingSequences.add(list);
+                trainingSequences.add(trainingSequence);
 
                 trainingSequence = trainingReader.readSequence();
                 if (trainingSequence == null) {
@@ -92,12 +73,12 @@ public class BatchLearningTest {
 
             while (true) {
                 double testPerplexity = 0;
-                for (Iterable<Integer> s : testSequences) {
+                for (Sequence s : testSequences) {
                     testPerplexity += oldModel.perplexity(s);
                 }
                 testPerplexity /= totalLength;
 
-                for (int[] s : trainingSequences) {
+                for (Sequence s : trainingSequences) {
                     trainer.learn(s, MAX_DEPTH);
                 }
                 final Model newModel = trainer.finishBatch();

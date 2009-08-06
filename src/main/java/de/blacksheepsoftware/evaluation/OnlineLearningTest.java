@@ -6,12 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.blacksheepsoftware.gene.Alphabet;
 import de.blacksheepsoftware.gene.FastaReader;
 import de.blacksheepsoftware.gene.FileFormatException;
-import de.blacksheepsoftware.gene.Sequence;
-import de.blacksheepsoftware.hmm.IntArrayList;
+import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.Sequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -21,12 +20,13 @@ public class OnlineLearningTest {
 
     protected static final int MAX_DEPTH = 8;
 
-    public static List<List<Integer>> readAllSequences(FastaReader r) throws IOException {
-        List<List<Integer>> testSequences = new ArrayList<List<Integer>>();
-        Sequence s;
-        while ((s = r.readSequence()) != null) {
+    public static List<Sequence> readAllSequences(FastaReader r) throws IOException {
+        List<Sequence> testSequences = new ArrayList<Sequence>();
+
+        while (r.ready()) {
+            Sequence s = r.readSequence();
             System.out.print(s.getIdentifier()+"\t");
-            testSequences.add(new IntArrayList(s, s.length()));
+            testSequences.add(s);
         }
         System.out.println();
         return testSequences;
@@ -47,11 +47,7 @@ public class OnlineLearningTest {
             final FastaReader trainingReader = new FastaReader(new BufferedReader(new FileReader(trainingFilename)));
             final FastaReader testReader = new FastaReader(new BufferedReader(new FileReader(testFilename)));
 
-            List<List<Integer>> testSequences = readAllSequences(testReader);
-            int totalLength = 0;
-            for (List<Integer> s : testSequences) {
-                totalLength += s.size();
-            }
+            List<Sequence> testSequences = readAllSequences(testReader);
 
             Sequence trainingSequence = trainingReader.readSequence();
 
@@ -60,14 +56,14 @@ public class OnlineLearningTest {
                 return;
             }
             Alphabet alphabet = trainingSequence.getAlphabet();
-            Model model = new Model(alphabet.numberOfCharacters(), Model.Variant.PARTIAL_BACKLINKS);
+            Model model = new Model(alphabet, Model.Variant.PARTIAL_BACKLINKS);
 
 
             while (true) {
-                model.learn(IntArrayList.forList(trainingSequence, trainingSequence.length()), MAX_DEPTH);
+                model.learn(trainingSequence, MAX_DEPTH);
 
-                for (List<Integer> s : testSequences) {
-                    System.out.print((model.perplexity(s)/s.size())+"\t");
+                for (Sequence s : testSequences) {
+                    System.out.print((model.perplexity(s)/s.length())+"\t");
                 }
                 System.out.println();
 

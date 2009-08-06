@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Vector;
 
+import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.Sequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -20,31 +22,32 @@ public final class WordTrainer {
         // empty constructor to prevent instantiation
     }
 
-    protected static List<int[]> readWords(LineNumberReader r) throws IOException {
-        List<int[]> words = new Vector<int[]>();
+    protected static List<Sequence> readWords(LineNumberReader r) throws IOException {
+        List<Sequence> words = new Vector<Sequence>();
 
         while (r.ready()) {
-            words.add(NumberKey.intArrayForString(r.readLine()));
+            final String s = r.readLine();
+            words.add(new Sequence(null, s, Alphabet.ABC, s.length()));
         }
 
         return words;
     }
 
-    public static int totalLength(Iterable<int[]> words) {
+    public static int totalLength(Iterable<Sequence> words) {
         int l = 0;
 
-        for (int[] w : words) {
-            l += w.length;
+        for (Sequence w : words) {
+            l += w.length();
         }
 
         return l;
     }
 
-    public static double totalPerplexity(Model m, Iterable<int[]> words) {
+    public static double totalPerplexity(Model m, Iterable<Sequence> words) {
         double t = 0;
 
-        for (int[] w : words) {
-            t += m.perplexity(NumberKey.intArrayList(w));
+        for (Sequence w : words) {
+            t += m.perplexity(w);
         }
 
         return t;
@@ -62,17 +65,17 @@ public final class WordTrainer {
 
         final LineNumberReader r = new LineNumberReader(new FileReader(args[0]));
 
-        List<int[]> trainingWords = readWords(r);
+        List<Sequence> trainingWords = readWords(r);
 
         final LineNumberReader r2 = new LineNumberReader(new FileReader(args[1]));
 
-        List<int[]> testingWords = readWords(r2);
+        List<Sequence> testingWords = readWords(r2);
 
-        Model model = new Model(26, Model.Variant.PARTIAL_BACKLINKS);
+        Model model = new Model(Alphabet.ABC, Model.Variant.PARTIAL_BACKLINKS);
 
         final int totalLength = totalLength(testingWords);
 
-        for (int[] w : trainingWords) {
+        for (Sequence w : trainingWords) {
             model.learn(w);
 
             double avgPerplexity = totalPerplexity(model, testingWords) / totalLength;

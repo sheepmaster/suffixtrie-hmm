@@ -13,6 +13,8 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    protected final Alphabet alphabet;
+
     protected final int numCharacters;
 
     protected int[][] transitions;
@@ -32,12 +34,13 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
     public static final int BOTTOM = 0;
     public static final int EPSILON = 1;
 
-    public Model(int numCharacters, Variant variant) {
-        this(numCharacters, DEFAULT_NODES, variant);
+    public Model(de.blacksheepsoftware.hmm.Alphabet alphabet, Variant variant) {
+        this(alphabet, DEFAULT_NODES, variant);
     }
 
-    public Model(int numCharacters, int maxNodes, Variant variant) {
-        this.numCharacters = numCharacters;
+    public Model(de.blacksheepsoftware.hmm.Alphabet alphabet, int maxNodes, Variant variant) {
+        this.alphabet = alphabet;
+        this.numCharacters = alphabet.numberOfCharacters();
         this.frequencies = new double[maxNodes][];
         this.frequencySums = new double[maxNodes];
         this.transitions = new int[maxNodes][];
@@ -53,7 +56,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
     }
 
     protected Model(Model m) {
-        this(m.numCharacters, m.transitions.length, m.startingDistribution.getVariant());
+        this(m.alphabet, m.transitions.length, m.startingDistribution.getVariant());
     }
 
     protected void deepCopyFrequenciesFrom(Model m) {
@@ -226,6 +229,14 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
      */
     public int numCharacters() {
         return numCharacters;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Alphabet getAlphabet() {
+        return alphabet;
     }
 
     /**

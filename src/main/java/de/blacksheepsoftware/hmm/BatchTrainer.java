@@ -1,6 +1,7 @@
 package de.blacksheepsoftware.hmm;
 
 
+
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
@@ -35,6 +36,14 @@ public class BatchTrainer extends Trainable {
 
     public Model getModel() {
         return newModel;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Alphabet getAlphabet() {
+        return model.getAlphabet();
     }
 
 }

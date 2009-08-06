@@ -43,6 +43,7 @@ public class Word implements Comparable<Word> {
         return new Word(newState, string + c, score + newState.normalize());
     }
 
+    @Override
     public String toString() {
         return string;
     }

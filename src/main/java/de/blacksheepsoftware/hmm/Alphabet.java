@@ -1,4 +1,4 @@
-package de.blacksheepsoftware.gene;
+package de.blacksheepsoftware.hmm;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +10,9 @@ import java.util.regex.Pattern;
  */
 public class Alphabet {
 
-    protected static final Alphabet DNA = new Alphabet("ACGT");
-    protected static final Alphabet AMINO_ACIDS = new Alphabet("ACDEFGHIKLPQRSTUVWY");
+    public static final Alphabet ABC = new Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    public static final Alphabet DNA = new Alphabet("ACGT");
+    public static final Alphabet AMINO_ACIDS = new Alphabet("ACDEFGHIKLPQRSTUVWY");
 
     protected final Map<Character,Integer> alphabetMap = new HashMap<Character, Integer>();
     protected final Pattern symbolPattern;

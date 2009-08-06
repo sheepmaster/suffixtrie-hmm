@@ -1,5 +1,6 @@
 package de.blacksheepsoftware.hmm;
 
+
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
@@ -10,14 +11,23 @@ public abstract class Trainable {
 
     protected abstract void learn(int[] word, int maxDepth, int defaultThreshold);
 
-    public void learn(int[] word, int maxDepth) {
-        learn(word, maxDepth, DEFAULT_THRESHOLD);
+    public abstract Alphabet getAlphabet();
+
+    protected void learn(Sequence seq, int maxDepth, int defaultThreshold) {
+        if (seq.getAlphabet() != getAlphabet()) {
+            throw new IllegalArgumentException("Invalid alphabet");
+        }
+        learn(seq.charSequence(), maxDepth, defaultThreshold);
+    }
+
+    public void learn(Sequence seq, int maxDepth) {
+        learn(seq, maxDepth, DEFAULT_THRESHOLD);
     }
 
     protected static final int DEFAULT_MAXIMUM_DEPTH = Integer.MAX_VALUE;
 
-    public void learn(int[] word) {
-        learn(word, DEFAULT_MAXIMUM_DEPTH);
+    public void learn(Sequence seq) {
+        learn(seq, DEFAULT_MAXIMUM_DEPTH);
     }
 
 }

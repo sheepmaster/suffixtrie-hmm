@@ -12,6 +12,7 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.Sequence;
 import de.blacksheepsoftware.hmm.UniformBaseModel;
 
 /**

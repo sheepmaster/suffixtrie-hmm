@@ -1,5 +1,6 @@
 package de.blacksheepsoftware.gene;
 
+import de.blacksheepsoftware.hmm.Alphabet;
 import junit.framework.TestCase;
 
 /**
@@ -9,7 +10,7 @@ import junit.framework.TestCase;
 public class AlphabetTest extends TestCase {
 
     /**
-     * Test method for {@link de.blacksheepsoftware.gene.Alphabet#indexOfSymbol(char)}.
+     * Test method for {@link de.blacksheepsoftware.hmm.Alphabet#indexOfSymbol(char)}.
      */
     public void testIndexOfSymbol() {
         checkSymbolIndices("abcdef");

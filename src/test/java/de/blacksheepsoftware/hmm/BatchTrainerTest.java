@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.hmm;
 
-import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.t9.NumberKey;
 import junit.framework.TestCase;
 
@@ -29,18 +28,25 @@ public class BatchTrainerTest extends TestCase {
      * Test method for {@link de.blacksheepsoftware.hmm.BatchTrainer#learn(int[], int, int)}.
      */
     public void testLearn() {
-        final Model m = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
+        final Model m = new Model(Alphabet.ABC, 5, Model.Variant.PARTIAL_BACKLINKS);
 
-        final String[] words = {"foo", "bar", "baz", "blurp", "abracadabra", "hokuspokus"};
+        final Sequence[] words = {
+                NumberKey.sequenceForWord("foo"),
+                NumberKey.sequenceForWord("bar"),
+                NumberKey.sequenceForWord("baz"),
+                NumberKey.sequenceForWord("blurp"),
+                NumberKey.sequenceForWord("abracadabra"),
+                NumberKey.sequenceForWord("hokuspokus")
+        };
 
-        for (String w : words) {
-            m.learn(NumberKey.intArrayForString(w));
+        for (Sequence w : words) {
+            m.learn(w);
         }
 
         final BatchTrainer trainer = new BatchTrainer(m);
 
-        for (String w : words) {
-            trainer.learn(NumberKey.intArrayForString(w));
+        for (Sequence w : words) {
+            trainer.learn(w);
         }
 
         trainer.finishBatch();

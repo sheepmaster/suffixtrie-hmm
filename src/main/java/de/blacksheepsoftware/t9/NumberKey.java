@@ -6,7 +6,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import de.blacksheepsoftware.hmm.IntArrayList;
+import de.blacksheepsoftware.hmm.Alphabet;
+import de.blacksheepsoftware.hmm.Sequence;
 
 
 public class NumberKey implements CharacterTemplate {
@@ -45,6 +46,10 @@ public class NumberKey implements CharacterTemplate {
         return characters[number-2];
     }
 
+    public static Sequence sequenceForWord(String word) {
+        return new Sequence(null, word, Alphabet.ABC, word.length());
+    }
+
     protected static List<NumberKey> numberKeysForString(String s) {
         final String lc = s.toLowerCase(Locale.ENGLISH);
 
@@ -61,21 +66,4 @@ public class NumberKey implements CharacterTemplate {
         return s.codePointAt(0) - 96;
     }
 
-    public static int[] intArrayForString(String s) {
-        String lowerCase = s.toLowerCase(Locale.ENGLISH);
-        int length = s.length();
-        int[] a = new int[length];
-        for (int i=0; i<a.length; i++) {
-            a[i] = lowerCase.codePointAt(i) - 96;
-        }
-        return a;
-    }
-
-    public static Iterable<Integer> intArrayList(int[] array) {
-        return new IntArrayList(array);
-    }
-
-    public static Iterable<Integer> characterSequenceForString(String s) {
-        return intArrayList(intArrayForString(s));
-    }
 }

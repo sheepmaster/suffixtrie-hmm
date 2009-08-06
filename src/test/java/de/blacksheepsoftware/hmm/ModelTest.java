@@ -20,19 +20,19 @@ public class ModelTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        model = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
+        model = new Model(Alphabet.ABC, 5, Model.Variant.PARTIAL_BACKLINKS);
 
-        model.learn(NumberKey.intArrayForString("foo"));
-        model.learn(NumberKey.intArrayForString("bar"));
-        model.learn(NumberKey.intArrayForString("baz"));
-        model.learn(NumberKey.intArrayForString("blurp"));
-        model.learn(NumberKey.intArrayForString("abracadabra"));
-        model.learn(NumberKey.intArrayForString("hokuspokus"));
+        model.learn(NumberKey.sequenceForWord("foo"));
+        model.learn(NumberKey.sequenceForWord("bar"));
+        model.learn(NumberKey.sequenceForWord("baz"));
+        model.learn(NumberKey.sequenceForWord("blurp"));
+        model.learn(NumberKey.sequenceForWord("abracadabra"));
+        model.learn(NumberKey.sequenceForWord("hokuspokus"));
 
     }
 
     protected void printWordPerplexity(String word) {
-        final double perplexity = model.perplexity(NumberKey.characterSequenceForString(word));
+        final double perplexity = model.perplexity(NumberKey.sequenceForWord(word));
         assertFalse("perplexity is not a number", Double.isNaN(perplexity));
         //        assertFalse(Double.isInfinite(perplexity));
         System.err.println("perplexity for \""+word+"\": "+perplexity);
@@ -49,7 +49,7 @@ public class ModelTest extends TestCase {
     }
 
     protected void printCompletionPerplexity(String prefix, String word) {
-        final double perplexity = model.perplexity(NumberKey.characterSequenceForString(word), NumberKey.characterSequenceForString(prefix));
+        final double perplexity = model.perplexity(NumberKey.sequenceForWord(word), NumberKey.sequenceForWord(prefix));
         assertFalse("perplexity is not a number", Double.isNaN(perplexity));
         System.err.println("perplexity for \""+word+"\" after \""+prefix+"\": "+perplexity);
     }
@@ -63,7 +63,7 @@ public class ModelTest extends TestCase {
     }
 
     protected void checkOutputDistribution(String prefix) {
-        final StateDistribution dist = model.startingDistribution().successor(NumberKey.characterSequenceForString(prefix));
+        final StateDistribution dist = model.startingDistribution().successor(NumberKey.sequenceForWord(prefix));
         dist.normalize();
         double totalProbability = 0;
         for (int c=1; c<=model.numCharacters; c++) {
@@ -137,15 +137,15 @@ public class ModelTest extends TestCase {
     }
 
     public void testLearnLongSequence() {
-        final Model newModel = new Model(26, 5, Model.Variant.PARTIAL_BACKLINKS);
+        final Model newModel = new Model(Alphabet.ABC, 5, Model.Variant.PARTIAL_BACKLINKS);
 
         final int maxDepth = 4;
-        newModel.learn(NumberKey.intArrayForString("foo"), maxDepth);
-        newModel.learn(NumberKey.intArrayForString("bar"), maxDepth);
-        newModel.learn(NumberKey.intArrayForString("baz"), maxDepth);
-        newModel.learn(NumberKey.intArrayForString("blurp"), maxDepth);
-        newModel.learn(NumberKey.intArrayForString("abracadabra"), maxDepth);
-        newModel.learn(NumberKey.intArrayForString("hokuspokus"), maxDepth);
+        newModel.learn(NumberKey.sequenceForWord("foo"), maxDepth);
+        newModel.learn(NumberKey.sequenceForWord("bar"), maxDepth);
+        newModel.learn(NumberKey.sequenceForWord("baz"), maxDepth);
+        newModel.learn(NumberKey.sequenceForWord("blurp"), maxDepth);
+        newModel.learn(NumberKey.sequenceForWord("abracadabra"), maxDepth);
+        newModel.learn(NumberKey.sequenceForWord("hokuspokus"), maxDepth);
     }
 
 }

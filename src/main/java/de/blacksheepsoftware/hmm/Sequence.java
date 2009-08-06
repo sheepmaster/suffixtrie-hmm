@@ -1,8 +1,10 @@
-package de.blacksheepsoftware.gene;
+package de.blacksheepsoftware.hmm;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
+
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -14,6 +16,7 @@ public class Sequence implements Iterable<Integer> {
     protected final String contents;
     protected final Alphabet alphabet;
     protected final int length;
+    protected int[] charSequence = null;
 
     public Sequence(String identifier, String contents, Alphabet alphabet, int length) {
         this.identifier = identifier;
@@ -42,6 +45,24 @@ public class Sequence implements Iterable<Integer> {
 
     public int length() {
         return length;
+    }
+
+    public int[] charSequence() {
+        if (charSequence == null) {
+            charSequence = IntArray.forList(this);
+        }
+        return charSequence;
+    }
+
+    /**
+     * @param sequences
+     */
+    public static int totalLength(List<Sequence> sequences) {
+        int totalLength = 0;
+        for (Sequence s : sequences) {
+            totalLength += s.length();
+        }
+        return totalLength;
     }
 
     private class SequenceIterator implements Iterator<Integer> {  // TODO: better name

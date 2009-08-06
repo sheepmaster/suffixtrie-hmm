@@ -8,20 +8,20 @@ import de.blacksheepsoftware.hmm.Model;
 
 public class Text {
     protected Model model;
-    
+
     protected StringBuffer text = new StringBuffer();
-    
+
     protected int cursorStart = 0;
     protected int cursorEnd = 0;
     protected Stack<NumberKey> activeNumbers = new Stack<NumberKey>();
     protected boolean wordSelected = false;
     protected int activeWord = 0;
     protected List<String> words = new ArrayList<String>();
-    
+
     public Text(Model m) {
         model = m;
     }
-    
+
     public void check() {
         assert cursorStart >= 0;
         assert cursorStart <= text.length();
@@ -34,19 +34,19 @@ public class Text {
         assert activeWord >= 0;
         assert (wordSelected || (activeWord == 0)); // if no word is selected, the "active" word is the first
     }
-    
+
     public String getContents() {
         return text.toString();
     }
-    
+
     public int getCursorStart() {
         return cursorStart;
     }
-    
+
     public int getCursorEnd() {
         return cursorEnd;
     }
-        
+
     public void moveRight() {
         if (cursorEnd == cursorStart) {
             // nothing is selected
@@ -89,7 +89,7 @@ public class Text {
         activeNumbers.clear();
         deselectWord();
     }
-    
+
     protected void replaceActiveWord() {
         text.replace(cursorStart, cursorEnd, words().get(activeWord));
     }
@@ -102,35 +102,35 @@ public class Text {
     }
 
     public void moveDown() {
-//      if (cursorBegin == cursorEnd) {
-//      
-//      } else {
+        //      if (cursorBegin == cursorEnd) {
+        //
+        //      } else {
         findActiveWord();
         activeWord = (activeWord + 1) % words().size();
         replaceActiveWord();
-//      }
+        //      }
     }
-    
+
     public void moveUp() {
-//      if (cursorBegin == cursorEnd) {
-//      
-//      } else {
+        //      if (cursorBegin == cursorEnd) {
+        //
+        //      } else {
         findActiveWord();
         final int size = words().size();
         activeWord = (activeWord + size - 1) % size;
         replaceActiveWord();
-//      }
+        //      }
     }
-    
+
     public void insertChar(char c) {
-//        if (activeWord > 0) {
-            cursorStart = cursorEnd;
-            finishWord();
-//        }
+        //        if (activeWord > 0) {
+        cursorStart = cursorEnd;
+        finishWord();
+        //        }
         text.insert(cursorStart++, c);
         cursorEnd++;
     }
-    
+
     public void insertNumberKey(NumberKey n) {
         if (wordSelected) {
             cursorStart = cursorEnd;
@@ -141,27 +141,27 @@ public class Text {
         replaceActiveWord();
         cursorEnd++;
     }
-    
+
     protected int findWordStart(int index) {
         while ((index > 0) && Character.isLetter(text.charAt(index-1))) {
             index--;
         }
         return index;
     }
-    
+
     protected int findWordEnd(int index) {
         while ((index < text.length()) && Character.isLetter(text.charAt(index))) {
             index++;
         }
         return index;
     }
-    
+
     protected List<String> words() {
         if (words.isEmpty()) {
             if (activeNumbers.isEmpty()) {
                 activeNumbers.addAll(NumberKey.numberKeysForString(text.substring(cursorStart, cursorEnd)));
             }
-            final Iterable<Integer> prefix = NumberKey.characterSequenceForString(text.substring(findWordStart(cursorStart), cursorStart));
+            final Iterable<Integer> prefix = NumberKey.sequenceForWord(text.substring(findWordStart(cursorStart), cursorStart));
             final List<Word> wordList = Word.completions(model.startingDistribution().successor(prefix), activeNumbers);
             for (Word w : wordList) {
                 words.add(w.string);
@@ -187,11 +187,11 @@ public class Text {
             }
         }
     }
-  /*  
+    /*
     protected static class Word implements Comparable<Word> {
         protected double score;
         protected String string;
-        
+
         public Word(double score, String string) {
             this.score = score;
             this.string = string;
@@ -201,13 +201,13 @@ public class Text {
             return Double.compare(score, arg0.score);
         }
     }
-/*    
+/*
     protected static final Comparator<List<Word>> wordListComparator = new Comparator<List<Word>>() {
         public int compare(List<Word> arg0, List<Word> arg1) {
             return Double.compare(arg0.get(0).score, arg1.get(0).score);
         }
     };
-    
+
     protected static LinkedList<Word> merge(LinkedList<Word>[] list) {
         LinkedList<Word> mergedList = new LinkedList<Word>();
         PriorityQueue<LinkedList<Word>> pq = new PriorityQueue<LinkedList<Word>>(list.length, wordListComparator);
@@ -227,7 +227,7 @@ public class Text {
 	protected static class Word implements Comparable<Word> {
 		protected Double score;
 		protected String string;
-		
+
 		public Word(double score, String string) {
 			this.score = new Double(score);
 			this.string = string;
@@ -237,7 +237,7 @@ public class Text {
 		    return other.score.compareTo(score);
 		}
 	}
-	
+
 	protected static class CompList<T extends Comparable> extends LinkedList<T> implements Comparable<CompList<T>> {
 		private static final long serialVersionUID = 1L;
 
@@ -245,18 +245,18 @@ public class Text {
 		    return getFirst().compareTo(other.getFirst());
 		}
 	}
-	
+
 	public Text(Model model) {
 		this.model = model;
 	}
-	
+
 	protected Model model;
 	protected List chunks = new Vector();
 	protected int activeChunk = 0;
 	protected LinkedList<NumberKey> activeNumbers = new LinkedList<NumberKey>();
 	protected String[] words = null;
 	protected int activeWord = 0;
-	
+
 	protected static CompList merge(CompList[] list) {
 		CompList mergedList = new CompList();
 		PriorityQueue pq = new BinaryHeap();
@@ -272,7 +272,7 @@ public class Text {
 		}
 		return mergedList;
 	}
-	
+
 	protected static CompList<Word> words(Model model, List<NumberKey> numbers, String word, double score) {
 		NumberKey n = numbers.remove(0);
 		if (numbers.isEmpty()) {
@@ -309,7 +309,7 @@ public class Text {
 			words[i] = ((Word)it.next()).string;
 		}
 	}
-	
+
 	protected void mergeWords() {
 		if (activeChunk == 0) {
 			return;
@@ -321,7 +321,7 @@ public class Text {
 			chunks.remove(activeChunk);
 		}
 	}
-	
+
 	protected void finishWord() {
 		if ((words == null) || (words.length == 0) || (activeChunk == 0)) {
 			return;
@@ -333,7 +333,7 @@ public class Text {
 			mergeWords();
 		}
 	}
-	
+
 	protected void activateWord() {
 		if (activeChunk == 0) {
 			return;
@@ -350,7 +350,7 @@ public class Text {
 			activeNumbers.addAll(l);
 		}
 	}
-	
+
 	public void moveRight() {
 		finishWord();
 		if (activeChunk < chunks.size()) {
@@ -366,20 +366,20 @@ public class Text {
 		}
 		activateWord();
 	}
-	
+
 	public void nextWord() {
 		activeWord = (activeWord + 1) % words.length;
 	}
-	
+
 	public void previousWord() {
 		activeWord = (activeWord - 1) % words.length;
 	}
-	
+
 	public void insertChar(char c) {
 		finishWord();
 		chunks.add(activeChunk++, new Character(c));
 	}
-	
+
 	public void insertNumberKey(NumberKey n) {
 		if ((activeChunk == 0) || !(chunks.get(activeChunk-1) instanceof Model)) {
 			chunks.add(activeChunk++, new Model(freqs));
@@ -388,7 +388,7 @@ public class Text {
 		calcWords();
 		activeWord = 0;
 	}
-	
+
 	public void delete() {
 		if (activeChunk == 0) {
 			return;
@@ -414,7 +414,7 @@ public class Text {
 			}
 		}
 	}
-	
+
 	public String toString() {
 		StringBuffer s = new StringBuffer();
 		Iterator i = chunks.iterator();
@@ -423,7 +423,7 @@ public class Text {
 		}
 		return s.toString();
 	}
-*/
+     */
 
     /**
      * 

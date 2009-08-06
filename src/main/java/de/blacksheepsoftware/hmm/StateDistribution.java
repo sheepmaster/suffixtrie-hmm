@@ -71,7 +71,7 @@ public abstract class StateDistribution implements Serializable {
 
     public double normalize() {
         final double normalizingFactor = 1 / totalProbability();
-        if (Double.isInfinite(normalizingFactor)) {
+        if (Double.isInfinite(normalizingFactor) && (stateProbabilities.length > 0)) {
             throw new IllegalArgumentException("total probability is zero");
         } else if (Double.isNaN(normalizingFactor)) {
             throw new IllegalArgumentException("total probability is not a number");
