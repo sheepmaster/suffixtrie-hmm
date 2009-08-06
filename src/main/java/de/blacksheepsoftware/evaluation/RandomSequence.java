@@ -1,4 +1,4 @@
-package de.blacksheepsoftware.gene;
+package de.blacksheepsoftware.evaluation;
 
 import java.util.Iterator;
 import java.util.Random;

@@ -1,4 +1,4 @@
-package de.blacksheepsoftware.gene;
+package de.blacksheepsoftware.evaluation;
 
 import java.io.FileInputStream;
 import java.io.IOException;
