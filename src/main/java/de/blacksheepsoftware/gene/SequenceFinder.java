@@ -28,8 +28,8 @@ public class SequenceFinder {
             System.err.println("Usage: java "+SequenceFinder.class.getName()+" <HMM file> <FASTA files...>");
             System.exit(1);
         }
-        String hmmFileName = args[0];
-        Vector<InputStream> files = new Vector<InputStream>();
+        final String hmmFileName = args[0];
+        final Vector<InputStream> files = new Vector<InputStream>();
         final InputStream input;
         if (args.length > 1) {
             for (int i=1; i<args.length; i++) {
@@ -43,12 +43,12 @@ public class SequenceFinder {
         } else {
             input = System.in;
         }
-        BufferedReader r = new BufferedReader(new InputStreamReader(input));
+        final BufferedReader r = new BufferedReader(new InputStreamReader(input));
 
         try {
-            Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
+            final Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
 
-            FastaReader reader = new FastaReader(r);
+            final FastaReader reader = new FastaReader(r);
 
             final UniformBaseModel baseModel = new UniformBaseModel(model.numCharacters());
 
