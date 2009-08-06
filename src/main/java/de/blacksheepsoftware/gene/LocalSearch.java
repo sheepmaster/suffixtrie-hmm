@@ -1,7 +1,8 @@
 package de.blacksheepsoftware.gene;
 
+import java.util.Iterator;
+
 import de.blacksheepsoftware.hmm.SequenceIterable;
-import de.blacksheepsoftware.hmm.SequenceIterator;
 
 
 /**
@@ -15,19 +16,21 @@ public class LocalSearch {
     protected double maxSum = 0.0;
 
     public LocalSearch(SequenceIterable model, SequenceIterable baseModel, Iterable<Integer> sequence) {
-        SequenceIterator modelIterator = model.sequenceIterator();
-        SequenceIterator baseModelIterator = baseModel.sequenceIterator();
+        final Iterator<Integer> iterator1 = sequence.iterator();
+        final Iterator<Integer> iterator2 = sequence.iterator();
+        Iterator<Double> modelIterator = model.sequenceIterator(iterator1);
+        Iterator<Double> baseModelIterator = baseModel.sequenceIterator(iterator2);
         int startIndex = 0;
         int endIndex = 0;
         double sum = 0.0;
-        for (int c : sequence) {
+        while(modelIterator.hasNext()) {
             endIndex++;
-            sum += baseModelIterator.score(c) - modelIterator.score(c);
+            sum += baseModelIterator.next() - modelIterator.next();
             if (sum <= 0) {
                 sum = 0;
                 startIndex = endIndex;
-                modelIterator = model.sequenceIterator();
-                baseModelIterator = baseModel.sequenceIterator();
+                modelIterator = model.sequenceIterator(iterator1);
+                baseModelIterator = baseModel.sequenceIterator(iterator2);
             }
             if (sum > maxSum) {
                 maxSum = sum;

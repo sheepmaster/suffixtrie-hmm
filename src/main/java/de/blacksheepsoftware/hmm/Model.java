@@ -2,6 +2,7 @@ package de.blacksheepsoftware.hmm;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Iterator;
 
 
 public class Model extends Trainable implements SequenceIterable, Serializable {
@@ -104,8 +105,16 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         return startingDistribution.successor(prefix).perplexity(word);
     }
 
-    public SequenceIterator sequenceIterator() {
-        return new StateDistributionIterator(startingDistribution);
+    public Iterator<Double> sequenceIterator(Iterator<Integer> seq) {
+        return new TransformingIterator<Integer, Double>(seq) {
+            protected StateDistribution dist = startingDistribution;
+
+            @Override
+            public Double transform(Integer in) {
+                dist = dist.successor(in);
+                return dist.normalize();
+            }
+        };
     }
 
     protected int addNode(int parent, int label) {

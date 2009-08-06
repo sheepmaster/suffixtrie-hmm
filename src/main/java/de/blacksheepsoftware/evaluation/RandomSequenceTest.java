@@ -3,10 +3,10 @@ package de.blacksheepsoftware.evaluation;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
 import de.blacksheepsoftware.hmm.Model;
-import de.blacksheepsoftware.hmm.SequenceIterator;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -26,12 +26,12 @@ public class RandomSequenceTest {
         try {
             final Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
 
-            final SequenceIterator iterator = model.sequenceIterator();
             final RandomSequence seq = new RandomSequence(model.numCharacters());
+            final Iterator<Double> scores = model.sequenceIterator(seq.iterator());
             final double log2 = Math.log(2);
 
-            for (int c : seq) {
-                System.out.println(iterator.score(c) / log2);
+            while(true) {
+                System.out.println(scores.next() / log2);
             }
         } catch (IOException e) {
             e.printStackTrace();

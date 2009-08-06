@@ -1,5 +1,7 @@
 package de.blacksheepsoftware.hmm;
 
+import java.util.Iterator;
+
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -7,22 +9,22 @@ package de.blacksheepsoftware.hmm;
  */
 public class UniformBaseModel implements SequenceIterable {
 
-    protected final SequenceIterator sequenceIterator;
+    final double score;
 
     public UniformBaseModel(int numChars) {
-        final double score = Math.log(numChars);
-        sequenceIterator = new SequenceIterator() {
-            public double score(int character) {
-                return score;
-            }
-        };
+        score = Math.log(numChars);
     }
 
     /**
      * {@inheritDoc}
      */
-    public SequenceIterator sequenceIterator() {
-        return sequenceIterator;
+    public Iterator<Double> sequenceIterator(final Iterator<Integer> sequence) {
+        return new TransformingIterator<Integer, Double>(sequence) {
+            @Override
+            public Double transform(Integer in) {
+                return score;
+            }
+        };
     }
 
 
