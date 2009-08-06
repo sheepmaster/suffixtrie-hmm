@@ -2,16 +2,18 @@ package de.blacksheepsoftware.hmm;
 
 import java.util.Iterator;
 
+import de.blacksheepsoftware.util.TransformingIterator;
+
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class UniformBaseModel implements SequenceIterable {
+public class UniformModel implements SequenceIterable {
 
     final double score;
 
-    public UniformBaseModel(int numChars) {
+    public UniformModel(int numChars) {
         score = Math.log(numChars);
     }
 

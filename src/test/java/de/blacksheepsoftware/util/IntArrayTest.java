@@ -1,10 +1,10 @@
-package de.blacksheepsoftware.gene;
+package de.blacksheepsoftware.util;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import de.blacksheepsoftware.hmm.IntArray;
+import de.blacksheepsoftware.util.IntArray;
 
 import junit.framework.TestCase;
 
@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 public class IntArrayTest extends TestCase {
 
     /**
-     * Test method for {@link de.blacksheepsoftware.hmm.IntArray#forList(java.lang.Iterable)}.
+     * Test method for {@link de.blacksheepsoftware.util.IntArray#forList(java.lang.Iterable)}.
      */
     public void testIntArray() {
         final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);

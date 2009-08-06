@@ -1,4 +1,4 @@
-package de.blacksheepsoftware.hmm;
+package de.blacksheepsoftware.util;
 
 public class IntArray {
     public static final int DEFAULT_LIST_LENGTH = 16;

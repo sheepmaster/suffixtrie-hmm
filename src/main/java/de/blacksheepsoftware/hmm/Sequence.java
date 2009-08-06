@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 
+import de.blacksheepsoftware.util.IntArray;
+
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>

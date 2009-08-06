@@ -1,4 +1,4 @@
-package de.blacksheepsoftware.hmm;
+package de.blacksheepsoftware.util;
 
 import java.util.Iterator;
 

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import de.blacksheepsoftware.util.TransformingIterator;
+
 
 public class Model extends Trainable implements SequenceIterable, Serializable {
     public enum Variant {

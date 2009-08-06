@@ -13,7 +13,7 @@ import java.util.zip.GZIPInputStream;
 
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.Sequence;
-import de.blacksheepsoftware.hmm.UniformBaseModel;
+import de.blacksheepsoftware.hmm.UniformModel;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -51,7 +51,7 @@ public class SequenceFinder {
 
             final FastaReader reader = new FastaReader(r);
 
-            final UniformBaseModel baseModel = new UniformBaseModel(model.numCharacters());
+            final UniformModel baseModel = new UniformModel(model.numCharacters());
 
             System.out.println("sequence id\tfrom\tto\tscore");
 

@@ -1,4 +1,4 @@
-package de.blacksheepsoftware.gene;
+package de.blacksheepsoftware.hmm;
 
 import de.blacksheepsoftware.hmm.Alphabet;
 import junit.framework.TestCase;
