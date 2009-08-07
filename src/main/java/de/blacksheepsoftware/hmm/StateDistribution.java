@@ -106,7 +106,7 @@ public abstract class StateDistribution implements Serializable {
     }
 
     public StateDistribution successor(int character) {
-        return alpha(null, character, Integer.MAX_VALUE);
+        return alpha(null, character, Integer.MAX_VALUE, false);
     }
 
     public StateDistribution successor(Iterable<Integer> characters) {
@@ -132,9 +132,9 @@ public abstract class StateDistribution implements Serializable {
         return p / LOG_2;
     }
 
-    protected abstract StateDistribution beta(StateDistribution alpha, int character);
+    protected abstract StateDistribution beta(StateDistribution alpha, int character, boolean useSmoothing);
 
-    protected abstract StateDistribution alpha(Model m, int character, int maxDepth);
+    protected abstract StateDistribution alpha(Model m, int character, int maxDepth, boolean useSmoothing);
 
     protected abstract void update(Model m, StateDistribution beta, int character);
 
@@ -175,7 +175,7 @@ public abstract class StateDistribution implements Serializable {
         }
 
         @Override
-        protected StateDistribution beta(StateDistribution oldBeta, int character) {
+        protected StateDistribution beta(StateDistribution oldBeta, int character, boolean useSmoothing) {
             checkExpectedSuffix(oldBeta, character);
             final int depth = depth();
             double[] newProbs = new double[depth];
@@ -183,10 +183,12 @@ public abstract class StateDistribution implements Serializable {
             double p = 0;
             for (int i = 0; i <= depth; i++) {
                 final int state = states[i];
-                // beta is only used for learning, so smoothing is always used.
                 final double transitionPseudoCount;
                 final double backPseudoCount;
-                if (state == EPSILON) {
+                if (!useSmoothing) {
+                    backPseudoCount = 0;
+                    transitionPseudoCount = 0;
+                } else if (state == EPSILON) {
                     transitionPseudoCount = 1;
                     backPseudoCount = 0;
                 } else {
@@ -209,7 +211,7 @@ public abstract class StateDistribution implements Serializable {
         }
 
         @Override
-        protected StateDistribution alpha(Model m, int character, int maxDepth) {
+        protected StateDistribution alpha(Model m, int character, int maxDepth, boolean useSmoothing) {
             if (character == INVALID) {
                 return model.startingDistribution();
             }
@@ -224,7 +226,7 @@ public abstract class StateDistribution implements Serializable {
                 p += currentProbability;
                 final double transitionPseudoCount;
                 final double backPseudoCount;
-                if (m == null) {
+                if (!useSmoothing) {
                     transitionPseudoCount = 0;
                     backPseudoCount = 0;
                 } else if (state == EPSILON) {
@@ -235,7 +237,7 @@ public abstract class StateDistribution implements Serializable {
                     backPseudoCount = transitionPseudoCount;
                 }
                 int t = model.transitions[state][character];
-                if ((t == BOTTOM) && (m != null) && (depth < maxDepth)) {
+                if ((t == BOTTOM) && useSmoothing && (depth < maxDepth)) {
                     // if we are in training mode, add the missing state
                     t = model.addNode(state, character);
                     m.addNode(state, character);
