@@ -6,16 +6,20 @@ import de.blacksheepsoftware.hmm.SequenceIterable;
 
 
 /**
+ * Note: this class has a natural ordering that is inconsistent with equals.
+ * 
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
- *
  */
-public class LocalSearch {
+public class LocalSearch implements Comparable<LocalSearch> {
 
     protected int maxStartIndex = 0;
     protected int maxEndIndex = 0;
     protected double maxSum = 0.0;
 
+    protected final Iterable<Integer> sequence;
+
     public LocalSearch(SequenceIterable model, SequenceIterable baseModel, Iterable<Integer> sequence) {
+        this.sequence = sequence;
         final Iterator<Integer> iterator1 = sequence.iterator();
         final Iterator<Integer> iterator2 = sequence.iterator();
         Iterator<Double> modelIterator = model.sequenceIterator(iterator1);
@@ -50,6 +54,13 @@ public class LocalSearch {
 
     public double sum() {
         return maxSum;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(LocalSearch o) {
+        return Double.compare(maxSum, o.maxSum);
     }
 
 }
