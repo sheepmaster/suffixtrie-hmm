@@ -18,7 +18,7 @@ import de.blacksheepsoftware.hmm.Sequence;
  *
  */
 public class BatchLearningTest {
-    protected static final int MAX_DEPTH = 8;
+    protected static final int MAX_DEPTH = 9;
 
     /**
      * @param args
@@ -35,13 +35,9 @@ public class BatchLearningTest {
             final FastaReader trainingReader = new FastaReader(new BufferedReader(new FileReader(trainingFilename)));
             final FastaReader testReader = new FastaReader(new BufferedReader(new FileReader(testFilename)));
 
-            List<Sequence> testSequences = testReader.readAllSequences();
-            int totalLength = 0;
-            for (Sequence s : testSequences) {
-                totalLength += s.length();
-            }
+            final List<Sequence> testSequences = testReader.readAllSequences();
 
-            List<Sequence> trainingSequences = new ArrayList<Sequence>();
+            final List<Sequence> trainingSequences = new ArrayList<Sequence>();
 
             Sequence trainingSequence = trainingReader.readSequence();
 
@@ -52,10 +48,12 @@ public class BatchLearningTest {
             Alphabet alphabet = trainingSequence.getAlphabet();
             Model model = new Model(alphabet, Model.Variant.PARTIAL_BACKLINKS);
 
+            int trainingLength = 0;
             while (true) {
                 model.learn(trainingSequence, MAX_DEPTH);
 
                 trainingSequences.add(trainingSequence);
+                trainingLength += trainingSequence.length();
 
                 trainingSequence = trainingReader.readSequence();
                 if (trainingSequence == null) {
@@ -66,17 +64,15 @@ public class BatchLearningTest {
                 }
             }
 
-            System.out.println("Avg. test perplexity\tparameter difference");
+
+            System.out.println("Avg. test perplexity\ttraining perplexity\tparameter difference");
 
             final BatchTrainer trainer = new BatchTrainer(model);
             Model oldModel = model;
 
             while (true) {
-                double testPerplexity = 0;
-                for (Sequence s : testSequences) {
-                    testPerplexity += oldModel.perplexity(s);
-                }
-                testPerplexity /= totalLength;
+                final double testPerplexity = oldModel.averagePerplexity(testSequences);
+                final double trainingPerplexity = oldModel.averagePerplexity(trainingSequences);
 
                 for (Sequence s : trainingSequences) {
                     trainer.learn(s, MAX_DEPTH);
@@ -85,7 +81,7 @@ public class BatchLearningTest {
 
                 final double parameterDifference = oldModel.parameterDifference(newModel);
 
-                System.out.println(testPerplexity+"\t"+parameterDifference);
+                System.out.println(testPerplexity+"\t"+trainingPerplexity+"\t"+parameterDifference);
 
                 if (parameterDifference < 0.0005) {
                     break;

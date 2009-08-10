@@ -102,12 +102,28 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         return startingDistribution;
     }
 
-    public double perplexity(Iterable<Integer> word) {
+    public double perplexity(Sequence word) {
         return startingDistribution.perplexity(word);
     }
 
-    public double perplexity(Iterable<Integer> word, Iterable<Integer> prefix) {
+    public double perplexity(Sequence word, Sequence prefix) {
         return startingDistribution.successor(prefix).perplexity(word);
+    }
+
+    /**
+     * @param sequences
+     * @param totalLength
+     * @param model
+     * @return
+     */
+    public double averagePerplexity(Iterable<Sequence> sequences) {
+        final int totalLength = Sequence.totalLength(sequences);
+        double testPerplexity = 0;
+        for (Sequence s : sequences) {
+            testPerplexity += perplexity(s);
+        }
+        testPerplexity /= totalLength;
+        return testPerplexity;
     }
 
     public Iterator<Double> sequenceIterator(Iterator<Integer> seq) {

@@ -35,10 +35,6 @@ public class OnlineLearningTest2 {
             final FastaReader testReader = new FastaReader(new BufferedReader(new FileReader(testFilename)));
 
             List<Sequence> testSequences = testReader.readAllSequences();
-            int totalLength = 0;
-            for (Sequence s : testSequences) {
-                totalLength += s.length();
-            }
 
             Sequence trainingSequence = trainingReader.readSequence();
 
@@ -58,11 +54,7 @@ public class OnlineLearningTest2 {
 
                 double posteriorPerplexity = model.perplexity(trainingSequence)/trainingSequence.length();
 
-                double testPerplexity = 0;
-                for (Sequence s : testSequences) {
-                    testPerplexity += model.perplexity(s);
-                }
-                testPerplexity /= totalLength;
+                double testPerplexity = model.averagePerplexity(testSequences);
                 System.out.println(newPerplexity+"\t"+posteriorPerplexity+"\t"+testPerplexity);
 
                 trainingSequence = trainingReader.readSequence();
