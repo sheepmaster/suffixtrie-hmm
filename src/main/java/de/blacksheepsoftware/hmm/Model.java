@@ -268,6 +268,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         }
         double diff = 0;
         for (int i=1; i<numNodes; i++) {
+            //            if (transitions[i] != null) {
             for (int j=0; j<=numCharacters; j++) {
                 final double p = frequencies[i][j]/frequencySums[i];
                 final double p2 = otherModel.frequencies[i][j]/otherModel.frequencySums[i];
@@ -275,8 +276,25 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
                     diff += Math.abs(p - p2);
                 }
             }
+            //            }
         }
         return diff / (numNodes * (numCharacters+1));
+    }
+
+    public void cleanup() {
+        for (int i=1; i<numNodes; i++) {
+            //            if (transitions[i] != null) {
+            for (int j=1; j <= numCharacters; j++) {
+                final int state = transitions[i][j];
+                if (state != BOTTOM && frequencies[i][j]/frequencySums[i] == 0) {
+                    transitions[i][j] = BOTTOM;
+                    //                        transitions[state] = null;
+                    //                        frequencies[state] = null;
+                    System.err.println("Removed state "+state);
+                }
+                //                }
+            }
+        }
     }
 
 }

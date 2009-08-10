@@ -24,6 +24,7 @@ public class BatchTrainer extends Trainable {
 
     public Model finishBatch() {
         final Model m = newModel;
+        m.cleanup();
         replaceModel(newModel);
         return m;
     }
