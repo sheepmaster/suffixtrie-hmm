@@ -269,7 +269,11 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         double diff = 0;
         for (int i=1; i<numNodes; i++) {
             for (int j=0; j<=numCharacters; j++) {
-                diff += Math.abs(frequencies[i][j]/frequencySums[i] - otherModel.frequencies[i][j]/otherModel.frequencySums[i]);
+                final double p = frequencies[i][j]/frequencySums[i];
+                final double p2 = otherModel.frequencies[i][j]/otherModel.frequencySums[i];
+                if (!(Double.isNaN(p) || Double.isNaN(p2))) {
+                    diff += Math.abs(p - p2);
+                }
             }
         }
         return diff / (numNodes * (numCharacters+1));

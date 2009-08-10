@@ -9,6 +9,8 @@ import java.io.Serializable;
 import de.blacksheepsoftware.hmm.Model.Variant;
 
 public abstract class StateDistribution implements Serializable {
+    protected static final double ALMOST_ONE = 0.999999999999999;
+
     private static final long serialVersionUID = -366668114489984302L;
 
     public static final double LOG_2 = Math.log(2);
@@ -71,13 +73,9 @@ public abstract class StateDistribution implements Serializable {
 
     public double normalize() {
         final double normalizingFactor = 1 / totalProbability();
-        if (Double.isInfinite(normalizingFactor) && (stateProbabilities.length > 0)) {
-            throw new IllegalArgumentException("total probability is zero");
-        } else if (Double.isNaN(normalizingFactor)) {
-            throw new IllegalArgumentException("total probability is not a number");
-        } else if (normalizingFactor < 1) {
-            throw new IllegalArgumentException("total probability is not between zero and one");
-        }
+        assert ((stateProbabilities.length == 0) || !Double.isInfinite(normalizingFactor)) : "total probability is zero";
+        assert !Double.isNaN(normalizingFactor) : "total probability is not a number";
+        assert normalizingFactor >= ALMOST_ONE : "total probability is not between zero and one";
         scale(normalizingFactor);
         return Math.log(normalizingFactor);
     }
@@ -150,15 +148,20 @@ public abstract class StateDistribution implements Serializable {
     }
 
     protected void checkExpectedSuffix(StateDistribution beta, int character) {
-        final int expectedLongestSuffix;
+        int expectedLongestSuffix;
         if (character == INVALID) {
             expectedLongestSuffix = EPSILON;
         } else {
             expectedLongestSuffix = successorState(longestSuffix, character);
         }
-        if (beta.longestSuffix != expectedLongestSuffix) {
-            throw new IllegalArgumentException("Invalid successor state");
+
+        while (expectedLongestSuffix != BOTTOM) {
+            if (beta.longestSuffix == expectedLongestSuffix) {
+                return;
+            }
+            expectedLongestSuffix = model.transitions[expectedLongestSuffix][BACK];
         }
+        throw new IllegalArgumentException("Invalid successor state");
     }
 
     public static class PartialBacklinksVariant extends StateDistribution {
@@ -242,17 +245,24 @@ public abstract class StateDistribution implements Serializable {
                     t = model.addNode(state, character);
                     m.addNode(state, character);
                 }
+                final double frequencySum = model.frequencySums[state] + transitionPseudoCount + backPseudoCount;
+                assert frequencySum > 0;
                 if (t != BOTTOM) {
-                    if (newProbs == null) {
-                        newProbs = new double[depth + 1];
-                        newLongestSuffix = t;
+                    final double newProb = p * (model.frequencies[state][character] + transitionPseudoCount) / frequencySum;
+                    if (newProb > 0) {
+                        if (newProbs == null) {
+                            newProbs = new double[depth + 1];
+                            newLongestSuffix = t;
+                        }
+                        newProbs[depth] = newProb;
+                        assert !Double.isNaN(newProb);
+                        //                    } else {
+                        //                        System.err.println("muuh");
                     }
-                    newProbs[depth] = p * (model.frequencies[state][character] + transitionPseudoCount)
-                    / (model.frequencySums[state] + transitionPseudoCount + backPseudoCount);
                 }
                 depth--;
-                p *= (model.frequencies[state][BACK] + backPseudoCount)
-                / (model.frequencySums[state] + transitionPseudoCount + backPseudoCount);
+                p *= (model.frequencies[state][BACK] + backPseudoCount) / frequencySum;
+                assert !Double.isNaN(p);
                 state = model.transitions[state][BACK];
             }
             if (newProbs == null) {
