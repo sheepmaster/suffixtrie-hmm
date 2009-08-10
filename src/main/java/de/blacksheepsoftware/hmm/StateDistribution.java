@@ -9,7 +9,7 @@ import java.io.Serializable;
 import de.blacksheepsoftware.hmm.Model.Variant;
 
 public abstract class StateDistribution implements Serializable {
-    protected static final double ALMOST_ONE = 0.999999999999999;
+    protected static final double ALMOST_ONE = 0.99999999999999;
 
     private static final long serialVersionUID = -366668114489984302L;
 

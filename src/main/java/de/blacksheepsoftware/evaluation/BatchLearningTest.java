@@ -18,7 +18,7 @@ import de.blacksheepsoftware.hmm.Sequence;
  *
  */
 public class BatchLearningTest {
-    protected static final int MAX_DEPTH = 9;
+    protected static final int MAX_DEPTH = 10;
 
     /**
      * @param args
@@ -83,12 +83,13 @@ public class BatchLearningTest {
 
                 System.out.println(testPerplexity+"\t"+trainingPerplexity+"\t"+parameterDifference);
 
-                if (parameterDifference < 0.0005) {
+                if (parameterDifference < 0.002) {
                     break;
                 }
 
                 oldModel = newModel;
             }
+            System.err.println(oldModel.numStates()+" states.");
 
 
         } catch (IOException e) {

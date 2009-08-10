@@ -286,7 +286,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
             //            if (transitions[i] != null) {
             for (int j=1; j <= numCharacters; j++) {
                 final int state = transitions[i][j];
-                if (state != BOTTOM && frequencies[i][j]/frequencySums[i] == 0) {
+                if (state != BOTTOM && ((frequencies[i][j]/frequencySums[i] == 0) || frequencySums[state] == 0)) {
                     transitions[i][j] = BOTTOM;
                     //                        transitions[state] = null;
                     //                        frequencies[state] = null;
