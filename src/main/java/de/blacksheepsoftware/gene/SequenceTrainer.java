@@ -9,10 +9,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.SequenceInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 import java.util.zip.GZIPOutputStream;
 
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+
 import de.blacksheepsoftware.hmm.Alphabet;
+import de.blacksheepsoftware.hmm.BatchTrainer;
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.Sequence;
 
@@ -22,71 +30,121 @@ import de.blacksheepsoftware.hmm.Sequence;
  */
 public class SequenceTrainer {
 
-    protected static final int MAX_DEPTH = 8;
+    @Option(name = "--maxDepth", usage="maximum depth")
+    protected int maxDepth = 8;
+
+    @Option(name = "--maxIterations", usage="maximum number of iterations for batch learning")
+    protected int maxIterations = Integer.MAX_VALUE;
+
+    @Option(name = "--epsilon", usage="threshold for parameter difference")
+    protected double parameterEpsilon = 0.002;
+
+    @Argument
+    protected List<String> arguments = new ArrayList<String>();
 
     /**
      * @param args
      */
     public static void main(String[] args) {
-        if (args.length < 1) {
-            System.err.println("Usage: java "+SequenceTrainer.class.getName()+" <HMM file> <FASTA files...>");
+        SequenceTrainer trainer = new SequenceTrainer();
+        trainer.doMain(args);
+
+    }
+
+    /**
+     * @param args
+     */
+    private void doMain(String[] args) {
+        final CmdLineParser parser = new CmdLineParser(this);
+        try {
+            parser.parseArgument(args);
+            if (arguments.size() < 1) {
+                throw new CmdLineException(parser, "No arguments given");
+            }
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Usage: java "+SequenceTrainer.class.getName()+" <options> <HMM file> <FASTA files...>");
+            parser.printUsage(System.err);
             System.exit(1);
         }
-        String hmmFileName = args[0];
+
+        String hmmFileName = arguments.remove(0);
         Vector<InputStream> files = new Vector<InputStream>();
         final InputStream input;
-        if (args.length > 1) {
-            for (int i=1; i<args.length; i++) {
+        if (arguments.isEmpty()) {
+            input = System.in;
+        } else {
+            for (String s : arguments) {
                 try {
-                    files.add(new FileInputStream(args[i]));
+                    files.add(new FileInputStream(s));
                 } catch (FileNotFoundException e) {
-                    System.err.println("Warning: Couldn't find '" + args[i] + "'!");
+                    System.err.println("Warning: Couldn't find '" + s + "'!");
                 }
             }
             input = new SequenceInputStream(files.elements());
-        } else {
-            input = System.in;
         }
         BufferedReader r = new BufferedReader(new InputStreamReader(input));
 
         try {
             FastaReader fasta = new FastaReader(r);
-            Sequence s = fasta.readSequence();
+            Sequence trainingSequence = fasta.readSequence();
 
-            if (s == null) {
+            if (trainingSequence == null) {
                 System.err.println("Warning: No sequences found");
                 return;
             }
-            Alphabet alphabet = s.getAlphabet();
+            Alphabet alphabet = trainingSequence.getAlphabet();
             Model model = new Model(alphabet, Model.Variant.PARTIAL_BACKLINKS);
 
-            int seqNo = 0;
+            final List<Sequence> trainingSequences = new ArrayList<Sequence>();
 
+            int seqNo = 0;
             while (true) {
-                model.learn(s, MAX_DEPTH);
-                System.err.print(".");
-                seqNo++;
-                if (seqNo % 80 == 0) {
-                    System.err.println();
-                }
-                s = fasta.readSequence();
-                if (s == null) {
+                model.learn(trainingSequence, maxDepth);
+                System.out.print(++seqNo+" sequences read\r");
+                trainingSequences.add(trainingSequence);
+                trainingSequence = fasta.readSequence();
+                if (trainingSequence == null) {
                     break;
                 }
-                if (s.getAlphabet() != alphabet) {
+                if (trainingSequence.getAlphabet() != alphabet) {
                     throw new FileFormatException("All sequences must be of the same type");
                 }
             }
 
+            System.out.println();
+
+            final BatchTrainer trainer = new BatchTrainer(model);
+            Model oldModel = model;
+
+            int iteration = 0;
+
+            while (iteration < maxIterations) {
+                for (Sequence s : trainingSequences) {
+                    trainer.learn(s, maxDepth);
+                }
+                System.out.print("Iteration "+ iteration +"\r");
+                final Model newModel = trainer.finishBatch();
+
+                final double parameterDifference = oldModel.parameterDifference(newModel);
+
+                if (parameterDifference < parameterEpsilon) {
+                    break;
+                }
+                iteration++;
+
+                oldModel = newModel;
+            }
+
+            System.out.println();
+
             final ObjectOutputStream output = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hmmFileName)));
             output.writeObject(model);
             output.close();
-            System.err.println();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
 }

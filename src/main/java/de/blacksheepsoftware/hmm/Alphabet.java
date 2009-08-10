@@ -1,5 +1,6 @@
 package de.blacksheepsoftware.hmm;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -8,7 +9,9 @@ import java.util.regex.Pattern;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class Alphabet {
+public class Alphabet implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public static final Alphabet ABC = new Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     public static final Alphabet DNA = new Alphabet("ACGT");

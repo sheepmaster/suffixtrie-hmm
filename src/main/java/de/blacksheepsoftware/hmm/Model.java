@@ -290,7 +290,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
                     transitions[i][j] = BOTTOM;
                     //                        transitions[state] = null;
                     //                        frequencies[state] = null;
-                    System.err.println("Removed state "+state);
+                    //                    System.err.println("Removed state "+state);
                 }
                 //                }
             }
