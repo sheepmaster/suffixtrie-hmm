@@ -28,7 +28,7 @@ public class RandomLocalSearchTest {
             final Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
             final UniformModel baseModel = new UniformModel(model.numCharacters());
 
-            final RandomSequence seq = new RandomSequence(model.numCharacters());
+            final RandomSequence seq = new RandomSequence(model.numCharacters(), 42);
 
             int maxStartIndex = 0;
             int maxEndIndex = 0;
