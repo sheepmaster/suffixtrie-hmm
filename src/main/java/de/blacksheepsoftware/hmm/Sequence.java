@@ -1,5 +1,6 @@
 package de.blacksheepsoftware.hmm;
 
+import java.util.AbstractCollection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
@@ -11,7 +12,7 @@ import de.blacksheepsoftware.util.IntArray;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class Sequence implements Iterable<Integer> {
+public class Sequence extends AbstractCollection<Integer> {
 
     protected final String identifier;
     protected final String contents;
@@ -29,6 +30,7 @@ public class Sequence implements Iterable<Integer> {
     /**
      * {@inheritDoc}
      */
+    @Override
     public Iterator<Integer> iterator() {
         return new SequenceIterator();
     }
@@ -46,6 +48,11 @@ public class Sequence implements Iterable<Integer> {
 
     public int length() {
         return length;
+    }
+
+    @Override
+    public int size() {
+        return length();
     }
 
     public int[] charSequence() {
