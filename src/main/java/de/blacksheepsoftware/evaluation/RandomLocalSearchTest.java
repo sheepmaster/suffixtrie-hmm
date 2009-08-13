@@ -30,8 +30,6 @@ public class RandomLocalSearchTest {
 
             final RandomSequence seq = new RandomSequence(model.numCharacters(), 42);
 
-            int maxStartIndex = 0;
-            int maxEndIndex = 0;
             double maxSum = 0.0;
 
             System.out.println("start index\tend index\tscore");
@@ -54,8 +52,6 @@ public class RandomLocalSearchTest {
                 }
                 if (sum > maxSum) {
                     maxSum = sum;
-                    maxStartIndex = startIndex;
-                    maxEndIndex = endIndex;
                     System.out.println(startIndex + "\t" + endIndex + "\t" + sum);
                 }
             }
