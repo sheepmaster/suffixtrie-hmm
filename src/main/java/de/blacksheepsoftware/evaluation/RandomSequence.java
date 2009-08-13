@@ -23,26 +23,30 @@ public class RandomSequence implements Iterable<Integer> {
     }
 
     /**
+     * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
+     *
+     */
+    protected class RandomIterator implements Iterator<Integer> {
+        private final Random r = (seed == 0) ? new Random() : new Random(seed);
+    
+        public boolean hasNext() {
+            return true;
+        }
+    
+        public Integer next() {
+            return r.nextInt(numCharacters)+1;
+        }
+    
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Iterator<Integer> iterator() {
-        final Random r = (seed == 0) ? new Random() : new Random(seed);
-
-        return new Iterator<Integer>() {
-
-            public boolean hasNext() {
-                return true;
-            }
-
-            public Integer next() {
-                return r.nextInt(numCharacters)+1;
-            }
-
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-        };
+        return new RandomIterator();
     }
 
 
