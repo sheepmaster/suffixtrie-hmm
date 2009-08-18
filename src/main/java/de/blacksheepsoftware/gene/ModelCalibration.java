@@ -35,19 +35,33 @@ public class ModelCalibration {
             scores[i] = s.sum();
         }
 
-        calibrate(scores);
+        calibrateDirect(scores);
     }
 
-    private void calibrate(double[] randomScores) {
+    private static double mu(double[] randomScores, double lambda) {
+        double esum = 0;
+        for (double s : randomScores) {
+            esum += Math.exp(-lambda * s);
+        }
+        return -Math.log(esum/randomScores.length) / lambda;
+    }
+
+    private void calibrateDirect(double[] randomScores) {
         final Stats stats = new Stats(randomScores);
         lambda = Math.PI/Math.sqrt(6 * stats.getVariance());
 
-        final double mu = stats.getMean() - 0.57722/lambda;
+        //        final double mu = stats.getMean() - 0.57722/lambda;
+        final double mu = mu(randomScores, lambda);
         k = Math.exp(lambda*mu)/SEQUENCE_LENGTH;
     }
 
+    public double normalizedScore(LocalSearch s) {
+        return lambda*s.sum() - Math.log(k*s.getSequence().length());
+    }
+
     public double specificity(LocalSearch s) {
-        return -Math.expm1(-Math.exp(Math.log(k*s.getSequence().length()) - lambda*s.sum()));
+        //        return -Math.expm1(-(k*s.getSequence().length())/Math.exp(lambda*s.sum()));
+        return -Math.expm1(-Math.exp(-normalizedScore(s)));
     }
 
     public double getLambda() {

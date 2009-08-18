@@ -63,7 +63,7 @@ public class SequenceFinder {
 
             System.err.println("done (lambda: "+c.getLambda()+" k: "+c.getK()+")");
 
-            System.out.println("sequence id\tfrom\tto\tscore\tspecificity");
+            System.out.println("sequence id\tfrom\tto\tscore\tnormalized score\tspecificity");
 
             Sequence s;
             while ((s = reader.readSequence()) != null) {
@@ -73,7 +73,7 @@ public class SequenceFinder {
                 final LocalSearch search = new LocalSearch(model, baseModel, s);
                 final double score = search.sum() / Math.log(2);
                 if (score > 0) {
-                    System.out.println(s.getIdentifier()+"\t"+search.startIndex()+"\t"+search.endIndex()+"\t"+score+"\t"+c.specificity(search));
+                    System.out.println(s.getIdentifier()+"\t"+search.startIndex()+"\t"+search.endIndex()+"\t"+score+"\t"+c.normalizedScore(search)+"\t"+c.specificity(search));
                 }
             }
 
