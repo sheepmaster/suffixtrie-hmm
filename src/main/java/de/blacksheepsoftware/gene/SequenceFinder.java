@@ -47,13 +47,23 @@ public class SequenceFinder {
         final BufferedReader r = new BufferedReader(new InputStreamReader(input));
 
         try {
+            System.err.print("Reading model...");
+
             final Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
 
-            final FastaReader reader = new FastaReader(r);
+            System.err.println("done.");
 
             final UniformModel baseModel = new UniformModel(model.numCharacters());
 
-            System.out.println("sequence id\tfrom\tto\tscore");
+            final FastaReader reader = new FastaReader(r);
+
+            System.err.print("Calibrating model...");
+
+            ModelCalibration c = new ModelCalibration(model, baseModel);
+
+            System.err.println("done (lambda: "+c.getLambda()+" k: "+c.getK()+")");
+
+            System.out.println("sequence id\tfrom\tto\tscore\tspecificity");
 
             Sequence s;
             while ((s = reader.readSequence()) != null) {
@@ -63,7 +73,7 @@ public class SequenceFinder {
                 final LocalSearch search = new LocalSearch(model, baseModel, s);
                 final double score = search.sum() / Math.log(2);
                 if (score > 0) {
-                    System.out.println(s.getIdentifier()+"\t"+search.startIndex()+"\t"+search.endIndex()+"\t"+score);
+                    System.out.println(s.getIdentifier()+"\t"+search.startIndex()+"\t"+search.endIndex()+"\t"+score+"\t"+c.specificity(search));
                 }
             }
 
