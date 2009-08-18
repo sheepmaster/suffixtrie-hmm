@@ -11,10 +11,10 @@ import de.blacksheepsoftware.util.TransformingIterator;
  */
 public class UniformModel implements SequenceIterable {
 
-    final double score;
+    final int numChars;
 
     public UniformModel(int numChars) {
-        score = Math.log(numChars);
+        this.numChars = numChars;
     }
 
     /**
@@ -22,11 +22,18 @@ public class UniformModel implements SequenceIterable {
      */
     public Iterator<Double> sequenceIterator(final Iterator<Integer> sequence) {
         return new TransformingIterator<Integer, Double>(sequence) {
+
+            final double score = Math.log(numChars);
+
             @Override
             public Double transform(Integer in) {
                 return score;
             }
         };
+    }
+
+    public int numCharacters() {
+        return numChars;
     }
 
 

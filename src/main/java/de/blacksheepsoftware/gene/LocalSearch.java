@@ -2,6 +2,7 @@ package de.blacksheepsoftware.gene;
 
 import java.util.Iterator;
 
+import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.SequenceIterable;
 
 
@@ -16,9 +17,9 @@ public class LocalSearch implements Comparable<LocalSearch> {
     protected int maxEndIndex = 0;
     protected double maxSum = 0.0;
 
-    protected final Iterable<Integer> sequence;
+    protected final ISequence sequence;
 
-    public LocalSearch(SequenceIterable model, SequenceIterable baseModel, Iterable<Integer> sequence) {
+    public LocalSearch(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
         this.sequence = sequence;
         final Iterator<Integer> iterator1 = sequence.iterator();
         final Iterator<Integer> iterator2 = sequence.iterator();
@@ -54,6 +55,10 @@ public class LocalSearch implements Comparable<LocalSearch> {
 
     public double sum() {
         return maxSum;
+    }
+
+    public ISequence getSequence() {
+        return sequence;
     }
 
     /**

@@ -12,7 +12,7 @@ import de.blacksheepsoftware.util.IntArray;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class Sequence extends AbstractCollection<Integer> {
+public class Sequence extends AbstractCollection<Integer> implements ISequence {
 
     protected final String identifier;
     protected final String contents;

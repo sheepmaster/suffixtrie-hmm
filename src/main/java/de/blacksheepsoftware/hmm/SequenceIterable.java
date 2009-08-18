@@ -10,4 +10,6 @@ public interface SequenceIterable {
 
     Iterator<Double> sequenceIterator(Iterator<Integer> sequence);
 
+    int numCharacters();
+
 }

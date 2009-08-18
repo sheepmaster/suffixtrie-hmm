@@ -3,11 +3,13 @@ package de.blacksheepsoftware.evaluation;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import de.blacksheepsoftware.hmm.ISequence;
+
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class FiniteRandomSequence extends RandomSequence {
+public class FiniteRandomSequence extends RandomSequence implements ISequence {
 
     protected final int length;
 
@@ -53,6 +55,20 @@ public class FiniteRandomSequence extends RandomSequence {
     @Override
     public Iterator<Integer> iterator() {
         return new FiniteRandomIterator();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int length() {
+        return length;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getIdentifier() {
+        return "Random"+numCharacters+":"+seed;
     }
 
 

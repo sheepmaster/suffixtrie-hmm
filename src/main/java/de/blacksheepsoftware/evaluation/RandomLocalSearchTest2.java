@@ -27,7 +27,7 @@ public class RandomLocalSearchTest2 {
             System.out.println("start index\tend index\tscore");
 
             for (int i = 0; true; i++) {
-                final RandomSequence seq = new FiniteRandomSequence(model.numCharacters(), 400);
+                final FiniteRandomSequence seq = new FiniteRandomSequence(model.numCharacters(), 4000);
 
                 final LocalSearch search = new LocalSearch(model, baseModel, seq);
 
