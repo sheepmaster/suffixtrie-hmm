@@ -59,9 +59,17 @@ public class ModelCalibration {
         return lambda*s.sum() - Math.log(k*s.getSequence().length());
     }
 
+    public double eValue(LocalSearch s) {
+        // return Math.exp(-normalizedScore(s));
+        return k*s.getSequence().length()*Math.exp(-lambda*s.sum());
+    }
+
     public double specificity(LocalSearch s) {
-        //        return -Math.expm1(-(k*s.getSequence().length())/Math.exp(lambda*s.sum()));
-        return -Math.expm1(-Math.exp(-normalizedScore(s)));
+        // The maximum normalized score follows a standard Gumbel distribution
+        // return -Math.expm1(-Math.exp(-normalizedScore(s)));
+
+        // The number of hits with a minimum score follows a Poisson distribution
+        return -Math.expm1(-eValue(s));
     }
 
     public double getLambda() {
