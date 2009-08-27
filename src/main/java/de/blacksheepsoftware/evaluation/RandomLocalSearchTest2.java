@@ -24,14 +24,14 @@ public class RandomLocalSearchTest2 {
             final Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
             final UniformModel baseModel = new UniformModel(model.numCharacters());
 
-            System.out.println("start index\tend index\tscore");
+            System.out.println("start index\tend index\tscore\tavg. score");
 
             for (int i = 0; true; i++) {
-                final FiniteRandomSequence seq = new FiniteRandomSequence(model.numCharacters(), 4000);
+                final FiniteRandomSequence seq = new FiniteRandomSequence(model.numCharacters(), 400);
 
                 final LocalSearch search = new LocalSearch(model, baseModel, seq);
 
-                System.out.println(search.startIndex()+"\t"+search.endIndex()+"\t"+search.sum());
+                System.out.println(search.startIndex()+"\t"+search.endIndex()+"\t"+search.sum()+"\t"+(search.sum()/(search.endIndex()-search.startIndex())));
                 //                System.err.println(i+" hits\r");
             }
 

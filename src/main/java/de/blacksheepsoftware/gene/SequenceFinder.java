@@ -1,12 +1,12 @@
 package de.blacksheepsoftware.gene;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.Reader;
 import java.io.SequenceInputStream;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
@@ -44,7 +44,7 @@ public class SequenceFinder {
         } else {
             input = System.in;
         }
-        final BufferedReader r = new BufferedReader(new InputStreamReader(input));
+        final Reader r = new InputStreamReader(input);
 
         try {
             System.err.print("Reading model...");

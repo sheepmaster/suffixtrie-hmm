@@ -2,6 +2,7 @@ package de.blacksheepsoftware.gene;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,6 +22,10 @@ public class FastaReader {
     protected final BufferedReader r;
 
     protected String line;
+
+    public FastaReader(Reader r) throws IOException {
+        this(new BufferedReader(r));
+    }
 
     public FastaReader(BufferedReader r) throws IOException {
         this.r = r;

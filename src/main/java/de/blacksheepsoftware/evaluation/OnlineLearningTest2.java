@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.evaluation;
 
-import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -31,8 +30,8 @@ public class OnlineLearningTest2 {
         final String testFilename = args[1];
 
         try {
-            final FastaReader trainingReader = new FastaReader(new BufferedReader(new FileReader(trainingFilename)));
-            final FastaReader testReader = new FastaReader(new BufferedReader(new FileReader(testFilename)));
+            final FastaReader trainingReader = new FastaReader(new FileReader(trainingFilename));
+            final FastaReader testReader = new FastaReader(new FileReader(testFilename));
 
             List<Sequence> testSequences = testReader.readAllSequences();
 

@@ -1,6 +1,5 @@
 package de.blacksheepsoftware.gene;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -8,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.Reader;
 import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,7 +83,7 @@ public class SequenceTrainer {
             }
             input = new SequenceInputStream(files.elements());
         }
-        BufferedReader r = new BufferedReader(new InputStreamReader(input));
+        Reader r = new InputStreamReader(input);
 
         try {
             FastaReader fasta = new FastaReader(r);
