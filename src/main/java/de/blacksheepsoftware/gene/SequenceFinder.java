@@ -70,7 +70,7 @@ public class SequenceFinder {
                 if (s.getAlphabet().numberOfCharacters() != model.numCharacters()) {
                     throw new FileFormatException("Sequence doesn't fit to model");
                 }
-                final LocalSearch search = new LocalSearch(model, baseModel, s);
+                final LocalSearch search = LocalSearch.search(model, baseModel, s);
                 final double score = search.sum() / Math.log(2);
                 if (score > 0) {
                     System.out.println(s.getIdentifier()+"\t"+search.startIndex()+

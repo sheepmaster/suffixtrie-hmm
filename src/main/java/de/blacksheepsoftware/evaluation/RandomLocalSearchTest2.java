@@ -29,7 +29,7 @@ public class RandomLocalSearchTest2 {
             for (int i = 0; true; i++) {
                 final FiniteRandomSequence seq = new FiniteRandomSequence(model.numCharacters(), 400);
 
-                final LocalSearch search = new LocalSearch(model, baseModel, seq);
+                final LocalSearch search = LocalSearch.search(model, baseModel, seq);
 
                 System.out.println(search.startIndex()+"\t"+search.endIndex()+"\t"+search.sum()+"\t"+(search.sum()/(search.endIndex()-search.startIndex())));
                 //                System.err.println(i+" hits\r");

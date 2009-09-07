@@ -13,14 +13,24 @@ import de.blacksheepsoftware.hmm.SequenceIterable;
  */
 public class LocalSearch implements Comparable<LocalSearch> {
 
-    protected int maxStartIndex = 0;
-    protected int maxEndIndex = 0;
-    protected double maxSum = 0.0;
+    protected final int startIndex;
+    protected final int endIndex;
+    protected final double sum;
 
     protected final ISequence sequence;
 
-    public LocalSearch(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
+    protected LocalSearch(ISequence sequence, int startIndex, int endIndex, double sum) {
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
+        this.sum = sum;
         this.sequence = sequence;
+    }
+
+    public static LocalSearch search(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
+        int maxStartIndex = 0;
+        int maxEndIndex = 0;
+        double maxSum = 0.0;
+
         final Iterator<Integer> iterator1 = sequence.iterator();
         final Iterator<Integer> iterator2 = sequence.iterator();
         Iterator<Double> modelIterator = model.sequenceIterator(iterator1);
@@ -43,18 +53,19 @@ public class LocalSearch implements Comparable<LocalSearch> {
                 maxEndIndex = endIndex;
             }
         }
+        return new LocalSearch(sequence, maxStartIndex, maxEndIndex, maxSum);
     }
 
     public int startIndex() {
-        return maxStartIndex;
+        return startIndex;
     }
 
     public int endIndex() {
-        return maxEndIndex;
+        return endIndex;
     }
 
     public double sum() {
-        return maxSum;
+        return sum;
     }
 
     public ISequence getSequence() {
@@ -65,7 +76,7 @@ public class LocalSearch implements Comparable<LocalSearch> {
      * {@inheritDoc}
      */
     public int compareTo(LocalSearch o) {
-        return Double.compare(maxSum, o.maxSum);
+        return Double.compare(sum, o.sum);
     }
 
 }

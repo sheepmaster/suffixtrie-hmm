@@ -31,7 +31,7 @@ public class ModelCalibration {
         final int numCharacters = model.numCharacters();
         for (int i=0; i<scores.length; i++) {
             final FiniteRandomSequence seq = new FiniteRandomSequence(numCharacters, SEQUENCE_LENGTH);
-            final LocalSearch s = new LocalSearch(model, baseModel, seq);
+            final LocalSearch s = LocalSearch.search(model, baseModel, seq);
             scores[i] = s.sum();
         }
 
