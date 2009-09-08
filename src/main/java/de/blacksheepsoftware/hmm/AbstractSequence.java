@@ -17,6 +17,7 @@ public abstract class AbstractSequence extends AbstractList<Integer> implements 
         return length();
     }
 
+    @Override
     public ISequence subList(int start, int end) {
         return new SubSequence(this, start, end);
     }
@@ -32,5 +33,9 @@ public abstract class AbstractSequence extends AbstractList<Integer> implements 
         return totalLength;
     }
 
+    @Override
+    public String toString() {
+        return getIdentifier();
+    }
 
 }
