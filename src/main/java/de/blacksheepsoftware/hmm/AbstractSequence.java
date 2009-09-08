@@ -17,9 +17,18 @@ public abstract class AbstractSequence extends AbstractList<Integer> implements 
         return length();
     }
 
-    @Override
-    public ISequence subList(int start, int end) {
-        return new SubSequence(this, start, end);
+    public ISequence subSequencePreceding(SubSequence s) {
+        if (s.containingSequence != this) {
+            throw new IllegalArgumentException();
+        }
+        return new SubSequence(this, 0, s.startIndex());
+    }
+
+    public ISequence subSequenceFollowing(SubSequence s) {
+        if (s.containingSequence != this) {
+            throw new IllegalArgumentException();
+        }
+        return new SubSequence(this, s.endIndex(), length());
     }
 
     /**

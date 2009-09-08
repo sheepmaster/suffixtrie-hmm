@@ -11,5 +11,6 @@ public interface ISequence extends List<Integer> {
 
     String getIdentifier();
 
-    ISequence subList(int start, int end);
+    ISequence subSequencePreceding(SubSequence s);
+    ISequence subSequenceFollowing(SubSequence s);
 }

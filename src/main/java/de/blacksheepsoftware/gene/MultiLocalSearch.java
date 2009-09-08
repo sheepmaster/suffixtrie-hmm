@@ -52,11 +52,16 @@ public class MultiLocalSearch implements Iterable<LocalSearch> {
         public LocalSearch next() {
             final ISequence seq = sequences.remove();
             final LocalSearch s = LocalSearch.search(model, baseModel, seq);
-            if (s.startIndex() > 0) {
-                sequences.add(s.precedingSubsequence());
+            if (s.length() == 0) {
+                return next();
             }
-            if (s.endIndex() < sequence.length()) {
-                sequences.add(s.followingSequence());
+            final ISequence pred = seq.subSequencePreceding(s);
+            if (pred.length() > 0) {
+                sequences.add(pred);
+            }
+            final ISequence succ = seq.subSequenceFollowing(s);
+            if (succ.length() > 0) {
+                sequences.add(succ);
             }
             return s;
         }

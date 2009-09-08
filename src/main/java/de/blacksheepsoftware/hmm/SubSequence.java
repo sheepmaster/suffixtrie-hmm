@@ -83,12 +83,20 @@ public class SubSequence extends AbstractSequence {
 
     }
 
-    public ISequence precedingSubsequence() {
-        return containingSequence.subList(0, start);
+    @Override
+    public ISequence subSequencePreceding(SubSequence s) {
+        if (s.containingSequence != containingSequence) {
+            throw new IllegalArgumentException();
+        }
+        return new SubSequence(containingSequence, start, s.startIndex());
     }
 
-    public ISequence followingSequence() {
-        return containingSequence.subList(end, containingSequence.length());
+    @Override
+    public ISequence subSequenceFollowing(SubSequence s) {
+        if (s.containingSequence != containingSequence) {
+            throw new IllegalArgumentException();
+        }
+        return new SubSequence(containingSequence, s.endIndex(), end);
     }
 
 }
