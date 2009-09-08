@@ -16,7 +16,7 @@ public class LocalSearch extends SubSequence implements Comparable<LocalSearch> 
 
     protected final double sum;
 
-    protected LocalSearch(ISequence sequence, int startIndex, int endIndex, double sum) {
+    LocalSearch(ISequence sequence, int startIndex, int endIndex, double sum) {
         super(sequence, startIndex, endIndex);
         this.sum = sum;
     }

@@ -23,9 +23,16 @@ public class SubSequence extends AbstractSequence {
         if (start > end) {
             throw new IllegalArgumentException("start: "+start+" end: "+end);
         }
-        this.containingSequence = containingSequence;
-        this.start = start;
-        this.end = end;
+        if (containingSequence instanceof SubSequence) {
+            SubSequence subSequence = (SubSequence)containingSequence;
+            this.containingSequence = subSequence.containingSequence;
+            this.start = start + subSequence.start;
+            this.end = end + subSequence.start;
+        } else {
+            this.containingSequence = containingSequence;
+            this.start = start;
+            this.end = end;
+        }
     }
 
     /**
@@ -76,21 +83,7 @@ public class SubSequence extends AbstractSequence {
 
     }
 
-    @Override
-    public ISequence subList(int subStart, int subEnd) {
-        if (subStart < start) {
-            throw new IndexOutOfBoundsException("start");
-        }
-        if (subEnd > end) {
-            throw new IndexOutOfBoundsException("end");
-        }
-        if (subStart > subEnd) {
-            throw new IllegalArgumentException("start: "+subStart+" end: "+subEnd);
-        }
-        return containingSequence.subList(start + subStart, start + subEnd);
-    }
-
-    public ISequence precedingSequence() {
+    public ISequence precedingSubsequence() {
         return containingSequence.subList(0, start);
     }
 
