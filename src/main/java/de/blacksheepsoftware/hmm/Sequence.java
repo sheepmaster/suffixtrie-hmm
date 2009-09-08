@@ -63,6 +63,7 @@ public class Sequence extends AbstractList<Integer> implements ISequence, Random
         return charSequence;
     }
 
+    @Override
     public Integer get(int i) {
         return charSequence()[i];
     }
@@ -70,9 +71,9 @@ public class Sequence extends AbstractList<Integer> implements ISequence, Random
     /**
      * @param sequences
      */
-    public static int totalLength(Iterable<Sequence> sequences) {
+    public static int totalLength(Iterable<? extends ISequence> sequences) {
         int totalLength = 0;
-        for (Sequence s : sequences) {
+        for (ISequence s : sequences) {
             totalLength += s.length();
         }
         return totalLength;
