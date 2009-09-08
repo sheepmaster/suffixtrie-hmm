@@ -65,8 +65,8 @@ public class SequenceFinder {
 
             System.out.println("sequence id\tfrom\tto\tscore\tnormalized score\tE-value\tspecificity");
 
-            Sequence s;
-            while ((s = reader.readSequence()) != null) {
+            while (reader.ready()) {
+                final Sequence s = reader.readSequence();
                 if (s.getAlphabet().numberOfCharacters() != model.numCharacters()) {
                     throw new FileFormatException("Sequence doesn't fit to model");
                 }
