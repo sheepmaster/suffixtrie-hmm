@@ -72,7 +72,7 @@ public class MultiLocalSearchTest {
                 for (LocalSearch search : searches) {
                     final double score = search.sum() / Math.log(2);
                     if (score > 0) {
-                        System.out.println(search+"\t"+search.startIndex()+
+                        System.out.println(search.getContainingSequence()+"\t"+search.startIndex()+
                                 "\t"+search.endIndex()+"\t"+score);
                     } else {
                         System.err.println("muuh");

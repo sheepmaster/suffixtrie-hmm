@@ -23,16 +23,16 @@ public class SubSequence extends AbstractSequence {
         if (start > end) {
             throw new IllegalArgumentException("start: "+start+" end: "+end);
         }
-        if (containingSequence instanceof SubSequence) {
-            SubSequence subSequence = (SubSequence)containingSequence;
-            this.containingSequence = subSequence.containingSequence;
-            this.start = start + subSequence.start;
-            this.end = end + subSequence.start;
-        } else {
-            this.containingSequence = containingSequence;
-            this.start = start;
-            this.end = end;
-        }
+        //        if (containingSequence instanceof SubSequence) {
+        //            SubSequence subSequence = (SubSequence)containingSequence;
+        //            this.containingSequence = subSequence.containingSequence;
+        //            this.start = start + subSequence.start;
+        //            this.end = end + subSequence.start;
+        //        } else {
+        this.containingSequence = containingSequence;
+        this.start = start;
+        this.end = end;
+        //        }
     }
 
     /**
@@ -85,18 +85,18 @@ public class SubSequence extends AbstractSequence {
 
     @Override
     public ISequence subSequencePreceding(SubSequence s) {
-        if (s.containingSequence != containingSequence) {
-            throw new IllegalArgumentException();
-        }
-        return new SubSequence(containingSequence, start, s.startIndex());
+        //        if (s.containingSequence != containingSequence) {
+        //            throw new IllegalArgumentException();
+        //        }
+        return new SubSequence(containingSequence, start, start+s.startIndex());
     }
 
     @Override
     public ISequence subSequenceFollowing(SubSequence s) {
-        if (s.containingSequence != containingSequence) {
-            throw new IllegalArgumentException();
-        }
-        return new SubSequence(containingSequence, s.endIndex(), end);
+        //        if (s.containingSequence != containingSequence) {
+        //            throw new IllegalArgumentException();
+        //        }
+        return new SubSequence(containingSequence, start+s.endIndex(), end);
     }
 
 }

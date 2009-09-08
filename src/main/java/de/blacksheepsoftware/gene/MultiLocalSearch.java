@@ -1,8 +1,8 @@
 package de.blacksheepsoftware.gene;
 
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.PriorityQueue;
 
 import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.SequenceIterable;
@@ -33,37 +33,42 @@ public class MultiLocalSearch implements Iterable<LocalSearch> {
 
     protected class LocalSearchIterator implements Iterator<LocalSearch> {
 
-        protected Queue<ISequence> sequences = new LinkedList<ISequence>();
+        protected PriorityQueue<LocalSearch> searchHits = new PriorityQueue<LocalSearch>(11, Collections.reverseOrder());
 
         protected LocalSearchIterator() {
-            sequences.add(sequence);
+            addSearchHit(sequence);
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean hasNext() {
-            return !sequences.isEmpty();
+            return !searchHits.isEmpty();
         }
 
         /**
          * {@inheritDoc}
          */
         public LocalSearch next() {
-            final ISequence seq = sequences.remove();
-            final LocalSearch s = LocalSearch.search(model, baseModel, seq);
-            if (s.length() == 0) {
-                return next();
-            }
-            final ISequence pred = seq.subSequencePreceding(s);
-            if (pred.length() > 0) {
-                sequences.add(pred);
-            }
-            final ISequence succ = seq.subSequenceFollowing(s);
-            if (succ.length() > 0) {
-                sequences.add(succ);
-            }
+            final LocalSearch s = searchHits.remove();
+            final ISequence seq = s.getContainingSequence();
+            addSearchHit(seq.subSequencePreceding(s));
+            addSearchHit(seq.subSequenceFollowing(s));
             return s;
+        }
+
+        /**
+         * @param seq
+         */
+        private void addSearchHit(final ISequence seq) {
+            if (seq.length() == 0) {
+                return;
+            }
+            final LocalSearch hit = LocalSearch.search(model, baseModel, seq);
+            if (hit.length() > 0) {
+                searchHits.add(hit);
+            }
+
         }
 
         /**
