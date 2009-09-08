@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.util.zip.GZIPInputStream;
 
 import de.blacksheepsoftware.gene.LocalSearch;
+import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.UniformModel;
 
@@ -27,7 +28,7 @@ public class RandomLocalSearchTest2 {
             System.out.println("start index\tend index\tscore\tavg. score");
 
             for (int i = 0; true; i++) {
-                final FiniteRandomSequence seq = new FiniteRandomSequence(model.numCharacters(), 400);
+                final ISequence seq = new RandomSequence(model.numCharacters()).generateSequence(400);
 
                 final LocalSearch search = LocalSearch.search(model, baseModel, seq);
 

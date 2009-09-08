@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.SequenceIterable;
+import de.blacksheepsoftware.hmm.SubSequence;
 
 
 /**
@@ -11,19 +12,13 @@ import de.blacksheepsoftware.hmm.SequenceIterable;
  * 
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  */
-public class LocalSearch implements Comparable<LocalSearch> {
+public class LocalSearch extends SubSequence implements Comparable<LocalSearch> {
 
-    protected final int startIndex;
-    protected final int endIndex;
     protected final double sum;
 
-    protected final ISequence sequence;
-
     protected LocalSearch(ISequence sequence, int startIndex, int endIndex, double sum) {
-        this.startIndex = startIndex;
-        this.endIndex = endIndex;
+        super(sequence, startIndex, endIndex);
         this.sum = sum;
-        this.sequence = sequence;
     }
 
     public static LocalSearch search(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
@@ -56,20 +51,8 @@ public class LocalSearch implements Comparable<LocalSearch> {
         return new LocalSearch(sequence, maxStartIndex, maxEndIndex, maxSum);
     }
 
-    public int startIndex() {
-        return startIndex;
-    }
-
-    public int endIndex() {
-        return endIndex;
-    }
-
     public double sum() {
         return sum;
-    }
-
-    public ISequence getSequence() {
-        return sequence;
     }
 
     /**

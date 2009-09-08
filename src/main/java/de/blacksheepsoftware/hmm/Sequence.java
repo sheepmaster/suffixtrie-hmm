@@ -1,8 +1,9 @@
 package de.blacksheepsoftware.hmm;
 
-import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.RandomAccess;
 import java.util.regex.Matcher;
 
 import de.blacksheepsoftware.util.IntArray;
@@ -12,7 +13,7 @@ import de.blacksheepsoftware.util.IntArray;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class Sequence extends AbstractCollection<Integer> implements ISequence {
+public class Sequence extends AbstractList<Integer> implements ISequence, RandomAccess {
 
     protected final String identifier;
     protected final String contents;
@@ -60,6 +61,10 @@ public class Sequence extends AbstractCollection<Integer> implements ISequence {
             charSequence = IntArray.forList(this);
         }
         return charSequence;
+    }
+
+    public Integer get(int i) {
+        return charSequence()[i];
     }
 
     /**

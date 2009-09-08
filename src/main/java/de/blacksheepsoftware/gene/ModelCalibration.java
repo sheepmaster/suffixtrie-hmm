@@ -1,6 +1,7 @@
 package de.blacksheepsoftware.gene;
 
-import de.blacksheepsoftware.evaluation.FiniteRandomSequence;
+import de.blacksheepsoftware.evaluation.RandomSequence;
+import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.SequenceIterable;
 import de.blacksheepsoftware.util.Stats;
 
@@ -30,7 +31,7 @@ public class ModelCalibration {
         final double[] scores = new double[NUM_SEQUENCES];
         final int numCharacters = model.numCharacters();
         for (int i=0; i<scores.length; i++) {
-            final FiniteRandomSequence seq = new FiniteRandomSequence(numCharacters, SEQUENCE_LENGTH);
+            final ISequence seq = new RandomSequence(numCharacters).generateSequence(SEQUENCE_LENGTH);
             final LocalSearch s = LocalSearch.search(model, baseModel, seq);
             scores[i] = s.sum();
         }
@@ -56,12 +57,12 @@ public class ModelCalibration {
     }
 
     public double normalizedScore(LocalSearch s) {
-        return lambda*s.sum() - Math.log(k*s.getSequence().length());
+        return lambda*s.sum() - Math.log(k*s.getContainingSequence().length());
     }
 
     public double eValue(LocalSearch s) {
         // return Math.exp(-normalizedScore(s));
-        return k*s.getSequence().length()*Math.exp(-lambda*s.sum());
+        return k*s.getContainingSequence().length()*Math.exp(-lambda*s.sum());
     }
 
     public double specificity(LocalSearch s) {
