@@ -1,9 +1,7 @@
 package de.blacksheepsoftware.hmm;
 
-import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.RandomAccess;
 import java.util.regex.Matcher;
 
 import de.blacksheepsoftware.util.IntArray;
@@ -13,7 +11,7 @@ import de.blacksheepsoftware.util.IntArray;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class Sequence extends AbstractList<Integer> implements ISequence, RandomAccess {
+public class Sequence extends AbstractSequence {
 
     protected final String identifier;
     protected final String contents;
@@ -51,11 +49,6 @@ public class Sequence extends AbstractList<Integer> implements ISequence, Random
         return length;
     }
 
-    @Override
-    public int size() {
-        return length();
-    }
-
     public int[] charSequence() {
         if (charSequence == null) {
             charSequence = IntArray.forList(this);
@@ -66,17 +59,6 @@ public class Sequence extends AbstractList<Integer> implements ISequence, Random
     @Override
     public Integer get(int i) {
         return charSequence()[i];
-    }
-
-    /**
-     * @param sequences
-     */
-    public static int totalLength(Iterable<? extends ISequence> sequences) {
-        int totalLength = 0;
-        for (ISequence s : sequences) {
-            totalLength += s.length();
-        }
-        return totalLength;
     }
 
     private class SequenceIterator implements Iterator<Integer> {  // TODO: better name

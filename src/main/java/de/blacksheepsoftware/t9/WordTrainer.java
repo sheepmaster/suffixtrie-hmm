@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.Vector;
 
+import de.blacksheepsoftware.hmm.AbstractSequence;
 import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.Sequence;
@@ -63,7 +64,7 @@ public final class WordTrainer {
 
         Model model = new Model(Alphabet.ABC, Model.Variant.PARTIAL_BACKLINKS);
 
-        final int totalLength = Sequence.totalLength(testingWords);
+        final int totalLength = AbstractSequence.totalLength(testingWords);
 
         for (Sequence w : trainingWords) {
             model.learn(w);

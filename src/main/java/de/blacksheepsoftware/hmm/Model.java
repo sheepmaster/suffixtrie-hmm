@@ -117,7 +117,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
      * @return
      */
     public double averagePerplexity(Iterable<? extends ISequence> sequences) {
-        final int totalLength = Sequence.totalLength(sequences);
+        final int totalLength = AbstractSequence.totalLength(sequences);
         double testPerplexity = 0;
         for (ISequence s : sequences) {
             testPerplexity += perplexity(s);

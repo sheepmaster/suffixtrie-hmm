@@ -1,20 +1,28 @@
 package de.blacksheepsoftware.hmm;
 
-import java.util.AbstractList;
-import java.util.RandomAccess;
 
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class SubSequence extends AbstractList<Integer> implements ISequence, RandomAccess {
+public class SubSequence extends AbstractSequence {
 
     protected final ISequence containingSequence;
     protected final int start;
     protected final int end;
 
     public SubSequence(ISequence containingSequence, int start, int end) {
+        final int length = containingSequence.length();
+        if (start < 0) {
+            throw new IndexOutOfBoundsException("start: "+start);
+        }
+        if (end > length) {
+            throw new IndexOutOfBoundsException("end: "+end+" length: "+length);
+        }
+        if (start > end) {
+            throw new IllegalArgumentException("start: "+start+" end: "+end);
+        }
         this.containingSequence = containingSequence;
         this.start = start;
         this.end = end;
@@ -68,12 +76,26 @@ public class SubSequence extends AbstractList<Integer> implements ISequence, Ran
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public int size() {
-        return length();
+    public ISequence subList(int subStart, int subEnd) {
+        if (subStart < start) {
+            throw new IndexOutOfBoundsException("start");
+        }
+        if (subEnd > end) {
+            throw new IndexOutOfBoundsException("end");
+        }
+        if (subStart > subEnd) {
+            throw new IllegalArgumentException("start: "+subStart+" end: "+subEnd);
+        }
+        return containingSequence.subList(start + subStart, start + subEnd);
+    }
+
+    public ISequence precedingSequence() {
+        return containingSequence.subList(0, start);
+    }
+
+    public ISequence followingSequence() {
+        return containingSequence.subList(end, containingSequence.length());
     }
 
 }

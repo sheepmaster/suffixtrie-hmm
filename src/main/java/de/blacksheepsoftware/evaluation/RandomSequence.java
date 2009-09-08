@@ -1,10 +1,9 @@
 package de.blacksheepsoftware.evaluation;
 
-import java.util.AbstractList;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.RandomAccess;
 
+import de.blacksheepsoftware.hmm.AbstractSequence;
 import de.blacksheepsoftware.hmm.ISequence;
 
 /**
@@ -66,7 +65,7 @@ public class RandomSequence implements Iterable<Integer> {
         return new ListSequence("Random"+numCharacters+":"+seed, array);
     }
 
-    protected static class ListSequence extends AbstractList<Integer> implements ISequence, RandomAccess {
+    protected static class ListSequence extends AbstractSequence {
 
         protected final int[] sequence;
 

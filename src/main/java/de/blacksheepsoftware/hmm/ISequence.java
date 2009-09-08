@@ -10,4 +10,6 @@ public interface ISequence extends List<Integer> {
     int length();
 
     String getIdentifier();
+
+    ISequence subList(int start, int end);
 }
