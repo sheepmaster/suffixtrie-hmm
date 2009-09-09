@@ -51,9 +51,8 @@ public class MultiLocalSearch implements Iterable<LocalSearch> {
          */
         public LocalSearch next() {
             final LocalSearch s = searchHits.remove();
-            final ISequence seq = s.getContainingSequence();
-            addSearchHit(seq.subSequencePreceding(s));
-            addSearchHit(seq.subSequenceFollowing(s));
+            addSearchHit(s.precedingSubSequence());
+            addSearchHit(s.followingSubSequence());
             return s;
         }
 

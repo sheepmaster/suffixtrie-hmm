@@ -47,4 +47,12 @@ public abstract class AbstractSequence extends AbstractList<Integer> implements 
         return getIdentifier();
     }
 
+    public int startIndex() {
+        return 0;
+    }
+
+    public int endIndex() {
+        return length();
+    }
+
 }
