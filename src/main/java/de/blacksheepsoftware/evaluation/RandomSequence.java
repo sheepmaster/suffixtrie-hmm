@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import de.blacksheepsoftware.hmm.AbstractSequence;
+import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.ISequence;
 
 /**
@@ -16,12 +17,15 @@ public class RandomSequence implements Iterable<Integer> {
 
     protected final long seed;
 
-    public RandomSequence(int numCharacters) {
-        this(numCharacters, 0);
+    protected final Alphabet alphabet;
+
+    public RandomSequence(Alphabet alphabet) {
+        this(alphabet, 0);
     }
 
-    public RandomSequence(int numCharacters, long seed) {
-        this.numCharacters = numCharacters;
+    public RandomSequence(Alphabet alphabet, long seed) {
+        this.alphabet = alphabet;
+        this.numCharacters = alphabet.numberOfCharacters();
         this.seed = seed;
     }
 
@@ -62,16 +66,19 @@ public class RandomSequence implements Iterable<Integer> {
         for (int i=0; i<length; i++) {
             array[i] = it.next();
         }
-        return new ListSequence("Random"+numCharacters+":"+seed, array);
+        return new ListSequence(alphabet, "Random"+numCharacters+":"+seed, array);
     }
 
     protected static class ListSequence extends AbstractSequence {
 
         protected final int[] sequence;
 
+        protected final Alphabet alphabet;
+
         protected final String identifier;
 
-        public ListSequence(String identifier, int[] seq) {
+        public ListSequence(Alphabet alphabet, String identifier, int[] seq) {
+            this.alphabet = alphabet;
             this.identifier = identifier;
             sequence = seq;
         }
@@ -104,6 +111,13 @@ public class RandomSequence implements Iterable<Integer> {
         @Override
         public int size() {
             return length();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public Alphabet getAlphabet() {
+            return alphabet;
         }
 
     }

@@ -53,6 +53,7 @@ public class Sequence extends AbstractSequence {
         if (charSequence == null) {
             charSequence = IntArray.forList(this);
         }
+        assert charSequence.length == length;
         return charSequence;
     }
 

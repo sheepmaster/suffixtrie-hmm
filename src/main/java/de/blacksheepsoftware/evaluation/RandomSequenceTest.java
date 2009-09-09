@@ -26,7 +26,7 @@ public class RandomSequenceTest {
         try {
             final Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
 
-            final RandomSequence seq = new RandomSequence(model.numCharacters());
+            final RandomSequence seq = new RandomSequence(model.getAlphabet());
             final Iterator<Double> scores = model.sequenceIterator(seq.iterator());
             final double log2 = Math.log(2);
 

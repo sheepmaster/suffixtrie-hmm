@@ -2,6 +2,7 @@ package de.blacksheepsoftware.gene;
 
 import de.blacksheepsoftware.evaluation.RandomSequence;
 import de.blacksheepsoftware.hmm.ISequence;
+import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.SequenceIterable;
 import de.blacksheepsoftware.util.Stats;
 
@@ -17,10 +18,10 @@ public class ModelCalibration {
     protected double lambda;
     protected double k;
 
-    protected final SequenceIterable model;
+    protected final Model model;
     protected final SequenceIterable baseModel;
 
-    public ModelCalibration(SequenceIterable m, SequenceIterable baseModel) {
+    public ModelCalibration(Model m, SequenceIterable baseModel) {
         this.model = m;
         this.baseModel = baseModel;
 
@@ -29,9 +30,8 @@ public class ModelCalibration {
 
     private void calibrate() {
         final double[] scores = new double[NUM_SEQUENCES];
-        final int numCharacters = model.numCharacters();
         for (int i=0; i<scores.length; i++) {
-            final ISequence seq = new RandomSequence(numCharacters).generateSequence(SEQUENCE_LENGTH);
+            final ISequence seq = new RandomSequence(model.getAlphabet()).generateSequence(SEQUENCE_LENGTH);
             final LocalSearch s = LocalSearch.search(model, baseModel, seq);
             scores[i] = s.sum();
         }

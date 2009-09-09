@@ -23,8 +23,16 @@ public class FastaReader {
 
     protected String line;
 
+    private static BufferedReader bufferedReader(Reader r) {
+        if (r instanceof BufferedReader) {
+            return (BufferedReader)r;
+        } else {
+            return new BufferedReader(r);
+        }
+    }
+
     public FastaReader(Reader r) throws IOException {
-        this(new BufferedReader(r));
+        this(bufferedReader(r));
     }
 
     public FastaReader(BufferedReader r) throws IOException {

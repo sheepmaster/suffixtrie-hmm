@@ -16,4 +16,6 @@ public interface ISequence extends List<Integer> {
 
     ISequence subSequencePreceding(SubSequence s);
     ISequence subSequenceFollowing(SubSequence s);
+
+    public Alphabet getAlphabet();
 }

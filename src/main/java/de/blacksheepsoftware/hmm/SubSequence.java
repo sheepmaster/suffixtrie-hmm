@@ -11,8 +11,17 @@ public class SubSequence extends AbstractSequence {
     protected final ISequence containingSequence;
     protected final int start;
     protected final int end;
+    protected final boolean complement;
 
     public SubSequence(ISequence containingSequence, int start, int end) {
+        this(containingSequence, start, end, false);
+    }
+
+    public SubSequence(ISequence containingSequence, int start, int end, boolean complement) {
+        if (complement && containingSequence.getAlphabet() != Alphabet.DNA) {
+            throw new IllegalArgumentException("Only DNA sequences support complements");
+        }
+
         final int length = containingSequence.length();
         if (start < 0) {
             throw new IndexOutOfBoundsException("start: "+start);
@@ -32,6 +41,7 @@ public class SubSequence extends AbstractSequence {
         this.containingSequence = containingSequence;
         this.start = start;
         this.end = end;
+        this.complement = complement;
         //        }
     }
 
@@ -45,6 +55,7 @@ public class SubSequence extends AbstractSequence {
     /**
      * @return the start
      */
+    @Override
     public int startIndex() {
         return start;
     }
@@ -52,6 +63,7 @@ public class SubSequence extends AbstractSequence {
     /**
      * @return the end
      */
+    @Override
     public int endIndex() {
         return end;
     }
@@ -60,7 +72,8 @@ public class SubSequence extends AbstractSequence {
      * {@inheritDoc}
      */
     public String getIdentifier() {
-        return containingSequence.getIdentifier()+"["+start+".."+end+"]";
+        return complement ? containingSequence.getIdentifier()+"[complement("+start+".."+end+")]"
+                : containingSequence.getIdentifier()+"["+start+".."+end+"]";
     }
 
     /**
@@ -79,7 +92,7 @@ public class SubSequence extends AbstractSequence {
         if (index<0 || index>=size) {
             throw new IndexOutOfBoundsException("Index: "+index+",Size: "+size);
         }
-        return containingSequence.get(index + start);
+        return complement ? (5 - containingSequence.get(end - index - 1)) : containingSequence.get(index + start);
 
     }
 
@@ -105,6 +118,13 @@ public class SubSequence extends AbstractSequence {
 
     public ISequence followingSubSequence() {
         return containingSequence.subSequenceFollowing(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Alphabet getAlphabet() {
+        return containingSequence.getAlphabet();
     }
 
 }
