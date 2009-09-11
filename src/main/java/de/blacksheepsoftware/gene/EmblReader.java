@@ -8,7 +8,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.blacksheepsoftware.hmm.Alphabet;
-import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.SubSequence;
 
 /**
@@ -38,9 +37,9 @@ public class EmblReader {
 
         final AnnotatedSequence seq = readSequence(identifier);
 
-        final List<ISequence> subsequences = seq.getSubSequences();
+        final List<SubSequence> subsequences = seq.getSubSequences();
         for (String s : subsequenceStrings) {
-            final ISequence subseq;
+            final SubSequence subseq;
             final Matcher m1 = Pattern.compile("FT\\s+CDS\\s+(\\d+)\\.\\.(\\d+)").matcher(s);
             if (m1.matches()) {
                 final int start = Integer.parseInt(m1.group(1));
