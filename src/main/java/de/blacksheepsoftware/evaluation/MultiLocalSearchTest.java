@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Reader;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import de.blacksheepsoftware.gene.AnnotatedSequence;
@@ -22,6 +23,30 @@ import de.blacksheepsoftware.hmm.UniformModel;
  *
  */
 public class MultiLocalSearchTest {
+
+    /**
+     * 
+     */
+    private static final double LOG_2 = Math.log(2);
+
+    public static double[] softMax(double[] array) {
+        double[] softMax = new double[array.length];
+        double max = Double.NEGATIVE_INFINITY;
+        for (double d : array) {
+            max = Math.max(max, d);
+        }
+        double expSum = 0;
+        for (int i=0; i<array.length; i++) {
+            final double exp = Math.exp(array[i]-max);
+            softMax[i] = exp;
+            expSum += exp;
+        }
+        for (int i=0; i<array.length; i++) {
+            softMax[i] /= expSum;
+        }
+
+        return softMax;
+    }
 
     /**
      * @param args
@@ -56,7 +81,7 @@ public class MultiLocalSearchTest {
             System.out.println("sequence\trange\tscore");
             MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, seq);
             for (LocalSearch search : searches) {
-                final double score = search.sum() / Math.log(2);
+                final double score = search.sum() / LOG_2;
                 if (score > 0) {
                     final ISequence s = search.getContainingSequence();
                     System.out.println(s+"\t"+(s.startIndex()+search.startIndex())+
@@ -66,11 +91,17 @@ public class MultiLocalSearchTest {
                 }
             }
 
-            System.out.println("hit\tscore");
-            for (ISequence s : seq.getSubSequences()) {
+            System.out.println("hit\tscore\tprobability");
+            final List<ISequence> subSequences = seq.getSubSequences();
+            double[] scores = new double[subSequences.size()];
+            for (int i=0; i<scores.length; i++) {
+                ISequence s = subSequences.get(i);
                 final double perplexity = model.perplexity(s);
-                final double score = 2*s.length()-perplexity;
-                System.out.println(s+"\t"+score);
+                scores[i] = LOG_2*(2*s.length()-perplexity);
+            }
+            double[] probabilities = softMax(scores);
+            for (int i=0; i<scores.length; i++) {
+                System.out.println(subSequences.get(i)+"\t"+scores[i]/LOG_2+"\t"+probabilities[i]);
             }
 
         } catch (IOException e) {
