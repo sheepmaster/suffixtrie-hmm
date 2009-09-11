@@ -5,6 +5,7 @@ import java.util.Iterator;
 import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.SequenceIterable;
 import de.blacksheepsoftware.hmm.SubSequence;
+import de.blacksheepsoftware.util.TransformingIterator;
 
 
 /**
@@ -21,7 +22,11 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
         this.score = score;
     }
 
-    public ScoredSequence(ISequence sequence, int startIndex, int endIndex, SequenceIterable model, SequenceIterable baseModel) {
+    public ScoredSequence(SubSequence sequence, SequenceIterable model, SequenceIterable baseModel) {
+        this(sequence.getContainingSequence(), sequence.getStartIndex(), sequence.getEndIndex(), sequence.isComplement(), model, baseModel);
+    }
+
+    public ScoredSequence(ISequence sequence, int startIndex, int endIndex, boolean complement, SequenceIterable model, SequenceIterable baseModel) {
         super(sequence, startIndex, endIndex);
         double s = 0;
         Iterator<Double> modelIterator = model.sequenceIterator(this.iterator());
@@ -75,6 +80,22 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
      */
     public int compareTo(ScoredSequence o) {
         return Double.compare(score, o.score);
+    }
+
+    /**
+     * @param sequences
+     * @param model
+     * @param baseModel
+     * @return
+     */
+    public static TransformingIterator<SubSequence, ScoredSequence> scoringIterator(
+            final Iterable<SubSequence> sequences, final SequenceIterable model, final SequenceIterable baseModel) {
+        return new TransformingIterator<SubSequence,ScoredSequence>(sequences.iterator()) {
+            @Override
+            public ScoredSequence transform(SubSequence s) {
+                return new ScoredSequence(s, model, baseModel);
+            }
+        };
     }
 
 }
