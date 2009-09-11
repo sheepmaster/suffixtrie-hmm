@@ -11,7 +11,7 @@ import de.blacksheepsoftware.hmm.SequenceIterable;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class MultiLocalSearch implements Iterable<LocalSearch> {
+public class MultiLocalSearch implements Iterable<ScoredSequence> {
 
     protected final ISequence sequence;
 
@@ -27,13 +27,13 @@ public class MultiLocalSearch implements Iterable<LocalSearch> {
     /**
      * {@inheritDoc}
      */
-    public Iterator<LocalSearch> iterator() {
+    public Iterator<ScoredSequence> iterator() {
         return new LocalSearchIterator();
     }
 
-    protected class LocalSearchIterator implements Iterator<LocalSearch> {
+    protected class LocalSearchIterator implements Iterator<ScoredSequence> {
 
-        protected PriorityQueue<LocalSearch> searchHits = new PriorityQueue<LocalSearch>(11, Collections.reverseOrder());
+        protected PriorityQueue<ScoredSequence> searchHits = new PriorityQueue<ScoredSequence>(11, Collections.reverseOrder());
 
         protected LocalSearchIterator() {
             addSearchHit(sequence);
@@ -49,8 +49,8 @@ public class MultiLocalSearch implements Iterable<LocalSearch> {
         /**
          * {@inheritDoc}
          */
-        public LocalSearch next() {
-            final LocalSearch s = searchHits.remove();
+        public ScoredSequence next() {
+            final ScoredSequence s = searchHits.remove();
             addSearchHit(s.precedingSubSequence());
             addSearchHit(s.followingSubSequence());
             return s;
@@ -63,7 +63,7 @@ public class MultiLocalSearch implements Iterable<LocalSearch> {
             if (seq.length() == 0) {
                 return;
             }
-            final LocalSearch hit = LocalSearch.search(model, baseModel, seq);
+            final ScoredSequence hit = ScoredSequence.search(model, baseModel, seq);
             if (hit.length() > 0) {
                 searchHits.add(hit);
             }

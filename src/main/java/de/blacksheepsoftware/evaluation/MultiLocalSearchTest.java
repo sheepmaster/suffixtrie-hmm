@@ -12,7 +12,7 @@ import java.util.zip.GZIPInputStream;
 import de.blacksheepsoftware.gene.AnnotatedSequence;
 import de.blacksheepsoftware.gene.EmblReader;
 import de.blacksheepsoftware.gene.FileFormatException;
-import de.blacksheepsoftware.gene.LocalSearch;
+import de.blacksheepsoftware.gene.ScoredSequence;
 import de.blacksheepsoftware.gene.MultiLocalSearch;
 import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.Model;
@@ -78,14 +78,20 @@ public class MultiLocalSearchTest {
                 throw new FileFormatException("Sequence doesn't fit to model");
             }
 
-            System.out.println("sequence\trange\tscore");
+            System.out.println("sequence\trange\tscore\texpsum");
             MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, seq);
-            for (LocalSearch search : searches) {
-                final double score = search.sum() / LOG_2;
+            double expSum = 0;
+            double max = Double.NEGATIVE_INFINITY;
+            for (ScoredSequence search : searches) {
+                final double score = search.score() / LOG_2;
                 if (score > 0) {
+                    if (max == Double.NEGATIVE_INFINITY) {
+                        max = search.score();
+                    }
+                    expSum += Math.exp(search.score() - max);
                     final ISequence s = search.getContainingSequence();
                     System.out.println(s+"\t"+(s.startIndex()+search.startIndex())+
-                            ".."+(s.startIndex()+search.endIndex())+"\t"+score);
+                            ".."+(s.startIndex()+search.endIndex())+"\t"+score+"\t"+expSum);
                 } else {
                     System.err.println("muuh");
                 }

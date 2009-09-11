@@ -12,16 +12,28 @@ import de.blacksheepsoftware.hmm.SubSequence;
  * 
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  */
-public class LocalSearch extends SubSequence implements Comparable<LocalSearch> {
+public class ScoredSequence extends SubSequence implements Comparable<ScoredSequence> {
 
-    protected final double sum;
+    protected final double score;
 
-    LocalSearch(ISequence sequence, int startIndex, int endIndex, double sum) {
+    ScoredSequence(ISequence sequence, int startIndex, int endIndex, double score) {
         super(sequence, startIndex, endIndex);
-        this.sum = sum;
+        this.score = score;
     }
 
-    public static LocalSearch search(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
+    public ScoredSequence(ISequence sequence, int startIndex, int endIndex, SequenceIterable model, SequenceIterable baseModel) {
+        super(sequence, startIndex, endIndex);
+        double s = 0;
+        Iterator<Double> modelIterator = model.sequenceIterator(this.iterator());
+        Iterator<Double> baseModelIterator = baseModel.sequenceIterator(this.iterator());
+        while (modelIterator.hasNext()) {
+            s += baseModelIterator.next() - modelIterator.next();
+        }
+
+        this.score = s;
+    }
+
+    public static ScoredSequence search(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
         int maxStartIndex = 0;
         int maxEndIndex = 0;
         double maxSum = 0.0;
@@ -48,18 +60,21 @@ public class LocalSearch extends SubSequence implements Comparable<LocalSearch> 
                 maxEndIndex = endIndex;
             }
         }
-        return new LocalSearch(sequence, maxStartIndex, maxEndIndex, maxSum);
-    }
-
-    public double sum() {
-        return sum;
+        return new ScoredSequence(sequence, maxStartIndex, maxEndIndex, maxSum);
     }
 
     /**
      * {@inheritDoc}
      */
-    public int compareTo(LocalSearch o) {
-        return Double.compare(sum, o.sum);
+    public double score() {
+        return score;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int compareTo(ScoredSequence o) {
+        return Double.compare(score, o.score);
     }
 
 }

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.zip.GZIPInputStream;
 
-import de.blacksheepsoftware.gene.LocalSearch;
+import de.blacksheepsoftware.gene.ScoredSequence;
 import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.UniformModel;
@@ -30,9 +30,9 @@ public class RandomLocalSearchTest2 {
             for (int i = 0; true; i++) {
                 final ISequence seq = new RandomSequence(model.getAlphabet()).generateSequence(400);
 
-                final LocalSearch search = LocalSearch.search(model, baseModel, seq);
+                final ScoredSequence search = ScoredSequence.search(model, baseModel, seq);
 
-                System.out.println(search.startIndex()+"\t"+search.endIndex()+"\t"+search.sum()+"\t"+(search.sum()/(search.endIndex()-search.startIndex())));
+                System.out.println(search.startIndex()+"\t"+search.endIndex()+"\t"+search.score()+"\t"+(search.score()/(search.endIndex()-search.startIndex())));
                 //                System.err.println(i+" hits\r");
             }
 

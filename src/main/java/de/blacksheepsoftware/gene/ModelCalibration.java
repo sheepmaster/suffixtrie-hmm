@@ -32,8 +32,8 @@ public class ModelCalibration {
         final double[] scores = new double[NUM_SEQUENCES];
         for (int i=0; i<scores.length; i++) {
             final ISequence seq = new RandomSequence(model.getAlphabet()).generateSequence(SEQUENCE_LENGTH);
-            final LocalSearch s = LocalSearch.search(model, baseModel, seq);
-            scores[i] = s.sum();
+            final ScoredSequence s = ScoredSequence.search(model, baseModel, seq);
+            scores[i] = s.score();
         }
 
         calibrateDirect(scores);
@@ -56,16 +56,16 @@ public class ModelCalibration {
         k = Math.exp(lambda*mu)/SEQUENCE_LENGTH;
     }
 
-    public double normalizedScore(LocalSearch s) {
-        return lambda*s.sum() - Math.log(k*s.getContainingSequence().length());
+    public double normalizedScore(ScoredSequence s) {
+        return lambda*s.score() - Math.log(k*s.getContainingSequence().length());
     }
 
-    public double eValue(LocalSearch s) {
+    public double eValue(ScoredSequence s) {
         // return Math.exp(-normalizedScore(s));
-        return k*s.getContainingSequence().length()*Math.exp(-lambda*s.sum());
+        return k*s.getContainingSequence().length()*Math.exp(-lambda*s.score());
     }
 
-    public double specificity(LocalSearch s) {
+    public double specificity(ScoredSequence s) {
         // The maximum normalized score follows a standard Gumbel distribution
         // return -Math.expm1(-Math.exp(-normalizedScore(s)));
 
