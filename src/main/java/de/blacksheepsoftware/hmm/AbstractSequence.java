@@ -21,14 +21,14 @@ public abstract class AbstractSequence extends AbstractList<Integer> implements 
         if (s.containingSequence != this) {
             throw new IllegalArgumentException();
         }
-        return new SubSequence(this, 0, s.startIndex());
+        return new SubSequence(this, 0, s.getStartIndex());
     }
 
     public ISequence subSequenceFollowing(SubSequence s) {
         if (s.containingSequence != this) {
             throw new IllegalArgumentException();
         }
-        return new SubSequence(this, s.endIndex(), length());
+        return new SubSequence(this, s.getEndIndex(), length());
     }
 
     /**
@@ -47,11 +47,11 @@ public abstract class AbstractSequence extends AbstractList<Integer> implements 
         return getIdentifier();
     }
 
-    public int startIndex() {
+    public int getStartIndex() {
         return 0;
     }
 
-    public int endIndex() {
+    public int getEndIndex() {
         return length();
     }
 

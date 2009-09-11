@@ -90,8 +90,8 @@ public class MultiLocalSearchTest {
                     }
                     expSum += Math.exp(search.score() - max);
                     final ISequence s = search.getContainingSequence();
-                    System.out.println(s+"\t"+(s.startIndex()+search.startIndex())+
-                            ".."+(s.startIndex()+search.endIndex())+"\t"+score+"\t"+expSum);
+                    System.out.println(s+"\t"+(s.getStartIndex()+search.getStartIndex())+
+                            ".."+(s.getStartIndex()+search.getEndIndex())+"\t"+score+"\t"+expSum);
                 } else {
                     System.err.println("muuh");
                 }

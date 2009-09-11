@@ -52,11 +52,12 @@ public class SubSequence extends AbstractSequence {
         return containingSequence;
     }
 
+
     /**
      * @return the start
      */
     @Override
-    public int startIndex() {
+    public int getStartIndex() {
         return start;
     }
 
@@ -64,7 +65,7 @@ public class SubSequence extends AbstractSequence {
      * @return the end
      */
     @Override
-    public int endIndex() {
+    public int getEndIndex() {
         return end;
     }
 
@@ -101,7 +102,7 @@ public class SubSequence extends AbstractSequence {
         if (s.containingSequence != this) {
             throw new IllegalArgumentException();
         }
-        return new SubSequence(containingSequence, start, start+s.startIndex());
+        return new SubSequence(containingSequence, start, start+s.getStartIndex());
     }
 
     @Override
@@ -109,7 +110,7 @@ public class SubSequence extends AbstractSequence {
         if (s.containingSequence != this) {
             throw new IllegalArgumentException();
         }
-        return new SubSequence(containingSequence, start+s.endIndex(), end);
+        return new SubSequence(containingSequence, start+s.getEndIndex(), end);
     }
 
     public ISequence precedingSubSequence() {
@@ -125,6 +126,13 @@ public class SubSequence extends AbstractSequence {
      */
     public Alphabet getAlphabet() {
         return containingSequence.getAlphabet();
+    }
+
+    /**
+     * @return
+     */
+    public boolean isComplement() {
+        return complement;
     }
 
 }

@@ -15,7 +15,6 @@ public class AnnotatedSequence extends Sequence {
 
     public AnnotatedSequence(String identifier, String contents, Alphabet alphabet, int length) {
         super(identifier, contents, alphabet, length);
-        // TODO Auto-generated constructor stub
     }
 
     protected List<ISequence> subSequences = new ArrayList<ISequence>();

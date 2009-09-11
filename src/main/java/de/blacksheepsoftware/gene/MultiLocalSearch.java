@@ -33,7 +33,7 @@ public class MultiLocalSearch implements Iterable<ScoredSequence> {
 
     protected class LocalSearchIterator implements Iterator<ScoredSequence> {
 
-        protected PriorityQueue<ScoredSequence> searchHits = new PriorityQueue<ScoredSequence>(11, Collections.reverseOrder());
+        protected PriorityQueue<ScoredSequence> searchHitQueue = new PriorityQueue<ScoredSequence>(11, Collections.reverseOrder());
 
         protected LocalSearchIterator() {
             addSearchHit(sequence);
@@ -43,14 +43,14 @@ public class MultiLocalSearch implements Iterable<ScoredSequence> {
          * {@inheritDoc}
          */
         public boolean hasNext() {
-            return !searchHits.isEmpty();
+            return !searchHitQueue.isEmpty();
         }
 
         /**
          * {@inheritDoc}
          */
         public ScoredSequence next() {
-            final ScoredSequence s = searchHits.remove();
+            final ScoredSequence s = searchHitQueue.remove();
             addSearchHit(s.precedingSubSequence());
             addSearchHit(s.followingSubSequence());
             return s;
@@ -65,7 +65,7 @@ public class MultiLocalSearch implements Iterable<ScoredSequence> {
             }
             final ScoredSequence hit = ScoredSequence.search(model, baseModel, seq);
             if (hit.length() > 0) {
-                searchHits.add(hit);
+                searchHitQueue.add(hit);
             }
 
         }

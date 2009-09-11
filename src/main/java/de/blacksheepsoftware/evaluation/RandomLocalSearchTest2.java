@@ -32,7 +32,7 @@ public class RandomLocalSearchTest2 {
 
                 final ScoredSequence search = ScoredSequence.search(model, baseModel, seq);
 
-                System.out.println(search.startIndex()+"\t"+search.endIndex()+"\t"+search.score()+"\t"+(search.score()/(search.endIndex()-search.startIndex())));
+                System.out.println(search.getStartIndex()+"\t"+search.getEndIndex()+"\t"+search.score()+"\t"+(search.score()/(search.getEndIndex()-search.getStartIndex())));
                 //                System.err.println(i+" hits\r");
             }
 

@@ -73,8 +73,8 @@ public class SequenceFinder {
                 final ScoredSequence search = ScoredSequence.search(model, baseModel, s);
                 final double score = search.score() / Math.log(2);
                 if (score > 0) {
-                    System.out.println(s.getIdentifier()+"\t"+search.startIndex()+
-                            "\t"+search.endIndex()+"\t"+score+
+                    System.out.println(s.getIdentifier()+"\t"+search.getStartIndex()+
+                            "\t"+search.getEndIndex()+"\t"+score+
                             "\t"+c.normalizedScore(search)+"\t"+c.eValue(search)+"\t"+c.specificity(search));
                 }
             }
