@@ -12,10 +12,12 @@ import java.util.zip.GZIPInputStream;
 import de.blacksheepsoftware.gene.AnnotatedSequence;
 import de.blacksheepsoftware.gene.EmblReader;
 import de.blacksheepsoftware.gene.FileFormatException;
-import de.blacksheepsoftware.gene.ScoredSequence;
 import de.blacksheepsoftware.gene.MultiLocalSearch;
+import de.blacksheepsoftware.gene.Normalizer;
+import de.blacksheepsoftware.gene.ScoredSequence;
 import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.Model;
+import de.blacksheepsoftware.hmm.SubSequence;
 import de.blacksheepsoftware.hmm.UniformModel;
 
 /**
@@ -72,44 +74,32 @@ public class MultiLocalSearchTest {
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
 
-            final AnnotatedSequence seq = reader.readAnnotatedSequence();
+            final AnnotatedSequence fullSequence = reader.readAnnotatedSequence();
 
-            if (seq.getAlphabet().numberOfCharacters() != model.numCharacters()) {
+            if (fullSequence.getAlphabet().numberOfCharacters() != model.numCharacters()) {
                 throw new FileFormatException("Sequence doesn't fit to model");
             }
 
-            System.out.println("sequence\trange\tscore\texpsum");
-            MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, seq);
-            double expSum = 0;
-            double max = Double.NEGATIVE_INFINITY;
-            for (ScoredSequence search : searches) {
-                final double score = search.score() / LOG_2;
+            System.out.println("sequence\trange\tscore\tprobability");
+            MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
+            Normalizer n = new Normalizer(searches.iterator());
+            for (ScoredSequence sequence : n) {
+                final double score = sequence.score() / LOG_2;
                 if (score > 0) {
-                    if (max == Double.NEGATIVE_INFINITY) {
-                        max = search.score();
-                    }
-                    expSum += Math.exp(search.score() - max);
-                    final ISequence s = search.getContainingSequence();
-                    System.out.println(s+"\t"+(s.getStartIndex()+search.getStartIndex())+
-                            ".."+(s.getStartIndex()+search.getEndIndex())+"\t"+score+"\t"+expSum);
+                    final ISequence searchRange = sequence.getContainingSequence();
+                    System.out.println(searchRange+"\t"+(searchRange.getStartIndex()+sequence.getStartIndex())+
+                            ".."+(searchRange.getStartIndex()+sequence.getEndIndex())+"\t"+score+"\t"+n.probability(sequence));
                 } else {
                     System.err.println("muuh");
                 }
             }
 
             System.out.println("hit\tscore\tprobability");
-            final List<ISequence> subSequences = seq.getSubSequences();
-            double[] scores = new double[subSequences.size()];
-            for (int i=0; i<scores.length; i++) {
-                ISequence s = subSequences.get(i);
-                final double perplexity = model.perplexity(s);
-                scores[i] = LOG_2*(2*s.length()-perplexity);
+            final List<SubSequence> subSequences = fullSequence.getSubSequences();
+            n = new Normalizer(subSequences, model, baseModel);
+            for (ScoredSequence sequence : n) {
+                System.out.println(sequence+"\t"+sequence.score()/LOG_2+"\t"+n.probability(sequence));
             }
-            double[] probabilities = softMax(scores);
-            for (int i=0; i<scores.length; i++) {
-                System.out.println(subSequences.get(i)+"\t"+scores[i]/LOG_2+"\t"+probabilities[i]);
-            }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
