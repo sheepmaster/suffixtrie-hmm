@@ -1,5 +1,6 @@
 package de.blacksheepsoftware.gene;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -30,7 +31,15 @@ import de.blacksheepsoftware.hmm.Sequence;
  */
 public class SequenceTrainer {
 
-    @Option(name = "--maxDepth", usage="maximum depth")
+    public enum Format {
+        Fasta,
+        Embl
+    }
+
+    @Option(name = "--format", usage="file format")
+    protected Format format;
+
+    @Option(name = "--maxDepth", usage="maximum trie depth")
     protected int maxDepth = 8;
 
     @Option(name = "--maxIterations", usage="maximum number of iterations for batch learning")
@@ -63,7 +72,7 @@ public class SequenceTrainer {
             }
         } catch (CmdLineException e) {
             System.err.println(e.getMessage());
-            System.err.println("Usage: java "+SequenceTrainer.class.getName()+" <options> <HMM file> <FASTA files...>");
+            System.err.println("Usage: java "+SequenceTrainer.class.getName()+" <options> <HMM file> <sequence files...>");
             parser.printUsage(System.err);
             System.exit(1);
         }
@@ -86,8 +95,8 @@ public class SequenceTrainer {
         Reader r = new InputStreamReader(input);
 
         try {
-            FastaReader fasta = new FastaReader(r);
-            Sequence trainingSequence = fasta.readSequence();
+            SequenceReader reader = reader(new BufferedReader(r));
+            Sequence trainingSequence = reader.readSequence();
 
             if (trainingSequence == null) {
                 System.err.println("Warning: No sequences found");
@@ -103,7 +112,7 @@ public class SequenceTrainer {
                 model.learn(trainingSequence, maxDepth);
                 System.out.print(++seqNo+" sequences read\r");
                 trainingSequences.add(trainingSequence);
-                trainingSequence = fasta.readSequence();
+                trainingSequence = reader.readSequence();
                 if (trainingSequence == null) {
                     break;
                 }
@@ -144,6 +153,33 @@ public class SequenceTrainer {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * @param r
+     * @throws IOException
+     */
+    private SequenceReader reader(BufferedReader r) throws IOException {
+        if (format == null) {
+            r.mark(1024);
+            final FastaReader fasta = new FastaReader(r);
+            if (fasta.canParse()) {
+                return fasta;
+            }
+            r.reset();
+            final EmblReader embl = new EmblReader(r);
+            if (embl.canParse()) {
+                r.reset();
+                return embl;
+            }
+            throw new FileFormatException("Unknown file format");
+        } else if (format.equals(Format.Fasta)) {
+            return new FastaReader(r);
+        } else if (format.equals(Format.Embl)) {
+            return new EmblReader(r);
+        } else {
+            throw new AssertionError();
         }
     }
 

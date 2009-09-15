@@ -2,6 +2,7 @@ package de.blacksheepsoftware.gene;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,7 +15,7 @@ import de.blacksheepsoftware.hmm.SubSequence;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class EmblReader {
+public class EmblReader implements SequenceReader {
 
     protected final List<String> subsequenceStrings = new ArrayList<String>();
 
@@ -24,18 +25,31 @@ public class EmblReader {
         this.r = r;
     }
 
-    public AnnotatedSequence readAnnotatedSequence() throws IOException, FileFormatException {
+    public EmblReader(Reader r) {
+        this(FastaReader.bufferedReader(r));
+    }
+
+    public boolean canParse() throws IOException {
         final String idLine = r.readLine();
         if (idLine == null) {
-            throw new FileFormatException("Missing header line");
+            return false;
         }
-        final Matcher headerMatcher = Pattern.compile("ID\\s+([a-zA-Z0-9_]+);").matcher(idLine);
+        return (idLine.startsWith("ID "));
+
+    }
+
+    public AnnotatedSequence readSequence() throws IOException, FileFormatException {
+        final String idLine = r.readLine();
+        if (idLine == null) {
+            return null;
+        }
+        final Matcher headerMatcher = Pattern.compile("ID\\s+([a-zA-Z0-9_]+)").matcher(idLine);
         if (!headerMatcher.lookingAt()) {
             throw new FileFormatException("Invalid header line: \""+idLine+"\"");
         }
         final String identifier = headerMatcher.group(1);
 
-        final AnnotatedSequence seq = readSequence(identifier);
+        final AnnotatedSequence seq = readFullSequence(identifier);
 
         final List<SubSequence> subsequences = seq.getSubSequences();
         for (String s : subsequenceStrings) {
@@ -68,7 +82,7 @@ public class EmblReader {
      * @throws IOException
      * @throws FileFormatException
      */
-    private AnnotatedSequence readSequence(final String identifier) throws IOException, FileFormatException {
+    private AnnotatedSequence readFullSequence(final String identifier) throws IOException, FileFormatException {
         while (r.ready()) {
             final String line = r.readLine();
             if (line.matches("FT\\s+CDS\\s+.*")) {

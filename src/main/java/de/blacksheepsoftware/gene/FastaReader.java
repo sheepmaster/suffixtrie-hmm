@@ -15,7 +15,7 @@ import de.blacksheepsoftware.hmm.Sequence;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class FastaReader {
+public class FastaReader implements SequenceReader {
 
     protected static final Pattern headerPattern = Pattern.compile("^>\\s*(\\S+)\\s+(\\d+)\\s+bp\\s+(.*)");
 
@@ -23,7 +23,7 @@ public class FastaReader {
 
     protected String line;
 
-    private static BufferedReader bufferedReader(Reader r) {
+    protected static BufferedReader bufferedReader(Reader r) {
         if (r instanceof BufferedReader) {
             return (BufferedReader)r;
         } else {
@@ -39,6 +39,11 @@ public class FastaReader {
         this.r = r;
         line = r.readLine();
     }
+
+    public boolean canParse() throws IOException {
+        return (line.startsWith(">"));
+    }
+
 
     public boolean ready() {
         return (line != null);

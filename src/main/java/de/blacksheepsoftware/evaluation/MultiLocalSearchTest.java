@@ -74,7 +74,7 @@ public class MultiLocalSearchTest {
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
 
-            final AnnotatedSequence fullSequence = reader.readAnnotatedSequence();
+            final AnnotatedSequence fullSequence = reader.readSequence();
 
             if (fullSequence.getAlphabet().numberOfCharacters() != model.numCharacters()) {
                 throw new FileFormatException("Sequence doesn't fit to model");
