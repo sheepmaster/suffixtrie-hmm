@@ -12,6 +12,8 @@ public interface SequenceReader {
 
     public boolean canParse() throws IOException;
 
+    public boolean ready() throws IOException;
+
     public Sequence readSequence() throws IOException;
 
 }

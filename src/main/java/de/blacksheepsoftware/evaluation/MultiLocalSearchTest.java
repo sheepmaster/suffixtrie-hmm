@@ -54,32 +54,34 @@ public class MultiLocalSearchTest {
 
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
+            while (reader.ready()) {
 
-            final AnnotatedSequence fullSequence = reader.readSequence();
+                final AnnotatedSequence fullSequence = reader.readSequence();
 
-            if (fullSequence.getAlphabet().numberOfCharacters() != model.numCharacters()) {
-                throw new FileFormatException("Sequence doesn't fit to model");
-            }
-
-            System.out.println("sequence\trange\tscore\tprobability");
-            MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
-            Normalizer n = new Normalizer(searches.iterator());
-            for (ScoredSequence sequence : n) {
-                final double score = sequence.score() / LOG_2;
-                if (score > 0) {
-                    final ISequence searchRange = sequence.getContainingSequence();
-                    System.out.println(searchRange+"\t"+(searchRange.getStartIndex()+sequence.getStartIndex())+
-                            ".."+(searchRange.getStartIndex()+sequence.getEndIndex())+"\t"+score+"\t"+n.probability(sequence));
-                } else {
-                    System.err.println("muuh");
+                if (fullSequence.getAlphabet().numberOfCharacters() != model.numCharacters()) {
+                    throw new FileFormatException("Sequence doesn't fit to model");
                 }
-            }
 
-            System.out.println("hit\tscore\tprobability");
-            final List<SubSequence> subSequences = fullSequence.getSubSequences();
-            n = new Normalizer(subSequences, model, baseModel);
-            for (ScoredSequence sequence : n) {
-                System.out.println(sequence+"\t"+sequence.score()/LOG_2+"\t"+n.probability(sequence));
+                System.out.println("sequence\trange\tscore\tprobability");
+                MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
+                Normalizer n = new Normalizer(searches.iterator());
+                for (ScoredSequence sequence : n) {
+                    final double score = sequence.score() / LOG_2;
+                    if (score > 0) {
+                        final ISequence searchRange = sequence.getContainingSequence();
+                        System.out.println(searchRange+"\t"+(searchRange.getStartIndex()+sequence.getStartIndex())+
+                                ".."+(searchRange.getStartIndex()+sequence.getEndIndex())+"\t"+score+"\t"+n.probability(sequence));
+                    } else {
+                        System.err.println("muuh");
+                    }
+                }
+
+                System.out.println("hit\tscore\tprobability");
+                final List<SubSequence> subSequences = fullSequence.getSubSequences();
+                n = new Normalizer(subSequences, model, baseModel);
+                for (ScoredSequence sequence : n) {
+                    System.out.println(sequence+"\t"+sequence.score()/LOG_2+"\t"+n.probability(sequence));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

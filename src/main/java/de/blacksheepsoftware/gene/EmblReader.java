@@ -58,7 +58,7 @@ public class EmblReader extends AbstractSequenceReader {
         final List<SubSequence> subsequences = seq.getSubSequences();
         for (String s : subsequenceStrings) {
             final SubSequence subseq;
-            final Matcher m1 = Pattern.compile("FT\\s+CDS\\s+(\\d+)\\.\\.(\\d+)").matcher(s);
+            final Matcher m1 = Pattern.compile("FT\\s+CDS\\s+<?(\\d+)\\.\\.>?(\\d+)").matcher(s);
             if (m1.matches()) {
                 final int start = Integer.parseInt(m1.group(1));
                 final int end = Integer.parseInt(m1.group(2));
@@ -70,11 +70,14 @@ public class EmblReader extends AbstractSequenceReader {
                     final int end = Integer.parseInt(m2.group(2));
                     subseq = new SubSequence(seq, start-1, end, true);
                 } else {
-                    throw new FileFormatException("Invalid feature header: \""+s+"\"");
+                    System.err.println("Warning: Invalid feature header: \""+s+"\"");
+                    continue;
                 }
             }
             subsequences.add(subseq);
         }
+
+        subsequenceStrings.clear();
 
         return seq;
 
@@ -92,9 +95,12 @@ public class EmblReader extends AbstractSequenceReader {
             if (line.matches("FT\\s+CDS\\s+.*")) {
                 subsequenceStrings.add(line);
             } else {
-                Matcher m = Pattern.compile("SQ\\s+Sequence (\\d+) BP;").matcher(line);
+                Matcher m = Pattern.compile("SQ\\s+Sequence (\\d+) BP;( \\d+ A; \\d+ C; \\d+ G; \\d+ T; (\\d+) other;)?").matcher(line);
                 if (m.lookingAt()) {
-                    final int length = Integer.parseInt(m.group(1));
+                    int length = Integer.parseInt(m.group(1));
+                    if (m.group(3) != null) {
+                        length -= Integer.parseInt(m.group(3));
+                    }
 
                     final StringBuffer sb = new StringBuffer();
                     while (true) {

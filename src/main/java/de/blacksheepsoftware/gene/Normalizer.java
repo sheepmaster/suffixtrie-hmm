@@ -1,8 +1,9 @@
 package de.blacksheepsoftware.gene;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import de.blacksheepsoftware.hmm.SequenceIterable;
 import de.blacksheepsoftware.hmm.SubSequence;
@@ -13,7 +14,7 @@ import de.blacksheepsoftware.hmm.SubSequence;
  */
 public class Normalizer implements Iterable<ScoredSequence> {
 
-    protected final List<ScoredSequence> sequenceList = new ArrayList<ScoredSequence>();
+    protected final SortedSet<ScoredSequence> sequenceList = new TreeSet<ScoredSequence>(Collections.reverseOrder());
 
     protected final double offset;
 
