@@ -3,8 +3,6 @@ package de.blacksheepsoftware.gene;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +13,7 @@ import de.blacksheepsoftware.hmm.Sequence;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class FastaReader implements SequenceReader {
+public class FastaReader extends AbstractSequenceReader {
 
     protected static final Pattern headerPattern = Pattern.compile("^>\\s*(\\S+)\\s+(\\d+)\\s+bp\\s+(.*)");
 
@@ -23,16 +21,8 @@ public class FastaReader implements SequenceReader {
 
     protected String line;
 
-    protected static BufferedReader bufferedReader(Reader r) {
-        if (r instanceof BufferedReader) {
-            return (BufferedReader)r;
-        } else {
-            return new BufferedReader(r);
-        }
-    }
-
     public FastaReader(Reader r) throws IOException {
-        this(bufferedReader(r));
+        this(AbstractSequenceReader.bufferedReader(r));
     }
 
     public FastaReader(BufferedReader r) throws IOException {
@@ -81,14 +71,6 @@ public class FastaReader implements SequenceReader {
             content.append(line);
         }
         return new Sequence(identifier, content.toString(), alphabet, length);
-    }
-
-    public List<Sequence> readAllSequences() throws IOException {
-        List<Sequence> testSequences = new ArrayList<Sequence>();
-        while (ready()) {
-            testSequences.add(readSequence());
-        }
-        return testSequences;
     }
 
 }

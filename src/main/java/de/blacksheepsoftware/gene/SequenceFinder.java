@@ -55,7 +55,7 @@ public class SequenceFinder {
 
             final UniformModel baseModel = new UniformModel(model.numCharacters());
 
-            final FastaReader reader = new FastaReader(r);
+            final SequenceReader reader = new FastaReader(r);
 
             System.err.print("Calibrating model...");
 

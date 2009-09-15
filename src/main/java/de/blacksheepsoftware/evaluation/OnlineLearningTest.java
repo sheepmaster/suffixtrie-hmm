@@ -2,11 +2,12 @@ package de.blacksheepsoftware.evaluation;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import de.blacksheepsoftware.gene.AbstractSequenceReader;
 import de.blacksheepsoftware.gene.FastaReader;
 import de.blacksheepsoftware.gene.FileFormatException;
+import de.blacksheepsoftware.gene.SequenceReader;
 import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.Sequence;
@@ -18,18 +19,6 @@ import de.blacksheepsoftware.hmm.Sequence;
 public class OnlineLearningTest {
 
     protected static final int MAX_DEPTH = 8;
-
-    public static List<Sequence> readAllSequences(FastaReader r) throws IOException {
-        List<Sequence> testSequences = new ArrayList<Sequence>();
-
-        while (r.ready()) {
-            Sequence s = r.readSequence();
-            System.out.print(s.getIdentifier()+"\t");
-            testSequences.add(s);
-        }
-        System.out.println();
-        return testSequences;
-    }
 
     /**
      * @param args
@@ -43,10 +32,10 @@ public class OnlineLearningTest {
         final String testFilename = args[1];
 
         try {
-            final FastaReader trainingReader = new FastaReader(new FileReader(trainingFilename));
-            final FastaReader testReader = new FastaReader(new FileReader(testFilename));
+            final SequenceReader trainingReader = new FastaReader(new FileReader(trainingFilename));
+            final AbstractSequenceReader testReader = new FastaReader(new FileReader(testFilename));
 
-            List<Sequence> testSequences = readAllSequences(testReader);
+            List<Sequence> testSequences = testReader.readAllSequences();
 
             Sequence trainingSequence = trainingReader.readSequence();
 

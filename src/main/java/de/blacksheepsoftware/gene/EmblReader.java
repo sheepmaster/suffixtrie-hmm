@@ -15,7 +15,7 @@ import de.blacksheepsoftware.hmm.SubSequence;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class EmblReader implements SequenceReader {
+public class EmblReader extends AbstractSequenceReader {
 
     protected final List<String> subsequenceStrings = new ArrayList<String>();
 
@@ -26,7 +26,7 @@ public class EmblReader implements SequenceReader {
     }
 
     public EmblReader(Reader r) {
-        this(FastaReader.bufferedReader(r));
+        this(AbstractSequenceReader.bufferedReader(r));
     }
 
     public boolean canParse() throws IOException {
@@ -36,6 +36,10 @@ public class EmblReader implements SequenceReader {
         }
         return (idLine.startsWith("ID "));
 
+    }
+
+    public boolean ready() throws IOException {
+        return r.ready();
     }
 
     public AnnotatedSequence readSequence() throws IOException, FileFormatException {

@@ -4,8 +4,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import de.blacksheepsoftware.gene.AbstractSequenceReader;
 import de.blacksheepsoftware.gene.FastaReader;
 import de.blacksheepsoftware.gene.FileFormatException;
+import de.blacksheepsoftware.gene.SequenceReader;
 import de.blacksheepsoftware.hmm.Alphabet;
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.Sequence;
@@ -30,8 +32,8 @@ public class OnlineLearningTest2 {
         final String testFilename = args[1];
 
         try {
-            final FastaReader trainingReader = new FastaReader(new FileReader(trainingFilename));
-            final FastaReader testReader = new FastaReader(new FileReader(testFilename));
+            final SequenceReader trainingReader = new FastaReader(new FileReader(trainingFilename));
+            final AbstractSequenceReader testReader = new FastaReader(new FileReader(testFilename));
 
             List<Sequence> testSequences = testReader.readAllSequences();
 

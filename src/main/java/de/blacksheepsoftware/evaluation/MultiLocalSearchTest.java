@@ -31,25 +31,6 @@ public class MultiLocalSearchTest {
      */
     private static final double LOG_2 = Math.log(2);
 
-    public static double[] softMax(double[] array) {
-        double[] softMax = new double[array.length];
-        double max = Double.NEGATIVE_INFINITY;
-        for (double d : array) {
-            max = Math.max(max, d);
-        }
-        double expSum = 0;
-        for (int i=0; i<array.length; i++) {
-            final double exp = Math.exp(array[i]-max);
-            softMax[i] = exp;
-            expSum += exp;
-        }
-        for (int i=0; i<array.length; i++) {
-            softMax[i] /= expSum;
-        }
-
-        return softMax;
-    }
-
     /**
      * @param args
      */
