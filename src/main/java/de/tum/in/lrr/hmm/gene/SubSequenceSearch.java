@@ -11,14 +11,14 @@ import de.tum.in.lrr.hmm.SequenceIterable;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class MultiLocalSearch implements Iterator<ScoredSequence> {
+public class SubSequenceSearch implements Iterator<ScoredSequence> {
 
     protected final ISequence sequence;
 
     protected final SequenceIterable model;
     protected final SequenceIterable baseModel;
 
-    public MultiLocalSearch(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
+    public SubSequenceSearch(SequenceIterable model, SequenceIterable baseModel, ISequence sequence) {
         this.sequence = sequence;
         this.model = model;
         this.baseModel = baseModel;

@@ -19,7 +19,7 @@ import de.tum.in.lrr.hmm.gene.EmblReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
 import de.tum.in.lrr.hmm.gene.ScoredSequence;
 import de.tum.in.lrr.hmm.gene.SoftMax;
-import de.tum.in.lrr.hmm.gene.MultiLocalSearch;
+import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -65,7 +65,7 @@ public class MultiLocalSearchTest {
                     throw new FileFormatException("Sequence doesn't fit to model");
                 }
 
-                final MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
+                final SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
                 final SoftMax n1 = new SoftMax(searches);
 
                 final ScoredSequence s1 = n1.iterator().next();
