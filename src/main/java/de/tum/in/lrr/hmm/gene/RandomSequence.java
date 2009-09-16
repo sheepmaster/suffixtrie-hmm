@@ -3,9 +3,9 @@ package de.tum.in.lrr.hmm.gene;
 import java.util.Iterator;
 import java.util.Random;
 
-import de.tum.in.lrr.hmm.AbstractSequence;
 import de.tum.in.lrr.hmm.Alphabet;
 import de.tum.in.lrr.hmm.ISequence;
+import de.tum.in.lrr.hmm.Sequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -66,60 +66,7 @@ public class RandomSequence implements Iterable<Integer> {
         for (int i=0; i<length; i++) {
             array[i] = it.next();
         }
-        return new ListSequence(alphabet, "Random"+numCharacters+":"+seed, array);
-    }
-
-    protected static class ListSequence extends AbstractSequence {
-
-        protected final int[] sequence;
-
-        protected final Alphabet alphabet;
-
-        protected final String identifier;
-
-        public ListSequence(Alphabet alphabet, String identifier, int[] seq) {
-            this.alphabet = alphabet;
-            this.identifier = identifier;
-            sequence = seq;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public String getIdentifier() {
-            return identifier;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int length() {
-            return sequence.length;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Integer get(int index) {
-            return sequence[index];
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int size() {
-            return length();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Alphabet getAlphabet() {
-            return alphabet;
-        }
-
+        return new Sequence("Random"+numCharacters+":"+seed, alphabet, array);
     }
 
 }
