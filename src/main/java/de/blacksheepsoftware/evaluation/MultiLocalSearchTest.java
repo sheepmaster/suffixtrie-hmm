@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Reader;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -54,6 +55,8 @@ public class MultiLocalSearchTest {
 
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
+            System.out.println("sequence\trange\tscore\tprobability");
+
             while (reader.ready()) {
 
                 final AnnotatedSequence fullSequence = reader.readSequence();
@@ -62,26 +65,26 @@ public class MultiLocalSearchTest {
                     throw new FileFormatException("Sequence doesn't fit to model");
                 }
 
-                System.out.println("sequence\trange\tscore\tprobability");
-                MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
-                Normalizer n = new Normalizer(searches.iterator());
-                for (ScoredSequence sequence : n) {
-                    final double score = sequence.score() / LOG_2;
-                    if (score > 0) {
-                        final ISequence searchRange = sequence.getContainingSequence();
-                        System.out.println(searchRange+"\t"+(searchRange.getStartIndex()+sequence.getStartIndex())+
-                                ".."+(searchRange.getStartIndex()+sequence.getEndIndex())+"\t"+score+"\t"+n.probability(sequence));
-                    } else {
-                        System.err.println("muuh");
-                    }
-                }
+                final MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
+                final Normalizer n1 = new Normalizer(searches.iterator());
 
-                System.out.println("hit\tscore\tprobability");
+                final ScoredSequence s1 = n1.iterator().next();
+
+                final double score = s1.score() / LOG_2;
+                final ISequence searchRange = s1.getContainingSequence();
+                System.out.print(fullSequence+"\t"+(searchRange.getStartIndex()+s1.getStartIndex()+1)+
+                        ".."+(searchRange.getStartIndex()+s1.getEndIndex())+"\t"+score+"\t"+n1.probability(s1));
+
                 final List<SubSequence> subSequences = fullSequence.getSubSequences();
-                n = new Normalizer(subSequences, model, baseModel);
-                for (ScoredSequence sequence : n) {
-                    System.out.println(sequence+"\t"+sequence.score()/LOG_2+"\t"+n.probability(sequence));
+                final Normalizer n2 = new Normalizer(subSequences, model, baseModel);
+
+                final Iterator<ScoredSequence> iterator = n2.iterator();
+                if (iterator.hasNext()) {
+                    final ScoredSequence s2 = iterator.next();
+
+                    System.out.print("\t"+(s2.getStartIndex()+1)+".."+s2.getEndIndex()+"\t"+s2.score()/LOG_2+"\t"+n2.probability(s2));
                 }
+                System.out.println();
             }
         } catch (IOException e) {
             e.printStackTrace();
