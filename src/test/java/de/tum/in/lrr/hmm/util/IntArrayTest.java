@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import de.tum.in.lrr.hmm.util.IntArray;
-
 import junit.framework.TestCase;
 
 /**
@@ -20,18 +18,18 @@ public class IntArrayTest extends TestCase {
     public void testIntArray() {
         final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);
         final int[] expected = new int[]{1, 2, 3, 4, 5};
-        assertTrue(Arrays.equals(expected, IntArray.forList(list)));
+        assertTrue(Arrays.equals(expected, IntArray.forList(list.iterator())));
     }
 
     public void testEmptyArray() {
         final List<Integer> list = Collections.emptyList();
         final int[] expected = new int[]{};
-        assertTrue(Arrays.equals(expected, IntArray.forList(list)));
+        assertTrue(Arrays.equals(expected, IntArray.forList(list.iterator())));
     }
 
     public void testLongArray() {
         final List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
         final int[] expected = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17};
-        assertTrue(Arrays.equals(expected, IntArray.forList(list)));
+        assertTrue(Arrays.equals(expected, IntArray.forList(list.iterator())));
     }
 }

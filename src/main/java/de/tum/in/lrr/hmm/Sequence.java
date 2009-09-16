@@ -14,24 +14,62 @@ import de.tum.in.lrr.hmm.util.IntArray;
 public class Sequence extends AbstractSequence {
 
     protected final String identifier;
-    protected final String contents;
     protected final Alphabet alphabet;
-    protected final int length;
     protected int[] charSequence = null;
 
-    public Sequence(String identifier, String contents, Alphabet alphabet, int length) {
-        this.identifier = identifier;
-        this.contents = contents;
+    public Sequence(String identifier, final String contents, final Alphabet alphabet, int length) {
+        this(identifier, alphabet, IntArray.forList(sequenceIterator(contents, alphabet), length));
+    }
+
+    public Sequence(String identifier, final String contents, final Alphabet alphabet) {
+        this(identifier, alphabet, IntArray.forList(sequenceIterator(contents, alphabet)));
+    }
+
+    public Sequence(String identifier, Alphabet alphabet, int[] sequence) {
+        this.charSequence = sequence;
         this.alphabet = alphabet;
-        this.length = length;
+        this.identifier = identifier;
     }
 
     /**
-     * {@inheritDoc}
+     * @param sequence
+     * @param alphabet
+     * @return
      */
-    @Override
-    public Iterator<Integer> iterator() {
-        return new SequenceIterator();
+    protected static Iterator<Integer> sequenceIterator(final String sequence, final Alphabet alphabet) {
+        return new Iterator<Integer>() {  // TODO: better name
+
+            protected final Matcher matcher = alphabet.getSymbolPattern().matcher(sequence);
+
+            protected boolean foundMatch = false;
+
+            /**
+             * {@inheritDoc}
+             */
+            public boolean hasNext() {
+                return foundMatch || (foundMatch = matcher.find());
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            public Integer next() {
+                if (hasNext()) {
+                    foundMatch = false;
+                    return alphabet.indexOfSymbol(matcher.group().charAt(0));
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
+
+        };
     }
 
     public Alphabet getAlphabet() {
@@ -46,58 +84,16 @@ public class Sequence extends AbstractSequence {
     }
 
     public int length() {
-        return length;
+        return charSequence.length;
     }
 
     public int[] charSequence() {
-        if (charSequence == null) {
-            charSequence = IntArray.forList(this);
-        }
-        assert charSequence.length == length;
         return charSequence;
     }
 
     @Override
     public Integer get(int i) {
         return charSequence()[i];
-    }
-
-    private class SequenceIterator implements Iterator<Integer> {  // TODO: better name
-
-        protected SequenceIterator() {
-            // nothing to do
-        }
-
-        protected final Matcher matcher = alphabet.getSymbolPattern().matcher(contents);
-
-        protected boolean foundMatch = false;
-
-        /**
-         * {@inheritDoc}
-         */
-        public boolean hasNext() {
-            return foundMatch || (foundMatch = matcher.find());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public Integer next() {
-            if (hasNext()) {
-                foundMatch = false;
-                return alphabet.indexOfSymbol(matcher.group().charAt(0));
-            } else {
-                throw new NoSuchElementException();
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-
     }
 
 }

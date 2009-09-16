@@ -1,17 +1,20 @@
 package de.tum.in.lrr.hmm.util;
 
+import java.util.Iterator;
+
 
 public class IntArray {
     public static final int DEFAULT_LIST_LENGTH = 16;
 
-    public static int[] forList(Iterable<Integer> list) {
-        return forList(list, DEFAULT_LIST_LENGTH);
+    public static int[] forList(Iterator<Integer> it) {
+        return forList(it, DEFAULT_LIST_LENGTH);
     }
 
-    public static int[] forList(Iterable<Integer> list, int length) {
+    public static int[] forList(Iterator<Integer> it, int length) {
         int[] array = new int[length];
         int numItems = 0;
-        for (int i : list) {
+        while (it.hasNext()) {
+            final int i = it.next();
             if (numItems >= array.length) {
                 final int newSize;
                 if (array.length >= Integer.MAX_VALUE >> 1) {
