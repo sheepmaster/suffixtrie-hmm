@@ -29,8 +29,8 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
     public ScoredSequence(ISequence sequence, int startIndex, int endIndex, boolean complement, SequenceIterable model, SequenceIterable baseModel) {
         super(sequence, startIndex, endIndex);
         double s = 0;
-        Iterator<Double> modelIterator = model.sequenceIterator(this.iterator());
-        Iterator<Double> baseModelIterator = baseModel.sequenceIterator(this.iterator());
+        Iterator<Double> modelIterator = model.scoringIterator(this.iterator());
+        Iterator<Double> baseModelIterator = baseModel.scoringIterator(this.iterator());
         while (modelIterator.hasNext()) {
             s += baseModelIterator.next() - modelIterator.next();
         }
@@ -45,8 +45,8 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
 
         final Iterator<Integer> iterator1 = sequence.iterator();
         final Iterator<Integer> iterator2 = sequence.iterator();
-        Iterator<Double> modelIterator = model.sequenceIterator(iterator1);
-        Iterator<Double> baseModelIterator = baseModel.sequenceIterator(iterator2);
+        Iterator<Double> modelIterator = model.scoringIterator(iterator1);
+        Iterator<Double> baseModelIterator = baseModel.scoringIterator(iterator2);
         int startIndex = 0;
         int endIndex = 0;
         double sum = 0.0;
@@ -56,8 +56,8 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
             if (sum <= 0) {
                 sum = 0;
                 startIndex = endIndex;
-                modelIterator = model.sequenceIterator(iterator1);
-                baseModelIterator = baseModel.sequenceIterator(iterator2);
+                modelIterator = model.scoringIterator(iterator1);
+                baseModelIterator = baseModel.scoringIterator(iterator2);
             }
             if (sum > maxSum) {
                 maxSum = sum;

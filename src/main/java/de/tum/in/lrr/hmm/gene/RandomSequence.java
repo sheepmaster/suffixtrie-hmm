@@ -1,4 +1,4 @@
-package de.tum.in.lrr.hmm.evaluation;
+package de.tum.in.lrr.hmm.gene;
 
 import java.util.Iterator;
 import java.util.Random;

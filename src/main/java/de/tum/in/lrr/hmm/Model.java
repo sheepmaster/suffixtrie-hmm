@@ -126,7 +126,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         return testPerplexity;
     }
 
-    public Iterator<Double> sequenceIterator(Iterator<Integer> seq) {
+    public Iterator<Double> scoringIterator(Iterator<Integer> seq) {
         return new TransformingIterator<Integer, Double>(seq) {
             protected StateDistribution dist = startingDistribution;
 

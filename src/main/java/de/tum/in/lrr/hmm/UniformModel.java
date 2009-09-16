@@ -20,7 +20,7 @@ public class UniformModel implements SequenceIterable {
     /**
      * {@inheritDoc}
      */
-    public Iterator<Double> sequenceIterator(final Iterator<Integer> sequence) {
+    public Iterator<Double> scoringIterator(final Iterator<Integer> sequence) {
         return new TransformingIterator<Integer, Double>(sequence) {
 
             final double score = Math.log(numChars);

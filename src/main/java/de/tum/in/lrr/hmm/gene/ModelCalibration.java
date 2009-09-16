@@ -3,7 +3,6 @@ package de.tum.in.lrr.hmm.gene;
 import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.SequenceIterable;
-import de.tum.in.lrr.hmm.evaluation.RandomSequence;
 import de.tum.in.lrr.hmm.util.Stats;
 
 /**

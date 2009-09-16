@@ -8,6 +8,7 @@ import java.util.zip.GZIPInputStream;
 import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.UniformModel;
+import de.tum.in.lrr.hmm.gene.RandomSequence;
 import de.tum.in.lrr.hmm.gene.ScoredSequence;
 
 /**

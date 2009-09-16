@@ -8,6 +8,7 @@ import java.util.zip.GZIPInputStream;
 
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.UniformModel;
+import de.tum.in.lrr.hmm.gene.RandomSequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -36,8 +37,8 @@ public class RandomLocalSearchTest {
 
             final Iterator<Integer> iterator1 = seq.iterator();
             final Iterator<Integer> iterator2 = seq.iterator();
-            Iterator<Double> modelIterator = model.sequenceIterator(iterator1);
-            Iterator<Double> baseModelIterator = baseModel.sequenceIterator(iterator2);
+            Iterator<Double> modelIterator = model.scoringIterator(iterator1);
+            Iterator<Double> baseModelIterator = baseModel.scoringIterator(iterator2);
             int startIndex = 0;
             int endIndex = 0;
             double sum = 0.0;
@@ -47,8 +48,8 @@ public class RandomLocalSearchTest {
                 if (sum <= 0) {
                     sum = 0;
                     startIndex = endIndex;
-                    modelIterator = model.sequenceIterator(iterator1);
-                    baseModelIterator = baseModel.sequenceIterator(iterator2);
+                    modelIterator = model.scoringIterator(iterator1);
+                    baseModelIterator = baseModel.scoringIterator(iterator2);
                 }
                 if (sum > maxSum) {
                     maxSum = sum;

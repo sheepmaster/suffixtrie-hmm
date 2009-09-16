@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.zip.GZIPInputStream;
 
 import de.tum.in.lrr.hmm.Model;
+import de.tum.in.lrr.hmm.gene.RandomSequence;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -27,7 +28,7 @@ public class RandomSequenceTest {
             final Model model = (Model)new ObjectInputStream(new GZIPInputStream(new FileInputStream(hmmFileName))).readObject();
 
             final RandomSequence seq = new RandomSequence(model.getAlphabet());
-            final Iterator<Double> scores = model.sequenceIterator(seq.iterator());
+            final Iterator<Double> scores = model.scoringIterator(seq.iterator());
             final double log2 = Math.log(2);
 
             while(true) {

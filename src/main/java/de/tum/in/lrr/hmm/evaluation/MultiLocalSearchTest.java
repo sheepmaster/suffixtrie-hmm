@@ -17,9 +17,9 @@ import de.tum.in.lrr.hmm.UniformModel;
 import de.tum.in.lrr.hmm.gene.AnnotatedSequence;
 import de.tum.in.lrr.hmm.gene.EmblReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
-import de.tum.in.lrr.hmm.gene.MultiLocalSearch;
 import de.tum.in.lrr.hmm.gene.ScoredSequence;
 import de.tum.in.lrr.hmm.gene.SoftMax;
+import de.tum.in.lrr.hmm.gene.MultiLocalSearch;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -66,7 +66,7 @@ public class MultiLocalSearchTest {
                 }
 
                 final MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
-                final SoftMax n1 = new SoftMax(searches.iterator());
+                final SoftMax n1 = new SoftMax(searches);
 
                 final ScoredSequence s1 = n1.iterator().next();
 

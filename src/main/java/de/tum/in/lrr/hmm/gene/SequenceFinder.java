@@ -58,7 +58,7 @@ public class SequenceFinder {
 
                 System.out.println("sequence\trange\tscore\tprobability");
                 MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
-                SoftMax n = new SoftMax(searches.iterator());
+                SoftMax n = new SoftMax(searches);
                 for (ScoredSequence sequence : n) {
                     final double score = sequence.score() / LOG_2;
                     if (score > 0) {
