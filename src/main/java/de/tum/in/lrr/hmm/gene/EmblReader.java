@@ -17,6 +17,10 @@ import de.tum.in.lrr.hmm.SubSequence;
  */
 public class EmblReader extends AbstractSequenceReader {
 
+    static final Pattern CDS_COMPLEMENT_MATCHER = Pattern.compile("FT\\s+CDS\\s+complement\\((\\d+)\\.\\.(\\d+)\\)");
+    static final Pattern CDS_PATTERN = Pattern.compile("FT\\s+CDS\\s+<?(\\d+)\\.\\.>?(\\d+)");
+    static final Pattern HEADER_PATTERN = Pattern.compile("ID\\s+([a-zA-Z0-9_]+)");
+
     protected final List<String> subsequenceStrings = new ArrayList<String>();
 
     protected final BufferedReader r;
@@ -47,7 +51,7 @@ public class EmblReader extends AbstractSequenceReader {
         if (idLine == null) {
             return null;
         }
-        final Matcher headerMatcher = Pattern.compile("ID\\s+([a-zA-Z0-9_]+)").matcher(idLine);
+        final Matcher headerMatcher = HEADER_PATTERN.matcher(idLine);
         if (!headerMatcher.lookingAt()) {
             throw new FileFormatException("Invalid header line: \""+idLine+"\"");
         }
@@ -58,13 +62,13 @@ public class EmblReader extends AbstractSequenceReader {
         final List<SubSequence> subsequences = seq.getSubSequences();
         for (String s : subsequenceStrings) {
             final SubSequence subseq;
-            final Matcher m1 = Pattern.compile("FT\\s+CDS\\s+<?(\\d+)\\.\\.>?(\\d+)").matcher(s);
+            final Matcher m1 = CDS_PATTERN.matcher(s);
             if (m1.matches()) {
                 final int start = Integer.parseInt(m1.group(1));
                 final int end = Integer.parseInt(m1.group(2));
                 subseq = new SubSequence(seq, start-1, end);
             } else {
-                final Matcher m2 = Pattern.compile("FT\\s+CDS\\s+complement\\((\\d+)\\.\\.(\\d+)\\)").matcher(s);
+                final Matcher m2 = CDS_COMPLEMENT_MATCHER.matcher(s);
                 if (m2.matches()) {
                     final int start = Integer.parseInt(m2.group(1));
                     final int end = Integer.parseInt(m2.group(2));
