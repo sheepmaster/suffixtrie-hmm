@@ -14,8 +14,8 @@ import de.blacksheepsoftware.gene.AnnotatedSequence;
 import de.blacksheepsoftware.gene.EmblReader;
 import de.blacksheepsoftware.gene.FileFormatException;
 import de.blacksheepsoftware.gene.MultiLocalSearch;
-import de.blacksheepsoftware.gene.Normalizer;
 import de.blacksheepsoftware.gene.ScoredSequence;
+import de.blacksheepsoftware.gene.SoftMax;
 import de.blacksheepsoftware.hmm.ISequence;
 import de.blacksheepsoftware.hmm.Model;
 import de.blacksheepsoftware.hmm.SubSequence;
@@ -37,7 +37,7 @@ public class MultiLocalSearchTest {
      */
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.err.println("Usage: java "+MultiLocalSearchTest.class.getName()+" <HMM file> <EMBL file>");
+            System.err.println("Usage: java "+MultiLocalSearchTest.class.getName()+" <HMM file> <sequence file>");
             System.exit(1);
         }
         final String hmmFileName = args[0];
@@ -66,7 +66,7 @@ public class MultiLocalSearchTest {
                 }
 
                 final MultiLocalSearch searches = new MultiLocalSearch(model, baseModel, fullSequence);
-                final Normalizer n1 = new Normalizer(searches.iterator());
+                final SoftMax n1 = new SoftMax(searches.iterator());
 
                 final ScoredSequence s1 = n1.iterator().next();
 
@@ -76,7 +76,7 @@ public class MultiLocalSearchTest {
                         ".."+(searchRange.getStartIndex()+s1.getEndIndex())+"\t"+score+"\t"+n1.probability(s1));
 
                 final List<SubSequence> subSequences = fullSequence.getSubSequences();
-                final Normalizer n2 = new Normalizer(subSequences, model, baseModel);
+                final SoftMax n2 = new SoftMax(subSequences, model, baseModel);
 
                 final Iterator<ScoredSequence> iterator = n2.iterator();
                 if (iterator.hasNext()) {

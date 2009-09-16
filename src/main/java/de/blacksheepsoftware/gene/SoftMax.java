@@ -12,17 +12,17 @@ import de.blacksheepsoftware.hmm.SubSequence;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class Normalizer implements Iterable<ScoredSequence> {
+public class SoftMax implements Iterable<ScoredSequence> {
 
     protected final SortedSet<ScoredSequence> sequenceList = new TreeSet<ScoredSequence>(Collections.reverseOrder());
 
     protected final double offset;
 
-    public Normalizer(final Iterable<SubSequence> sequences, final SequenceIterable model, final SequenceIterable baseModel) {
+    public SoftMax(final Iterable<SubSequence> sequences, final SequenceIterable model, final SequenceIterable baseModel) {
         this(ScoredSequence.scoringIterator(sequences, model, baseModel));
     }
 
-    public Normalizer(Iterator<ScoredSequence> sequences) {
+    public SoftMax(Iterator<ScoredSequence> sequences) {
         double max = Double.NEGATIVE_INFINITY;
         while (sequences.hasNext()) {
             final ScoredSequence s = sequences.next();
