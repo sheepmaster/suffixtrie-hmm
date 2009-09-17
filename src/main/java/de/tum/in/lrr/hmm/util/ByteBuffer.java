@@ -1,6 +1,5 @@
 package de.tum.in.lrr.hmm.util;
 
-import java.util.Iterator;
 
 
 public class ByteBuffer {
@@ -44,18 +43,4 @@ public class ByteBuffer {
         return buffer;
     }
 
-    public static final int DEFAULT_LIST_LENGTH = 16;
-
-    public static byte[] forList(Iterator<Byte> it) {
-        return forList(it, DEFAULT_LIST_LENGTH);
-    }
-
-    public static byte[] forList(Iterator<Byte> it, int length) {
-        ByteBuffer b = new ByteBuffer(length);
-        while (it.hasNext()) {
-            final byte i = it.next();
-            b.append(i);
-        }
-        return b.toByteArray();
-    }
 }

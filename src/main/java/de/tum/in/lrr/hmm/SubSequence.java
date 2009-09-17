@@ -73,8 +73,20 @@ public class SubSequence extends AbstractSequence {
      * {@inheritDoc}
      */
     public String getIdentifier() {
-        return complement ? containingSequence.getIdentifier()+"[complement("+start+".."+end+")]"
-                : containingSequence.getIdentifier()+"["+start+".."+end+"]";
+        return containingSequence.getIdentifier();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return getIdentifier()+"["+getRange()+"]";
+    }
+
+    public String getRange() {
+        final int offset = containingSequence.getStartIndex();
+        return complement ? "complement("+(offset+start)+".."+(offset+end)+")" : (offset+start)+".."+(offset+end);
     }
 
     /**

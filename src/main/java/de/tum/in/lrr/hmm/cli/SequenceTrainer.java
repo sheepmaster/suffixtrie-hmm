@@ -1,4 +1,4 @@
-package de.tum.in.lrr.hmm.gene;
+package de.tum.in.lrr.hmm.cli;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -24,6 +24,10 @@ import de.tum.in.lrr.hmm.Alphabet;
 import de.tum.in.lrr.hmm.BatchTrainer;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.Sequence;
+import de.tum.in.lrr.hmm.gene.EmblReader;
+import de.tum.in.lrr.hmm.gene.FastaReader;
+import de.tum.in.lrr.hmm.gene.FileFormatException;
+import de.tum.in.lrr.hmm.gene.SequenceReader;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>

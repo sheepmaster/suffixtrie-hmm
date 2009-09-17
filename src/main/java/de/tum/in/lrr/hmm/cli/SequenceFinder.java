@@ -1,4 +1,4 @@
-package de.tum.in.lrr.hmm.gene;
+package de.tum.in.lrr.hmm.cli;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -9,10 +9,15 @@ import java.io.Reader;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.SubSequence;
 import de.tum.in.lrr.hmm.UniformModel;
+import de.tum.in.lrr.hmm.gene.AnnotatedSequence;
+import de.tum.in.lrr.hmm.gene.EmblReader;
+import de.tum.in.lrr.hmm.gene.FileFormatException;
+import de.tum.in.lrr.hmm.gene.ScoredSequence;
+import de.tum.in.lrr.hmm.gene.SoftMax;
+import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -60,21 +65,14 @@ public class SequenceFinder {
                 SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
                 SoftMax n = new SoftMax(searches);
                 for (ScoredSequence sequence : n) {
-                    final double score = sequence.score() / LOG_2;
-                    if (score > 0) {
-                        final ISequence searchRange = sequence.getContainingSequence();
-                        System.out.println(searchRange+"\t"+(searchRange.getStartIndex()+sequence.getStartIndex())+
-                                ".."+(searchRange.getStartIndex()+sequence.getEndIndex())+"\t"+score+"\t"+n.probability(sequence));
-                    } else {
-                        System.err.println("muuh");
-                    }
+                    System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+(sequence.score() / LOG_2)+"\t"+n.probability(sequence));
                 }
 
-                System.out.println("hit\tscore\tprobability");
+                System.out.println("sequence\trange\tscore\tprobability");
                 final List<SubSequence> subSequences = fullSequence.getSubSequences();
                 n = new SoftMax(subSequences, model, baseModel);
                 for (ScoredSequence sequence : n) {
-                    System.out.println(sequence+"\t"+sequence.score()/LOG_2+"\t"+n.probability(sequence));
+                    System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+(sequence.score() / LOG_2)+"\t"+n.probability(sequence));
                 }
             }
         } catch (IOException e) {
