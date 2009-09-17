@@ -161,7 +161,7 @@ public class Text {
             if (activeNumbers.isEmpty()) {
                 activeNumbers.addAll(NumberKey.numberKeysForString(text.substring(cursorStart, cursorEnd)));
             }
-            final Iterable<Integer> prefix = NumberKey.sequenceForWord(text.substring(findWordStart(cursorStart), cursorStart));
+            final Iterable<Byte> prefix = NumberKey.sequenceForWord(text.substring(findWordStart(cursorStart), cursorStart));
             final List<Word> wordList = Word.completions(model.startingDistribution().successor(prefix), activeNumbers);
             for (Word w : wordList) {
                 words.add(w.string);

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 
-import de.tum.in.lrr.hmm.util.IntArray;
+import de.tum.in.lrr.hmm.util.ByteArray;
 
 
 /**
@@ -15,17 +15,17 @@ public class Sequence extends AbstractSequence {
 
     protected final String identifier;
     protected final Alphabet alphabet;
-    protected int[] charSequence = null;
+    protected byte[] charSequence = null;
 
     public Sequence(String identifier, final String contents, final Alphabet alphabet, int length) {
-        this(identifier, alphabet, IntArray.forList(sequenceIterator(contents, alphabet), length));
+        this(identifier, alphabet, ByteArray.forList(sequenceIterator(contents, alphabet), length));
     }
 
     public Sequence(String identifier, final String contents, final Alphabet alphabet) {
-        this(identifier, alphabet, IntArray.forList(sequenceIterator(contents, alphabet)));
+        this(identifier, alphabet, ByteArray.forList(sequenceIterator(contents, alphabet)));
     }
 
-    public Sequence(String identifier, Alphabet alphabet, int[] sequence) {
+    public Sequence(String identifier, Alphabet alphabet, byte[] sequence) {
         this.charSequence = sequence;
         this.alphabet = alphabet;
         this.identifier = identifier;
@@ -36,8 +36,8 @@ public class Sequence extends AbstractSequence {
      * @param alphabet
      * @return
      */
-    protected static Iterator<Integer> sequenceIterator(final String sequence, final Alphabet alphabet) {
-        return new Iterator<Integer>() {  // TODO: better name
+    protected static Iterator<Byte> sequenceIterator(final String sequence, final Alphabet alphabet) {
+        return new Iterator<Byte>() {  // TODO: better name
 
             protected final Matcher matcher = alphabet.getSymbolPattern().matcher(sequence);
 
@@ -53,7 +53,7 @@ public class Sequence extends AbstractSequence {
             /**
              * {@inheritDoc}
              */
-            public Integer next() {
+            public Byte next() {
                 if (hasNext()) {
                     foundMatch = false;
                     return alphabet.indexOfSymbol(matcher.group().charAt(0));
@@ -87,12 +87,12 @@ public class Sequence extends AbstractSequence {
         return charSequence.length;
     }
 
-    public int[] charSequence() {
+    public byte[] charSequence() {
         return charSequence;
     }
 
     @Override
-    public Integer get(int i) {
+    public Byte get(int i) {
         return charSequence()[i];
     }
 

@@ -39,7 +39,7 @@ public class Word implements Comparable<Word> {
      * @return The resulting word.
      */
     public Word push(char c) {
-        final StateDistribution newState = state.successor(NumberKey.intForChar(c));
+        final StateDistribution newState = state.successor(NumberKey.byteForChar(c));
         return new Word(newState, string + c, score + newState.normalize());
     }
 

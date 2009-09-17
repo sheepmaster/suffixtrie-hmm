@@ -11,7 +11,7 @@ import de.tum.in.lrr.hmm.Sequence;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class RandomSequence implements Iterable<Integer> {
+public class RandomSequence implements Iterable<Byte> {
 
     protected final int numCharacters;
 
@@ -33,15 +33,15 @@ public class RandomSequence implements Iterable<Integer> {
      * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
      *
      */
-    protected class RandomIterator implements Iterator<Integer> {
+    protected class RandomIterator implements Iterator<Byte> {
         private final Random r = (seed == 0) ? new Random() : new Random(seed);
 
         public boolean hasNext() {
             return true;
         }
 
-        public Integer next() {
-            return r.nextInt(numCharacters)+1;
+        public Byte next() {
+            return (byte)(r.nextInt(numCharacters)+1);
         }
 
         public void remove() {
@@ -52,7 +52,7 @@ public class RandomSequence implements Iterable<Integer> {
     /**
      * {@inheritDoc}
      */
-    public Iterator<Integer> iterator() {
+    public Iterator<Byte> iterator() {
         return new RandomIterator();
     }
 
@@ -61,9 +61,9 @@ public class RandomSequence implements Iterable<Integer> {
      * @return
      */
     public ISequence generateSequence(int length) {
-        Iterator<Integer> it = iterator();
-        int[] array = new int[length];
-        for (int i=0; i<length; i++) {
+        Iterator<Byte> it = iterator();
+        byte[] array = new byte[length];
+        for (byte i=0; i<length; i++) {
             array[i] = it.next();
         }
         return new Sequence("Random"+numCharacters+":"+seed, alphabet, array);

@@ -4,9 +4,6 @@ import static de.tum.in.lrr.hmm.Model.BACK;
 import static de.tum.in.lrr.hmm.Model.BOTTOM;
 import static de.tum.in.lrr.hmm.Model.EPSILON;
 import junit.framework.TestCase;
-import de.tum.in.lrr.hmm.Alphabet;
-import de.tum.in.lrr.hmm.Model;
-import de.tum.in.lrr.hmm.StateDistribution;
 import de.tum.in.lrr.hmm.t9.NumberKey;
 
 /**
@@ -69,7 +66,7 @@ public class ModelTest extends TestCase {
         final StateDistribution dist = model.startingDistribution().successor(NumberKey.sequenceForWord(prefix));
         dist.normalize();
         double totalProbability = 0;
-        for (int c=1; c<=model.numCharacters; c++) {
+        for (byte c=1; c<=model.numCharacters; c++) {
             final StateDistribution successor = dist.successor(c);
             final double totalOutputProbability = successor.totalProbability();
             double outputProbability = 0.0;

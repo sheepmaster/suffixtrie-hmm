@@ -35,8 +35,8 @@ public class RandomLocalSearchTest {
 
             System.out.println("start index\tend index\tscore");
 
-            final Iterator<Integer> iterator1 = seq.iterator();
-            final Iterator<Integer> iterator2 = seq.iterator();
+            final Iterator<Byte> iterator1 = seq.iterator();
+            final Iterator<Byte> iterator2 = seq.iterator();
             Iterator<Double> modelIterator = model.scoringIterator(iterator1);
             Iterator<Double> baseModelIterator = baseModel.scoringIterator(iterator2);
             int startIndex = 0;

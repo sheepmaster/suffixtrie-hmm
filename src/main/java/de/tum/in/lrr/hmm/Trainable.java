@@ -9,7 +9,7 @@ public abstract class Trainable {
 
     protected static final int DEFAULT_THRESHOLD = 16383;
 
-    protected abstract void learn(int[] word, int maxDepth, int defaultThreshold);
+    protected abstract void learn(byte[] word, int maxDepth, int defaultThreshold);
 
     public abstract Alphabet getAlphabet();
 

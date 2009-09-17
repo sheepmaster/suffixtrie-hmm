@@ -8,7 +8,7 @@ import java.util.Iterator;
  */
 public interface SequenceIterable {
 
-    Iterator<Double> scoringIterator(Iterator<Integer> sequence);
+    Iterator<Double> scoringIterator(Iterator<Byte> sequence);
 
     int numCharacters();
 

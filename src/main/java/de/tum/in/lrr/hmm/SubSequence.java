@@ -88,12 +88,12 @@ public class SubSequence extends AbstractSequence {
      * {@inheritDoc}
      */
     @Override
-    public Integer get(int index) {
+    public Byte get(int index) {
         final int size = size();
         if (index<0 || index>=size) {
             throw new IndexOutOfBoundsException("Index: "+index+",Size: "+size);
         }
-        return complement ? (5 - containingSequence.get(end - index - 1)) : containingSequence.get(index + start);
+        return complement ? (byte)(5 - containingSequence.get(end - index - 1)) : containingSequence.get(index + start);
 
     }
 

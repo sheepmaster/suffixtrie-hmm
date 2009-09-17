@@ -61,9 +61,9 @@ public class NumberKey implements CharacterTemplate {
         return numberKeys;
     }
 
-    public static int intForChar(char c) {
+    public static byte byteForChar(char c) {
         final String s = String.valueOf(c);
-        return s.codePointAt(0) - 96;
+        return (byte)(s.codePointAt(0) - 96);
     }
 
 }

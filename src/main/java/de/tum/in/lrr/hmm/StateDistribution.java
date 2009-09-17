@@ -103,13 +103,13 @@ public abstract class StateDistribution implements Serializable {
         }
     }
 
-    public StateDistribution successor(int character) {
+    public StateDistribution successor(byte character) {
         return alpha(null, character, Integer.MAX_VALUE, false);
     }
 
-    public StateDistribution successor(Iterable<Integer> characters) {
+    public StateDistribution successor(Iterable<Byte> characters) {
         StateDistribution newDistribution = this;
-        for (int c : characters) {
+        for (byte c : characters) {
             newDistribution = newDistribution.successor(c);
             newDistribution.normalize();
         }
@@ -120,10 +120,10 @@ public abstract class StateDistribution implements Serializable {
      * @param word
      * @return The perplexity (in <strong>bits</strong>) of {@code word}.
      */
-    public double perplexity(Iterable<Integer> word) {
+    public double perplexity(Iterable<Byte> word) {
         double p = 0;
         StateDistribution newDistribution = this;
-        for (final int c : word) {
+        for (final byte c : word) {
             newDistribution = newDistribution.successor(c);
             p += newDistribution.normalize();
         }

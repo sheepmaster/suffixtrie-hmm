@@ -7,7 +7,7 @@ import java.util.RandomAccess;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public abstract class AbstractSequence extends AbstractList<Integer> implements ISequence, RandomAccess {
+public abstract class AbstractSequence extends AbstractList<Byte> implements ISequence, RandomAccess {
 
     /**
      * {@inheritDoc}

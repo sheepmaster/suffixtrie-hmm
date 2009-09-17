@@ -17,7 +17,7 @@ public class Alphabet implements Serializable {
     public static final Alphabet DNA = new Alphabet("ACGT");
     public static final Alphabet AMINO_ACIDS = new Alphabet("ACDEFGHIKLPQRSTUVWY");
 
-    protected final Map<Character,Integer> alphabetMap = new HashMap<Character, Integer>();
+    protected final Map<Character,Byte> alphabetMap = new HashMap<Character, Byte>();
     protected final Pattern symbolPattern;
 
     public Alphabet(String alph) {
@@ -33,7 +33,7 @@ public class Alphabet implements Serializable {
             if (alphabetMap.containsKey(c)) {
                 throw new IllegalArgumentException("Alphabet may not contain duplicate symbols");
             }
-            alphabetMap.put(c, i+1);
+            alphabetMap.put(c, (byte)(i+1));
         }
     }
 
@@ -41,7 +41,7 @@ public class Alphabet implements Serializable {
         return alphabetMap.size();
     }
 
-    public int indexOfSymbol(char c) {
+    public byte indexOfSymbol(char c) {
         return alphabetMap.get(Character.toUpperCase(c));
     }
 

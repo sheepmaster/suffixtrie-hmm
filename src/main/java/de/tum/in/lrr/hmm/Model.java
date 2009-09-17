@@ -126,12 +126,12 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
         return testPerplexity;
     }
 
-    public Iterator<Double> scoringIterator(Iterator<Integer> seq) {
-        return new TransformingIterator<Integer, Double>(seq) {
+    public Iterator<Double> scoringIterator(Iterator<Byte> seq) {
+        return new TransformingIterator<Byte, Double>(seq) {
             protected StateDistribution dist = startingDistribution;
 
             @Override
-            public Double transform(Integer in) {
+            public Double transform(Byte in) {
                 dist = dist.successor(in);
                 return dist.normalize();
             }
@@ -175,7 +175,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
      * 
      * @see #learnStep(int[], StateDistribution, StateDistribution, int, int, int, int)
      */
-    protected StateDistribution learn(int[] word, StateDistribution alpha_start, StateDistribution beta_end, int start, int end, int maxDepth, int linearThreshold, boolean useSmoothing) {
+    protected StateDistribution learn(byte[] word, StateDistribution alpha_start, StateDistribution beta_end, int start, int end, int maxDepth, int linearThreshold, boolean useSmoothing) {
         final int diff = end - start;
         if (diff > linearThreshold) {
             final int mid = start + diff / 2;
@@ -215,7 +215,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
      * 
      * @see #learn(int[], StateDistribution, StateDistribution, int, int, int, int)
      */
-    private StateDistribution learnStep(int[] word, StateDistribution alpha_i, StateDistribution beta_j, int i, int j, int maxDepth, int linearThreshold, boolean useSmoothing) {
+    private StateDistribution learnStep(byte[] word, StateDistribution alpha_i, StateDistribution beta_j, int i, int j, int maxDepth, int linearThreshold, boolean useSmoothing) {
         final int c = (i < word.length) ? word[i] : StateDistribution.INVALID;
         final StateDistribution alpha_i1 = alpha_i.alpha(this, c, maxDepth, useSmoothing);
         final double scalingFactor = 1 / alpha_i1.totalProbability();
@@ -228,7 +228,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
     }
 
     @Override
-    public void learn(int[] word, int maxDepth, int linearThreshold) {
+    public void learn(byte[] word, int maxDepth, int linearThreshold) {
         final Model m = new Model(this);
         m.deepCopyFrequenciesFrom(this);
         m.learn(word, startingDistribution, startingDistribution, 0, word.length+1, maxDepth, linearThreshold, true);

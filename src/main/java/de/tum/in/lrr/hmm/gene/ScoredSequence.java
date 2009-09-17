@@ -43,8 +43,8 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
         int maxEndIndex = 0;
         double maxSum = 0.0;
 
-        final Iterator<Integer> iterator1 = sequence.iterator();
-        final Iterator<Integer> iterator2 = sequence.iterator();
+        final Iterator<Byte> iterator1 = sequence.iterator();
+        final Iterator<Byte> iterator2 = sequence.iterator();
         Iterator<Double> modelIterator = model.scoringIterator(iterator1);
         Iterator<Double> baseModelIterator = baseModel.scoringIterator(iterator2);
         int startIndex = 0;

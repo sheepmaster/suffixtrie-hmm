@@ -17,7 +17,7 @@ public class BatchTrainer extends Trainable {
     }
 
     @Override
-    public void learn(int[] w, int maxDepth, int linearThreshold) {
+    public void learn(byte[] w, int maxDepth, int linearThreshold) {
         final StateDistribution startingDistribution = model.startingDistribution();
         newModel.learn(w, startingDistribution, startingDistribution, 0, w.length+1, maxDepth, linearThreshold, false);
     }
