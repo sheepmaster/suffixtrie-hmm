@@ -1,10 +1,8 @@
 package de.tum.in.lrr.hmm;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 
-import de.tum.in.lrr.hmm.util.ByteArray;
+import de.tum.in.lrr.hmm.util.ByteBuffer;
 
 
 /**
@@ -18,11 +16,11 @@ public class Sequence extends AbstractSequence {
     protected byte[] charSequence = null;
 
     public Sequence(String identifier, final String contents, final Alphabet alphabet, int length) {
-        this(identifier, alphabet, ByteArray.forList(sequenceIterator(contents, alphabet), length));
+        this(identifier, alphabet, parseSequence(contents, alphabet, new ByteBuffer(length)));
     }
 
     public Sequence(String identifier, final String contents, final Alphabet alphabet) {
-        this(identifier, alphabet, ByteArray.forList(sequenceIterator(contents, alphabet)));
+        this(identifier, alphabet, parseSequence(contents, alphabet));
     }
 
     public Sequence(String identifier, Alphabet alphabet, byte[] sequence) {
@@ -31,45 +29,16 @@ public class Sequence extends AbstractSequence {
         this.identifier = identifier;
     }
 
-    /**
-     * @param sequence
-     * @param alphabet
-     * @return
-     */
-    protected static Iterator<Byte> sequenceIterator(final String sequence, final Alphabet alphabet) {
-        return new Iterator<Byte>() {  // TODO: better name
+    public static byte[] parseSequence(String sequence, Alphabet alphabet) {
+        return parseSequence(sequence, alphabet, new ByteBuffer());
+    }
 
-            protected final Matcher matcher = alphabet.getSymbolPattern().matcher(sequence);
-
-            protected boolean foundMatch = false;
-
-            /**
-             * {@inheritDoc}
-             */
-            public boolean hasNext() {
-                return foundMatch || (foundMatch = matcher.find());
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            public Byte next() {
-                if (hasNext()) {
-                    foundMatch = false;
-                    return alphabet.indexOfSymbol(matcher.group().charAt(0));
-                } else {
-                    throw new NoSuchElementException();
-                }
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-        };
+    public static byte[] parseSequence(String sequence, Alphabet alphabet, ByteBuffer buf) {
+        final Matcher matcher = alphabet.getSymbolPattern().matcher(sequence);
+        while (matcher.find()) {
+            buf.append(alphabet.indexOfSymbol(matcher.group().charAt(0)));
+        }
+        return buf.toByteArray();
     }
 
     public Alphabet getAlphabet() {
@@ -93,7 +62,7 @@ public class Sequence extends AbstractSequence {
 
     @Override
     public Byte get(int i) {
-        return charSequence()[i];
+        return charSequence[i];
     }
 
 }

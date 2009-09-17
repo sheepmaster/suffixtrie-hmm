@@ -6,7 +6,7 @@ import de.tum.in.lrr.hmm.AlphabetTest;
 import de.tum.in.lrr.hmm.BatchTrainerTest;
 import de.tum.in.lrr.hmm.ModelTest;
 import de.tum.in.lrr.hmm.UpdateStrategyTest;
-import de.tum.in.lrr.hmm.util.ByteArrayTest;
+import de.tum.in.lrr.hmm.util.ByteBufferTest;
 
 public class AllTests {
 
@@ -22,7 +22,7 @@ public class AllTests {
         suite.addTestSuite(TextTest.class);
         suite.addTestSuite(WordTest.class);
 
-        suite.addTestSuite(ByteArrayTest.class);
+        suite.addTestSuite(ByteBufferTest.class);
         //$JUnit-END$
         return suite;
     }
