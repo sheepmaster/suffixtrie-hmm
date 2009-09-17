@@ -6,9 +6,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import org.kohsuke.args4j.Argument;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
+
+import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.SubSequence;
 import de.tum.in.lrr.hmm.UniformModel;
@@ -25,6 +32,18 @@ import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
  */
 public class SequenceFinder {
 
+    @Option(name = "--maxhits", usage = "maximum number of hits to output")
+    int maxHits = Integer.MAX_VALUE;
+
+    @Option(name = "--scorethreshold", usage = "score threshold")
+    double scoreThreshold = Double.MIN_VALUE;
+
+    @Option(name = "--pthreshold", usage = "probability threshold")
+    double pThreshold = 0;
+
+    @Argument
+    protected List<String> arguments = new ArrayList<String>();
+
     /**
      * 
      */
@@ -34,14 +53,27 @@ public class SequenceFinder {
      * @param args
      */
     public static void main(String[] args) {
-        if (args.length != 2) {
-            System.err.println("Usage: java "+SequenceFinder.class.getName()+" <HMM file> <sequence file>");
+        new SequenceFinder().doMain(args);
+    }
+
+    public void doMain(String[] args) {
+        final CmdLineParser parser = new CmdLineParser(this);
+        try {
+            parser.parseArgument(args);
+            if (arguments.size() != 2) {
+                throw new CmdLineException(parser, "Expected two arguments");
+            }
+        } catch (CmdLineException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Usage: java "+SequenceFinder.class.getName()+" <options> <HMM file> <sequence file>");
+            parser.printUsage(System.err);
             System.exit(1);
         }
-        final String hmmFileName = args[0];
+
+        final String hmmFileName = arguments.get(0);
 
         try {
-            final Reader r = new FileReader(args[1]);
+            final Reader r = new FileReader(arguments.get(1));
 
             System.err.print("Reading model...");
 
@@ -61,19 +93,13 @@ public class SequenceFinder {
                     throw new FileFormatException("Sequence doesn't fit to model");
                 }
 
-                System.out.println("sequence\trange\tscore\tprobability");
+                System.out.println("genome search results:");
                 SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
-                SoftMax n = new SoftMax(searches);
-                for (ScoredSequence sequence : n) {
-                    System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+(sequence.score() / LOG_2)+"\t"+n.probability(sequence));
-                }
+                printHits(fullSequence, new SoftMax(searches));
 
-                System.out.println("sequence\trange\tscore\tprobability");
+                System.out.println("coding sequences:");
                 final List<SubSequence> subSequences = fullSequence.getSubSequences();
-                n = new SoftMax(subSequences, model, baseModel);
-                for (ScoredSequence sequence : n) {
-                    System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+(sequence.score() / LOG_2)+"\t"+n.probability(sequence));
-                }
+                printHits(fullSequence, new SoftMax(subSequences, model, baseModel));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -81,6 +107,25 @@ public class SequenceFinder {
             e.printStackTrace();
         }
 
+    }
+
+    void printHits(ISequence fullSequence, SoftMax m) {
+        System.out.println("sequence\trange\tscore\tprobability");
+        int i = 0;
+        for (ScoredSequence sequence : m) {
+            final double p = m.probability(sequence);
+            if (p < pThreshold) {
+                break;
+            }
+            final double score = sequence.score() / LOG_2;
+            if (score < scoreThreshold) {
+                break;
+            }
+            System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+score+"\t"+p);
+            if (++i >= maxHits) {
+                break;
+            }
+        }
     }
 
 }
