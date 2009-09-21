@@ -64,7 +64,7 @@ public class ModelCalibration {
         return k*s.getContainingSequence().length()*Math.exp(-lambda*s.score());
     }
 
-    public double specificity(ScoredSequence s) {
+    public double pValue(ScoredSequence s) {
         // The maximum normalized score follows a standard Gumbel distribution
         // return -Math.expm1(-Math.exp(-normalizedScore(s)));
 
