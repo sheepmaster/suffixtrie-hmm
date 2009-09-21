@@ -11,6 +11,10 @@ import de.tum.in.lrr.hmm.util.Stats;
  */
 public class ModelCalibration {
 
+    /**
+     * 
+     */
+    private static final double LOG_2 = Math.log(2);
     private static final int NUM_SEQUENCES = 10000;
     private static final int SEQUENCE_LENGTH = 4000;
 
@@ -57,6 +61,10 @@ public class ModelCalibration {
 
     public double normalizedScore(ScoredSequence s) {
         return lambda*s.score() - Math.log(k*s.getContainingSequence().length());
+    }
+
+    public double bitScore(ScoredSequence s) {
+        return normalizedScore(s) / LOG_2;
     }
 
     public double eValue(ScoredSequence s) {
