@@ -33,15 +33,6 @@ public class EmblReader extends AbstractSequenceReader {
         this(AbstractSequenceReader.bufferedReader(r));
     }
 
-    public boolean canParse() throws IOException {
-        final String idLine = r.readLine();
-        if (idLine == null) {
-            return false;
-        }
-        return (idLine.startsWith("ID "));
-
-    }
-
     public boolean ready() throws IOException {
         return r.ready();
     }

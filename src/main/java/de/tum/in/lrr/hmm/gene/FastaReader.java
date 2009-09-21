@@ -30,11 +30,6 @@ public class FastaReader extends AbstractSequenceReader {
         line = r.readLine();
     }
 
-    public boolean canParse() throws IOException {
-        return (line.startsWith(">"));
-    }
-
-
     public boolean ready() {
         return (line != null);
     }

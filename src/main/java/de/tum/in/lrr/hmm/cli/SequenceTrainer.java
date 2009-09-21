@@ -28,6 +28,8 @@ import de.tum.in.lrr.hmm.gene.EmblReader;
 import de.tum.in.lrr.hmm.gene.FastaReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
 import de.tum.in.lrr.hmm.gene.SequenceReader;
+import de.tum.in.lrr.hmm.util.CloneableReader;
+import de.tum.in.lrr.hmm.util.LinkedDataBlockReader;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -99,7 +101,7 @@ public class SequenceTrainer {
         Reader r = new InputStreamReader(input);
 
         try {
-            SequenceReader reader = reader(new BufferedReader(r));
+            SequenceReader reader = reader(r);
             Sequence trainingSequence = reader.readSequence();
 
             if (trainingSequence == null) {
@@ -164,26 +166,35 @@ public class SequenceTrainer {
      * @param r
      * @throws IOException
      */
-    private SequenceReader reader(BufferedReader r) throws IOException {
+    private SequenceReader reader(Reader r1) throws IOException {
+        final CloneableReader r = new LinkedDataBlockReader(r1);
         if (format == null) {
-            r.mark(1024);
-            final FastaReader fasta = new FastaReader(r);
-            if (fasta.canParse()) {
-                return fasta;
-            }
-            r.reset();
-            final EmblReader embl = new EmblReader(r);
-            if (embl.canParse()) {
-                r.reset();
-                return embl;
-            }
-            throw new FileFormatException("Unknown file format");
-        } else if (format.equals(Format.Fasta)) {
+            format = guessFormat(r);
+        }
+        switch(format) {
+        case Fasta:
             return new FastaReader(r);
-        } else if (format.equals(Format.Embl)) {
+        case Embl:
             return new EmblReader(r);
+        default:
+            throw new FileFormatException("Unknown file format");
+        }
+    }
+
+    /**
+     * @param r
+     * @throws IOException
+     */
+    private static Format guessFormat(final CloneableReader r) throws IOException {
+        String firstLine = new BufferedReader(r.clone()).readLine();
+        if (firstLine == null) {
+            return null;
+        } else if (firstLine.startsWith(">")) {
+            return Format.Fasta;
+        } else if (firstLine.startsWith("ID ")) {
+            return Format.Embl;
         } else {
-            throw new AssertionError();
+            return null;
         }
     }
 
