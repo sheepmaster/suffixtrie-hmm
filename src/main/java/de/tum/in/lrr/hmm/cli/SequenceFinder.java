@@ -36,7 +36,7 @@ public class SequenceFinder {
     int maxHits = Integer.MAX_VALUE;
 
     @Option(name = "--scorethreshold", usage = "score threshold")
-    double scoreThreshold = Double.MIN_VALUE;
+    double scoreThreshold = -Double.MAX_VALUE;
 
     @Option(name = "--pthreshold", usage = "probability threshold")
     double pThreshold = 0;
