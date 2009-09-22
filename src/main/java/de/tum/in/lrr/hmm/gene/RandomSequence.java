@@ -63,7 +63,7 @@ public class RandomSequence implements Iterable<Byte> {
     public ISequence generateSequence(int length) {
         Iterator<Byte> it = iterator();
         byte[] array = new byte[length];
-        for (byte i=0; i<length; i++) {
+        for (int i=0; i<length; i++) {
             array[i] = it.next();
         }
         return new Sequence("Random"+numCharacters+":"+seed, alphabet, array);

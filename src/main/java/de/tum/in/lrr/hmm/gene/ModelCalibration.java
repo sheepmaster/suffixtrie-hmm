@@ -15,11 +15,10 @@ public class ModelCalibration {
      * 
      */
     private static final double LOG_2 = Math.log(2);
-    private static final int NUM_SEQUENCES = 10000;
-    private static final int SEQUENCE_LENGTH = 4000;
+    private static final int DEFAULT_NUM_SEQUENCES = 10000;
+    private static final int DEFAULT_SEQUENCE_LENGTH = 4000;
 
     private static final double DELTA = 0.000001;
-    private static final int MAX_ITERATIONS = 100;
 
     protected double lambda;
     protected double k;
@@ -28,21 +27,25 @@ public class ModelCalibration {
     protected final SequenceIterable baseModel;
 
     public ModelCalibration(Model m, SequenceIterable baseModel) {
+        this(m, baseModel, DEFAULT_NUM_SEQUENCES, DEFAULT_SEQUENCE_LENGTH);
+    }
+
+    public ModelCalibration(Model m, SequenceIterable baseModel, int numSequences, int sequenceLength) {
         this.model = m;
         this.baseModel = baseModel;
 
-        calibrate();
+        calibrate(numSequences, sequenceLength);
     }
 
-    private void calibrate() {
-        final double[] scores = new double[NUM_SEQUENCES];
+    private void calibrate(int numSequences, int sequenceLength) {
+        final double[] scores = new double[numSequences];
         for (int i=0; i<scores.length; i++) {
-            final ISequence seq = new RandomSequence(model.getAlphabet()).generateSequence(SEQUENCE_LENGTH);
+            final ISequence seq = new RandomSequence(model.getAlphabet()).generateSequence(sequenceLength);
             final ScoredSequence s = ScoredSequence.search(model, baseModel, seq);
             scores[i] = s.score();
         }
 
-        calibrateDirect(scores);
+        calibrateDirect(scores, sequenceLength);
     }
 
     private static double mu(double[] randomScores, double lambda) {
@@ -63,7 +66,7 @@ public class ModelCalibration {
             double xxesum = 0;
             for (double x : randomScores) {
                 xsum += x;
-                final double e = Math.exp(x);
+                final double e = Math.exp(-lambda*x);
                 esum += e;
                 xesum += x*e;
                 xxesum += x*x*e;
@@ -81,13 +84,13 @@ public class ModelCalibration {
         }
     }
 
-    private void calibrateDirect(double[] randomScores) {
+    private void calibrateDirect(double[] randomScores, int sequenceLength) {
         final Stats stats = new Stats(randomScores);
         final double lambdaStart = Math.PI/Math.sqrt(6 * stats.getVariance());
         lambda = lambdaML(randomScores, lambdaStart);
 
         final double mu = mu(randomScores, lambda);
-        k = Math.exp(lambda*mu)/SEQUENCE_LENGTH;
+        k = Math.exp(lambda*mu)/sequenceLength;
     }
 
     public double normalizedScore(ScoredSequence s) {
