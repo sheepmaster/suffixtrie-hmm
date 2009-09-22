@@ -48,8 +48,8 @@ public class SubSequenceSearch extends GeneratingIterator<ScoredSequence> {
      * 
      */
     private int findIndex(double startTotal) {
-        for (int i = subSequences.size()-1; i >= 0; i++) {
-            if (startTotals.get(i) < total) {
+        for (int i = startTotals.size()-1; i >= 0; i--) {
+            if (startTotals.get(i) < startTotal) {
                 return i;
             }
         }
@@ -73,25 +73,30 @@ public class SubSequenceSearch extends GeneratingIterator<ScoredSequence> {
         final int j = findIndex(startTotal);
 
         if (j == -1) {
-            addSubSequences();
+            clearSequences();
             addSequence(start, end, startTotal, endTotal);
         } else if (endTotals.get(j) >= endTotal) {
             addSequence(start, end, startTotal, endTotal);
         } else {
+            final Double startTotal_j = startTotals.get(j);
             final ScoredSequence seq_j = subSequences.get(j);
             subSequences.subList(j, subSequences.size()).clear();
-            addOrMergeSequence(seq_j.getStartIndex(), end, startTotals.get(j), endTotal);
+            startTotals.subList(j, startTotals.size()).clear();
+            endTotals.subList(j, endTotals.size()).clear();
+            addOrMergeSequence(seq_j.getStartIndex(), end, startTotal_j, endTotal);
         }
     }
 
     /**
      * 
      */
-    private void addSubSequences() {
+    private void clearSequences() {
         for (ScoredSequence s : subSequences) {
             addValue(s);
         }
         subSequences.clear();
+        startTotals.clear();
+        endTotals.clear();
     }
 
     /**
@@ -106,9 +111,10 @@ public class SubSequenceSearch extends GeneratingIterator<ScoredSequence> {
             addOrMergeSequence(index, index+1, total, newTotal);
         }
         total = newTotal;
+        index++;
 
         if (!modelIterator.hasNext()) {
-            addSubSequences();
+            clearSequences();
         }
     }
 
