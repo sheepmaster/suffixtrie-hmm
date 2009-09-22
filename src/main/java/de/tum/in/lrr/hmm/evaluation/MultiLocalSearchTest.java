@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.SubSequence;
 import de.tum.in.lrr.hmm.UniformModel;
@@ -71,9 +70,8 @@ public class MultiLocalSearchTest {
                 final ScoredSequence s1 = n1.iterator().next();
 
                 final double score = s1.score() / LOG_2;
-                final ISequence searchRange = s1.getContainingSequence();
-                System.out.print(fullSequence+"\t"+(searchRange.getStartIndex()+s1.getStartIndex()+1)+
-                        ".."+(searchRange.getStartIndex()+s1.getEndIndex())+"\t"+score+"\t"+n1.probability(s1));
+                System.out.print(fullSequence+"\t"+(s1.getStartIndex()+1)+
+                        ".."+s1.getEndIndex()+"\t"+score+"\t"+n1.probability(s1));
 
                 final List<SubSequence> subSequences = fullSequence.getSubSequences();
                 final SoftMax n2 = new SoftMax(subSequences, model, baseModel);

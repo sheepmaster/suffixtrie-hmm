@@ -56,7 +56,6 @@ public class SubSequence extends AbstractSequence {
     /**
      * @return the start
      */
-    @Override
     public int getStartIndex() {
         return start;
     }
@@ -64,7 +63,6 @@ public class SubSequence extends AbstractSequence {
     /**
      * @return the end
      */
-    @Override
     public int getEndIndex() {
         return end;
     }
@@ -85,8 +83,7 @@ public class SubSequence extends AbstractSequence {
     }
 
     public String getRange() {
-        final int offset = containingSequence.getStartIndex();
-        return complement ? "complement("+(offset+start)+".."+(offset+end)+")" : (offset+start)+".."+(offset+end);
+        return complement ? "complement("+(start+1)+".."+end+")" : (start+1)+".."+end;
     }
 
     /**
@@ -107,30 +104,6 @@ public class SubSequence extends AbstractSequence {
         }
         return complement ? (byte)(5 - containingSequence.get(end - index - 1)) : containingSequence.get(index + start);
 
-    }
-
-    @Override
-    public ISequence subSequencePreceding(SubSequence s) {
-        if (s.containingSequence != this) {
-            throw new IllegalArgumentException();
-        }
-        return new SubSequence(containingSequence, start, start+s.getStartIndex());
-    }
-
-    @Override
-    public ISequence subSequenceFollowing(SubSequence s) {
-        if (s.containingSequence != this) {
-            throw new IllegalArgumentException();
-        }
-        return new SubSequence(containingSequence, start+s.getEndIndex(), end);
-    }
-
-    public ISequence precedingSubSequence() {
-        return containingSequence.subSequencePreceding(this);
-    }
-
-    public ISequence followingSubSequence() {
-        return containingSequence.subSequenceFollowing(this);
     }
 
     /**

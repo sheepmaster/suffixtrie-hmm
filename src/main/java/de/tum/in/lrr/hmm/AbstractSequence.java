@@ -47,12 +47,4 @@ public abstract class AbstractSequence extends AbstractList<Byte> implements ISe
         return getIdentifier();
     }
 
-    public int getStartIndex() {
-        return 0;
-    }
-
-    public int getEndIndex() {
-        return length();
-    }
-
 }
