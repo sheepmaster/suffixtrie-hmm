@@ -18,6 +18,9 @@ public class ModelCalibration {
     private static final int NUM_SEQUENCES = 10000;
     private static final int SEQUENCE_LENGTH = 4000;
 
+    private static final double DELTA = 0.000001;
+    private static final int MAX_ITERATIONS = 100;
+
     protected double lambda;
     protected double k;
 
@@ -50,11 +53,39 @@ public class ModelCalibration {
         return -Math.log(esum/randomScores.length) / lambda;
     }
 
+    private static double lambdaML(double[] randomScores, double lambda) {
+        int iteration = 0;
+        final int n = randomScores.length;
+        while (true) {
+            double xsum = 0;
+            double esum = 0;
+            double xesum = 0;
+            double xxesum = 0;
+            for (double x : randomScores) {
+                xsum += x;
+                final double e = Math.exp(x);
+                esum += e;
+                xesum += x*e;
+                xxesum += x*x*e;
+            }
+
+            final double tmp = xesum/esum;
+            final double fx = 1/lambda - xsum/n + tmp;
+            if (Math.abs(fx) < DELTA) {
+                return lambda;
+            }
+            final double dfx = tmp*tmp - xxesum/esum - 1/(lambda*lambda);
+
+            lambda -= fx/dfx;
+            System.err.println("iteration "+(++iteration));
+        }
+    }
+
     private void calibrateDirect(double[] randomScores) {
         final Stats stats = new Stats(randomScores);
-        lambda = Math.PI/Math.sqrt(6 * stats.getVariance());
+        final double lambdaStart = Math.PI/Math.sqrt(6 * stats.getVariance());
+        lambda = lambdaML(randomScores, lambdaStart);
 
-        //        final double mu = stats.getMean() - 0.57722/lambda;
         final double mu = mu(randomScores, lambda);
         k = Math.exp(lambda*mu)/SEQUENCE_LENGTH;
     }
