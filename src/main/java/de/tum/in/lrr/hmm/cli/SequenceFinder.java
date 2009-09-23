@@ -102,11 +102,11 @@ public class SequenceFinder {
 
                 System.out.println("genome search results:");
                 SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
-                printHits(fullSequence, new SoftMax(searches), calibration);
+                printHits(fullSequence, new SoftMax(searches, maxHits), calibration);
 
                 System.out.println("coding sequences:");
                 final List<SubSequence> subSequences = fullSequence.getSubSequences();
-                printHits(fullSequence, new SoftMax(subSequences, model, baseModel), calibration);
+                printHits(fullSequence, new SoftMax(subSequences, model, baseModel, maxHits), calibration);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,7 +118,6 @@ public class SequenceFinder {
 
     void printHits(ISequence fullSequence, SoftMax m, ModelCalibration c) {
         System.out.println("sequence\trange\tscore\tprobability");
-        int i = 0;
         for (ScoredSequence sequence : m) {
             final double p = m.probability(sequence);
             if (p < pThreshold) {
@@ -129,9 +128,6 @@ public class SequenceFinder {
                 break;
             }
             System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+score+"\t"+p+"\t"+c.bitScore(sequence)+"\t"+c.eValue(sequence)+"\t"+c.pValue(sequence));
-            if (++i >= maxHits) {
-                break;
-            }
         }
     }
 
