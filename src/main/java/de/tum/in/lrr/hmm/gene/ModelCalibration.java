@@ -15,7 +15,7 @@ public class ModelCalibration {
      * 
      */
     private static final double LOG_2 = Math.log(2);
-    private static final int DEFAULT_NUM_SEQUENCES = 10000;
+    private static final int DEFAULT_NUM_SEQUENCES = 1000;
     private static final int DEFAULT_SEQUENCE_LENGTH = 4000;
 
     private static final double DELTA = 0.000001;
@@ -86,8 +86,9 @@ public class ModelCalibration {
 
     private void calibrateDirect(double[] randomScores, int sequenceLength) {
         final Stats stats = new Stats(randomScores);
-        final double lambdaStart = Math.PI/Math.sqrt(6 * stats.getVariance());
-        lambda = lambdaML(randomScores, lambdaStart);
+        //        final double lambdaStart = Math.PI/Math.sqrt(6 * stats.getVariance());
+        //        lambda = lambdaML(randomScores, lambdaStart);
+        lambda = 1.0;
 
         final double mu = mu(randomScores, lambda);
         k = Math.exp(lambda*mu)/sequenceLength;
