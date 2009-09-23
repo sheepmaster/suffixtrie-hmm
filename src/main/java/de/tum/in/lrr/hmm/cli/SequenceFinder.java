@@ -22,6 +22,7 @@ import de.tum.in.lrr.hmm.UniformModel;
 import de.tum.in.lrr.hmm.gene.AnnotatedSequence;
 import de.tum.in.lrr.hmm.gene.EmblReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
+import de.tum.in.lrr.hmm.gene.ModelCalibration;
 import de.tum.in.lrr.hmm.gene.ScoredSequence;
 import de.tum.in.lrr.hmm.gene.SoftMax;
 import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
@@ -83,6 +84,12 @@ public class SequenceFinder {
 
             final UniformModel baseModel = new UniformModel(model.numCharacters());
 
+            System.err.print("Calibrating...");
+
+            final ModelCalibration calibration = new ModelCalibration(model, baseModel);
+
+            System.err.println("done");
+
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
             while (reader.ready()) {
@@ -95,11 +102,11 @@ public class SequenceFinder {
 
                 System.out.println("genome search results:");
                 SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
-                printHits(fullSequence, new SoftMax(searches));
+                printHits(fullSequence, new SoftMax(searches), calibration);
 
                 System.out.println("coding sequences:");
                 final List<SubSequence> subSequences = fullSequence.getSubSequences();
-                printHits(fullSequence, new SoftMax(subSequences, model, baseModel));
+                printHits(fullSequence, new SoftMax(subSequences, model, baseModel), calibration);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,7 +116,7 @@ public class SequenceFinder {
 
     }
 
-    void printHits(ISequence fullSequence, SoftMax m) {
+    void printHits(ISequence fullSequence, SoftMax m, ModelCalibration c) {
         System.out.println("sequence\trange\tscore\tprobability");
         int i = 0;
         for (ScoredSequence sequence : m) {
@@ -121,7 +128,7 @@ public class SequenceFinder {
             if (score < scoreThreshold) {
                 break;
             }
-            System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+score+"\t"+p);
+            System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+score+"\t"+p+"\t"+c.bitScore(sequence)+"\t"+c.eValue(sequence)+"\t"+c.pValue(sequence));
             if (++i >= maxHits) {
                 break;
             }
