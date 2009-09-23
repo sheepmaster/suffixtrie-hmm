@@ -24,14 +24,17 @@ public class SoftMax implements Iterable<ScoredSequence> {
 
     public SoftMax(Iterator<ScoredSequence> sequences) {
         double max = Double.NEGATIVE_INFINITY;
+        double expSum = 0;
         while (sequences.hasNext()) {
             final ScoredSequence s = sequences.next();
-            max = Math.max(max, s.score());
+            final double score = s.score();
+            if (score > max) {
+                expSum = expSum * Math.exp(max - score) + 1;
+                max = score;
+            } else {
+                expSum += Math.exp(score - max);
+            }
             sequenceList.add(s);
-        }
-        double expSum = 0;
-        for (ScoredSequence s : sequenceList) {
-            expSum += Math.exp(s.score() - max);
         }
         offset = Math.log(expSum) + max;
     }
