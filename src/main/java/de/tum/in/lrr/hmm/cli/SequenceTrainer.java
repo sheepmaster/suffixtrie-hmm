@@ -116,7 +116,7 @@ public class SequenceTrainer {
             int seqNo = 0;
             while (true) {
                 model.learn(trainingSequence, maxDepth);
-                System.out.print(++seqNo+" sequences read\r");
+                System.out.print("\r"+(++seqNo)+" sequences read");
                 trainingSequences.add(trainingSequence);
                 trainingSequence = reader.readSequence();
                 if (trainingSequence == null) {

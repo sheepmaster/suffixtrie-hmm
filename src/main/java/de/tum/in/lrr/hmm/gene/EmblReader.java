@@ -85,8 +85,11 @@ public class EmblReader extends AbstractSequenceReader {
      * @throws FileFormatException
      */
     private AnnotatedSequence readFullSequence(final String identifier) throws IOException, FileFormatException {
-        while (r.ready()) {
+        while (true) {
             final String line = r.readLine();
+            if (line == null) {
+                throw new FileFormatException("No sequence data found");
+            }
             if (line.matches("FT\\s+CDS\\s+.*")) {
                 subsequenceStrings.add(line);
             } else {
@@ -118,7 +121,6 @@ public class EmblReader extends AbstractSequenceReader {
             }
         }
 
-        throw new FileFormatException("No sequence data found");
     }
 
 }
