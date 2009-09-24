@@ -3,7 +3,6 @@ package de.tum.in.lrr.hmm.gene;
 import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.SequenceIterable;
-import de.tum.in.lrr.hmm.util.Stats;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -85,7 +84,7 @@ public class ModelCalibration {
     }
 
     private void calibrateDirect(double[] randomScores, int sequenceLength) {
-        final Stats stats = new Stats(randomScores);
+        //        final Stats stats = new Stats(randomScores);
         //        final double lambdaStart = Math.PI/Math.sqrt(6 * stats.getVariance());
         //        lambda = lambdaML(randomScores, lambdaStart);
         lambda = 1.0;
