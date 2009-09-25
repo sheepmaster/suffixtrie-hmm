@@ -6,6 +6,7 @@ import java.util.Random;
 import de.tum.in.lrr.hmm.Alphabet;
 import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Sequence;
+import de.tum.in.lrr.hmm.util.UnmodifiableIterator;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -33,7 +34,7 @@ public class RandomSequence implements Iterable<Byte> {
      * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
      *
      */
-    protected class RandomIterator implements Iterator<Byte> {
+    protected class RandomIterator extends UnmodifiableIterator<Byte> {
         private final Random r = (seed == 0) ? new Random() : new Random(seed);
 
         public boolean hasNext() {
@@ -42,10 +43,6 @@ public class RandomSequence implements Iterable<Byte> {
 
         public Byte next() {
             return (byte)(r.nextInt(numCharacters)+1);
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
         }
     }
 
