@@ -37,6 +37,22 @@ import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
  */
 public class SequenceFinder {
 
+    /**
+     * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
+     *
+     */
+    static final class BlockingHandler implements RejectedExecutionHandler {
+        public void rejectedExecution(Runnable task, ThreadPoolExecutor executor) {
+            if (!executor.isShutdown()) {
+                try {
+                    executor.getQueue().put(task);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
     @Option(name = "--maxhits", usage = "maximum number of hits to output")
     int maxHits = Integer.MAX_VALUE;
 
@@ -97,18 +113,7 @@ public class SequenceFinder {
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
             final int maxThreads = Runtime.getRuntime().availableProcessors();
-            final ThreadPoolExecutor pool = new ThreadPoolExecutor(0, maxThreads, 5, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new RejectedExecutionHandler() {
-                public void rejectedExecution(Runnable task, ThreadPoolExecutor executor) {
-                    if (!executor.isShutdown()) {
-                        try {
-                            executor.getQueue().put(task);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                }
-
-            });
+            final ThreadPoolExecutor pool = new ThreadPoolExecutor(0, maxThreads, 5, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new BlockingHandler());
 
             while (true) {
 
