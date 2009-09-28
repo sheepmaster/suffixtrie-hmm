@@ -127,12 +127,14 @@ public class SequenceFinder {
                         final SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
                         final List<SubSequence> subSequences = fullSequence.getSubSequences();
 
+                        final SoftMax softmax = new SoftMax(searches, maxHits);
+                        final SoftMax softmax2 = new SoftMax(subSequences, model, baseModel, maxHits);
                         synchronized(System.out) {
                             System.out.println("genome search results:");
-                            printHits(fullSequence, new SoftMax(searches, maxHits), calibration);
+                            printHits(fullSequence, softmax, calibration);
 
                             System.out.println("coding sequences:");
-                            printHits(fullSequence, new SoftMax(subSequences, model, baseModel, maxHits), calibration);
+                            printHits(fullSequence, softmax2, calibration);
                         }
                     }
                 });
