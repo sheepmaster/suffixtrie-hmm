@@ -138,7 +138,7 @@ public class SequenceTrainer {
                 for (Sequence s : trainingSequences) {
                     trainer.learn(s, maxDepth);
                 }
-                System.out.print("Iteration "+ iteration +"\r");
+                System.out.print("\rIteration "+ iteration);
                 final Model newModel = trainer.finishBatch();
 
                 final double parameterDifference = oldModel.parameterDifference(newModel);
