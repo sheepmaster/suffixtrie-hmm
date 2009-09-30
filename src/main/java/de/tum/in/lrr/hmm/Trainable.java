@@ -13,11 +13,11 @@ public abstract class Trainable {
 
     public abstract Alphabet getAlphabet();
 
-    protected void learn(Sequence seq, int maxDepth, int defaultThreshold) {
+    public void learn(Sequence seq, int maxDepth, int threshold) {
         if (seq.getAlphabet() != getAlphabet()) {
             throw new IllegalArgumentException("Invalid alphabet");
         }
-        learn(seq.charSequence(), maxDepth, defaultThreshold);
+        learn(seq.charSequence(), maxDepth, threshold);
     }
 
     public void learn(Sequence seq, int maxDepth) {
