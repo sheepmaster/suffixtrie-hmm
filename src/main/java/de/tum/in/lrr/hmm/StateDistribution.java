@@ -104,6 +104,9 @@ public abstract class StateDistribution implements Serializable {
     }
 
     public StateDistribution successor(byte character) {
+        if (character == BACK) {
+            return model.startingDistribution();
+        }
         return alpha(null, character, Integer.MAX_VALUE, false);
     }
 
@@ -125,16 +128,20 @@ public abstract class StateDistribution implements Serializable {
         StateDistribution newDistribution = this;
         for (final byte c : word) {
             newDistribution = newDistribution.successor(c);
-            p += newDistribution.normalize();
+            if (c == BACK) {
+                p += Math.log(model.numCharacters());
+            } else {
+                p += newDistribution.normalize();
+            }
         }
         return p / LOG_2;
     }
 
-    protected abstract StateDistribution beta(StateDistribution alpha, int character, boolean useSmoothing);
+    protected abstract StateDistribution beta(StateDistribution alpha, byte character, boolean useSmoothing);
 
-    protected abstract StateDistribution alpha(Model m, int character, int maxDepth, boolean useSmoothing);
+    protected abstract StateDistribution alpha(Model m, byte character, int maxDepth, boolean useSmoothing);
 
-    protected abstract void update(Model m, StateDistribution beta, int character);
+    protected abstract void update(Model m, StateDistribution beta, byte character);
 
     protected int successorState(int state, int character) {
         final int newState = model.transitions[state][character];
@@ -178,7 +185,7 @@ public abstract class StateDistribution implements Serializable {
         }
 
         @Override
-        protected StateDistribution beta(StateDistribution oldBeta, int character, boolean useSmoothing) {
+        protected StateDistribution beta(StateDistribution oldBeta, byte character, boolean useSmoothing) {
             checkExpectedSuffix(oldBeta, character);
             final int depth = depth();
             double[] newProbs = new double[depth];
@@ -214,7 +221,10 @@ public abstract class StateDistribution implements Serializable {
         }
 
         @Override
-        protected StateDistribution alpha(Model m, int character, int maxDepth, boolean useSmoothing) {
+        protected StateDistribution alpha(Model m, byte character, int maxDepth, boolean useSmoothing) {
+            if (character == BACK) {
+                throw new IllegalArgumentException("Illegal character");
+            }
             if (character == INVALID) {
                 return model.startingDistribution();
             }
@@ -272,7 +282,7 @@ public abstract class StateDistribution implements Serializable {
         }
 
         @Override
-        protected void update(Model m, StateDistribution beta, int character) {
+        protected void update(Model m, StateDistribution beta, byte character) {
             checkExpectedSuffix(beta, character);
             int depth = depth();
             int[] states = new int[depth + 1];
