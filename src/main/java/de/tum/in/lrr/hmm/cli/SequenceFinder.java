@@ -92,9 +92,12 @@ public class SequenceFinder {
 
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
-            while (reader.ready()) {
+            while (true) {
 
                 final AnnotatedSequence fullSequence = reader.readSequence();
+                if (fullSequence == null) {
+                    break;
+                }
 
                 if (fullSequence.getAlphabet().numberOfCharacters() != model.numCharacters()) {
                     throw new FileFormatException("Sequence doesn't fit to model");
