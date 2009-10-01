@@ -132,6 +132,11 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
 
             @Override
             public Double transform(Byte in) {
+                final byte c = in;
+                if (c == BACK) {
+                    dist = startingDistribution;
+                    return Math.log(numCharacters());
+                }
                 dist = dist.successor(in);
                 return dist.normalize();
             }
@@ -216,7 +221,7 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
      * @see #learn(int[], StateDistribution, StateDistribution, int, int, int, int)
      */
     private StateDistribution learnStep(byte[] word, StateDistribution alpha_i, StateDistribution beta_j, int i, int j, int maxDepth, int linearThreshold, boolean useSmoothing) {
-        final int c = (i < word.length) ? word[i] : StateDistribution.INVALID;
+        final byte c = (i < word.length) ? word[i] : StateDistribution.INVALID;
         final StateDistribution alpha_i1 = alpha_i.alpha(this, c, maxDepth, useSmoothing);
         final double scalingFactor = 1 / alpha_i1.totalProbability();
         alpha_i1.scale(scalingFactor);

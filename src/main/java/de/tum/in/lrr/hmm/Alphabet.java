@@ -11,11 +11,11 @@ import java.util.regex.Pattern;
  */
 public class Alphabet implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    public static final Alphabet ABC = new Alphabet("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    public static final Alphabet DNA = new Alphabet("ACGT");
-    public static final Alphabet AMINO_ACIDS = new Alphabet("ACDEFGHIKLPQRSTUVWY");
+    public static final Alphabet ABC = new Alphabet(" ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    public static final Alphabet DNA = new Alphabet("NACGT");
+    public static final Alphabet AMINO_ACIDS = new Alphabet("XACDEFGHIKLPQRSTUVWY");
 
     protected final Map<Character,Byte> alphabetMap = new HashMap<Character, Byte>();
     protected final Pattern symbolPattern;
@@ -23,7 +23,7 @@ public class Alphabet implements Serializable {
     public Alphabet(String alph) {
         String alphabet = alph.toUpperCase();
 
-        if (!alphabet.matches("[A-Z]+")) {
+        if (!alphabet.matches("[ A-Z]+")) {
             throw new IllegalArgumentException();
         }
         symbolPattern = Pattern.compile("["+alphabet+"]", Pattern.CASE_INSENSITIVE);
@@ -33,12 +33,12 @@ public class Alphabet implements Serializable {
             if (alphabetMap.containsKey(c)) {
                 throw new IllegalArgumentException("Alphabet may not contain duplicate symbols");
             }
-            alphabetMap.put(c, (byte)(i+1));
+            alphabetMap.put(c, (byte)i);
         }
     }
 
     public int numberOfCharacters() {
-        return alphabetMap.size();
+        return alphabetMap.size()-1;
     }
 
     public byte indexOfSymbol(char c) {

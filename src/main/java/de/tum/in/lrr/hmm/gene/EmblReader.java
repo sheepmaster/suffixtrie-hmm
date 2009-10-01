@@ -38,10 +38,13 @@ public class EmblReader extends AbstractSequenceReader {
     }
 
     public AnnotatedSequence readSequence() throws IOException, FileFormatException {
-        final String idLine = r.readLine();
-        if (idLine == null) {
-            return null;
-        }
+        String idLine;
+        do {
+            idLine = r.readLine();
+            if (idLine == null) {
+                return null;
+            }
+        } while (idLine.length() == 0);
         final Matcher headerMatcher = HEADER_PATTERN.matcher(idLine);
         if (!headerMatcher.lookingAt()) {
             throw new FileFormatException("Invalid header line: \""+idLine+"\"");

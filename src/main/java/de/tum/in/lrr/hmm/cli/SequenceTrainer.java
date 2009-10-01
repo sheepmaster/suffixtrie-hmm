@@ -37,22 +37,31 @@ import de.tum.in.lrr.hmm.util.LinkedDataBlockReader;
  */
 public class SequenceTrainer {
 
+    private static final int DEFAULT_LINEAR_THRESHOLD = 1<<14 - 1;
+
+    private static final double DEFAULT_EPSILON = 0.002;
+
+    private static final int DEFAULT_MAX_DEPTH = 8;
+
     public enum Format {
         Fasta,
         Embl
     }
 
-    @Option(name = "--format", usage="file format")
+    @Option(name = "--format", usage="file format (FASTA or EMBL)")
     protected Format format;
 
-    @Option(name = "--maxDepth", usage="maximum trie depth")
-    protected int maxDepth = 8;
+    @Option(name = "--maxDepth", usage="maximum trie depth (default: "+DEFAULT_MAX_DEPTH+")")
+    protected int maxDepth = DEFAULT_MAX_DEPTH;
 
     @Option(name = "--maxIterations", usage="maximum number of iterations for batch learning")
     protected int maxIterations = Integer.MAX_VALUE;
 
-    @Option(name = "--epsilon", usage="threshold for parameter difference")
-    protected double parameterEpsilon = 0.002;
+    @Option(name = "--epsilon", usage="threshold for parameter difference (default: "+DEFAULT_EPSILON+")")
+    protected double parameterEpsilon = DEFAULT_EPSILON;
+
+    @Option(name = "--linearThreshold", usage="threshold for linear training (default: "+DEFAULT_LINEAR_THRESHOLD+")")
+    protected int linearThreshold = DEFAULT_LINEAR_THRESHOLD;
 
     @Argument
     protected List<String> arguments = new ArrayList<String>();
@@ -115,7 +124,7 @@ public class SequenceTrainer {
 
             int seqNo = 0;
             while (true) {
-                model.learn(trainingSequence, maxDepth);
+                model.learn(trainingSequence, maxDepth, linearThreshold);
                 System.out.print("\r"+(++seqNo)+" sequences read");
                 trainingSequences.add(trainingSequence);
                 trainingSequence = reader.readSequence();
@@ -136,9 +145,9 @@ public class SequenceTrainer {
 
             while (iteration < maxIterations) {
                 for (Sequence s : trainingSequences) {
-                    trainer.learn(s, maxDepth);
+                    trainer.learn(s, maxDepth, linearThreshold);
                 }
-                System.out.print("Iteration "+ iteration +"\r");
+                System.out.print("\rIteration "+ iteration);
                 final Model newModel = trainer.finishBatch();
 
                 final double parameterDifference = oldModel.parameterDifference(newModel);
