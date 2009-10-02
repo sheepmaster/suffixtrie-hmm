@@ -1,5 +1,6 @@
 package de.tum.in.lrr.hmm.gene;
 
+import java.util.AbstractCollection;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -12,7 +13,7 @@ import de.tum.in.lrr.hmm.SubSequence;
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
  *
  */
-public class SoftMax implements Iterable<ScoredSequence> {
+public class SoftMax extends AbstractCollection<ScoredSequence> {
 
     protected final Deque<ScoredSequence> sequences = new ArrayDeque<ScoredSequence>();
 
@@ -60,12 +61,21 @@ public class SoftMax implements Iterable<ScoredSequence> {
         System.out.println(offset);
     }
 
+    @Override
     public Iterator<ScoredSequence> iterator() {
         return sequences.iterator();
     }
 
     public double probability(ScoredSequence s) {
         return Math.exp(s.score() - offset);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int size() {
+        return sequences.size();
     }
 
 }

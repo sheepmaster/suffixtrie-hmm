@@ -1,12 +1,12 @@
 package de.tum.in.lrr.hmm.cli;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
@@ -21,13 +21,15 @@ import org.kohsuke.args4j.Option;
 
 import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
+import de.tum.in.lrr.hmm.Sequence;
 import de.tum.in.lrr.hmm.SubSequence;
 import de.tum.in.lrr.hmm.UniformModel;
+import de.tum.in.lrr.hmm.gene.AbstractSequenceReader;
 import de.tum.in.lrr.hmm.gene.AnnotatedSequence;
-import de.tum.in.lrr.hmm.gene.EmblReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
 import de.tum.in.lrr.hmm.gene.ModelCalibration;
 import de.tum.in.lrr.hmm.gene.ScoredSequence;
+import de.tum.in.lrr.hmm.gene.SequenceReader;
 import de.tum.in.lrr.hmm.gene.SoftMax;
 import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
 
@@ -62,13 +64,8 @@ public class SequenceFinder {
     @Option(name = "--pthreshold", usage = "probability threshold")
     double pThreshold = 0;
 
-    enum Mode {
-        Genome,
-        Gene
-    }
-
-    @Option(name = "--mode", usage = "genome or gene")
-    Mode mode = Mode.Genome;
+    @Option(name = "--format", usage="file format (FASTA or EMBL)")
+    protected SequenceReader.Format format = null;
 
     @Argument
     protected List<String> arguments = new ArrayList<String>();
@@ -115,14 +112,14 @@ public class SequenceFinder {
 
             System.err.println("done");
 
-            final EmblReader reader = new EmblReader(new BufferedReader(r));
+            final SequenceReader reader = AbstractSequenceReader.create(r, format);
 
             final int maxThreads = Runtime.getRuntime().availableProcessors();
             final ThreadPoolExecutor pool = new ThreadPoolExecutor(0, maxThreads, 5, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new BlockingHandler());
 
             while (true) {
 
-                final AnnotatedSequence fullSequence = reader.readSequence();
+                final Sequence fullSequence = reader.readSequence();
 
                 if (fullSequence == null) {
                     break;
@@ -134,20 +131,27 @@ public class SequenceFinder {
 
                 pool.execute(new Runnable() {
                     public void run() {
-                        final SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
-                        final List<SubSequence> subSequences = fullSequence.getSubSequences();
+                        final List<SubSequence> subSequences;
+                        if (fullSequence instanceof AnnotatedSequence) {
+                            subSequences = ((AnnotatedSequence)fullSequence).getSubSequences();
+                        } else {
+                            subSequences = Collections.emptyList();
+                        }
 
-                        final SoftMax softmax = new SoftMax(searches, maxHits);
-                        final SoftMax softmax2 = new SoftMax(subSequences, model, baseModel, maxHits);
+                        final SoftMax softmax = new SoftMax(subSequences, model, baseModel, maxHits);
+                        final SoftMax searchResults = new SoftMax(new SubSequenceSearch(model, baseModel, fullSequence), maxHits);
                         synchronized(System.out) {
                             System.out.println("genome search results:");
-                            printHits(fullSequence, softmax, calibration);
+                            printHits(fullSequence, searchResults, calibration);
 
-                            System.out.println("coding sequences:");
-                            printHits(fullSequence, softmax2, calibration);
+                            if (!subSequences.isEmpty()) {
+                                System.out.println("coding sequences:");
+                                printHits(fullSequence, softmax, calibration);
+                            }
                         }
                     }
                 });
+
 
             }
             pool.shutdown();

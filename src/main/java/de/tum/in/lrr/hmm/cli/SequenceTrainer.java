@@ -40,7 +40,7 @@ public class SequenceTrainer {
     private static final int DEFAULT_MAX_DEPTH = 8;
 
     @Option(name = "--format", usage="file format (FASTA or EMBL)")
-    protected AbstractSequenceReader.Format format;
+    protected SequenceReader.Format format = null;
 
     @Option(name = "--maxDepth", usage="maximum trie depth (default: "+DEFAULT_MAX_DEPTH+")")
     protected int maxDepth = DEFAULT_MAX_DEPTH;
