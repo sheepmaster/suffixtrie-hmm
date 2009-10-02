@@ -130,26 +130,22 @@ public class SequenceTrainer {
             System.out.println();
 
             final BatchTrainer trainer = new BatchTrainer(model);
-            Model oldModel = model;
 
             int iteration = 0;
 
-            while (iteration < maxIterations) {
+            double parameterDifference;
+            do {
+                iteration++;
                 for (Sequence s : trainingSequences) {
                     trainer.learn(s, maxDepth, linearThreshold);
                 }
                 System.out.print("\rIteration "+ iteration);
                 final Model newModel = trainer.finishBatch();
 
-                final double parameterDifference = oldModel.parameterDifference(newModel);
+                parameterDifference = model.parameterDifference(newModel);
 
-                if (parameterDifference < parameterEpsilon) {
-                    break;
-                }
-                iteration++;
-
-                oldModel = newModel;
-            }
+                model = newModel;
+            } while (iteration < maxIterations && parameterDifference >= parameterEpsilon);
 
             System.out.println();
 
