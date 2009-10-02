@@ -1,6 +1,5 @@
 package de.tum.in.lrr.hmm.cli;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,12 +23,11 @@ import de.tum.in.lrr.hmm.Alphabet;
 import de.tum.in.lrr.hmm.BatchTrainer;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.Sequence;
+import de.tum.in.lrr.hmm.gene.AbstractSequenceReader;
 import de.tum.in.lrr.hmm.gene.EmblReader;
 import de.tum.in.lrr.hmm.gene.FastaReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
 import de.tum.in.lrr.hmm.gene.SequenceReader;
-import de.tum.in.lrr.hmm.util.CloneableReader;
-import de.tum.in.lrr.hmm.util.LinkedDataBlockReader;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -43,13 +41,8 @@ public class SequenceTrainer {
 
     private static final int DEFAULT_MAX_DEPTH = 8;
 
-    public enum Format {
-        Fasta,
-        Embl
-    }
-
     @Option(name = "--format", usage="file format (FASTA or EMBL)")
-    protected Format format;
+    protected AbstractSequenceReader.Format format;
 
     @Option(name = "--maxDepth", usage="maximum trie depth (default: "+DEFAULT_MAX_DEPTH+")")
     protected int maxDepth = DEFAULT_MAX_DEPTH;
@@ -176,34 +169,13 @@ public class SequenceTrainer {
      * @throws IOException
      */
     private SequenceReader reader(Reader r1) throws IOException {
-        final CloneableReader r = new LinkedDataBlockReader(r1);
-        if (format == null) {
-            format = guessFormat(r);
-        }
         switch(format) {
         case Fasta:
-            return new FastaReader(r);
+            return new FastaReader(r1);
         case Embl:
-            return new EmblReader(r);
+            return new EmblReader(r1);
         default:
-            throw new FileFormatException("Unknown file format");
-        }
-    }
-
-    /**
-     * @param r
-     * @throws IOException
-     */
-    private static Format guessFormat(final CloneableReader r) throws IOException {
-        String firstLine = new BufferedReader(r.clone()).readLine();
-        if (firstLine == null) {
-            return null;
-        } else if (firstLine.startsWith(">")) {
-            return Format.Fasta;
-        } else if (firstLine.startsWith("ID ")) {
-            return Format.Embl;
-        } else {
-            return null;
+            return AbstractSequenceReader.create(r1);
         }
     }
 

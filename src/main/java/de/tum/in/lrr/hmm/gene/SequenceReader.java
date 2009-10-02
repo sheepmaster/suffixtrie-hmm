@@ -10,6 +10,11 @@ import de.tum.in.lrr.hmm.Sequence;
  */
 public interface SequenceReader {
 
+    public enum Format {
+        Fasta,
+        Embl
+    }
+
     public boolean ready() throws IOException;
 
     public Sequence readSequence() throws IOException;
