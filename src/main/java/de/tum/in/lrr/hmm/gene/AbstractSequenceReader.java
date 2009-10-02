@@ -17,8 +17,14 @@ import de.tum.in.lrr.hmm.util.LinkedDataBlockReader;
 public abstract class AbstractSequenceReader implements SequenceReader {
 
     public static SequenceReader create(Reader r1) throws IOException {
+        return create(r1, null);
+    }
+
+    public static SequenceReader create(Reader r1, Format format) throws IOException {
         final CloneableReader r = new LinkedDataBlockReader(r1);
-        final Format format = guessFormat(r);
+        if (format == null) {
+            format = guessFormat(r);
+        }
         switch(format) {
         case Fasta:
             return new FastaReader(r);

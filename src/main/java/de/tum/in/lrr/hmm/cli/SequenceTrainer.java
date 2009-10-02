@@ -24,8 +24,6 @@ import de.tum.in.lrr.hmm.BatchTrainer;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.Sequence;
 import de.tum.in.lrr.hmm.gene.AbstractSequenceReader;
-import de.tum.in.lrr.hmm.gene.EmblReader;
-import de.tum.in.lrr.hmm.gene.FastaReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
 import de.tum.in.lrr.hmm.gene.SequenceReader;
 
@@ -103,7 +101,7 @@ public class SequenceTrainer {
         Reader r = new InputStreamReader(input);
 
         try {
-            SequenceReader reader = reader(r);
+            SequenceReader reader = AbstractSequenceReader.create(r, format);
             Sequence trainingSequence = reader.readSequence();
 
             if (trainingSequence == null) {
@@ -161,21 +159,6 @@ public class SequenceTrainer {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param r
-     * @throws IOException
-     */
-    private SequenceReader reader(Reader r1) throws IOException {
-        switch(format) {
-        case Fasta:
-            return new FastaReader(r1);
-        case Embl:
-            return new EmblReader(r1);
-        default:
-            return AbstractSequenceReader.create(r1);
         }
     }
 
