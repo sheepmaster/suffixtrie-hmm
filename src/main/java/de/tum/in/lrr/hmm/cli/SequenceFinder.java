@@ -8,6 +8,10 @@ import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 import org.kohsuke.args4j.Argument;
@@ -32,6 +36,22 @@ import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
  *
  */
 public class SequenceFinder {
+
+    /**
+     * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
+     *
+     */
+    static final class BlockingHandler implements RejectedExecutionHandler {
+        public void rejectedExecution(Runnable task, ThreadPoolExecutor executor) {
+            if (!executor.isShutdown()) {
+                try {
+                    executor.getQueue().put(task);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
 
     @Option(name = "--maxhits", usage = "maximum number of hits to output")
     int maxHits = Integer.MAX_VALUE;
@@ -97,9 +117,13 @@ public class SequenceFinder {
 
             final EmblReader reader = new EmblReader(new BufferedReader(r));
 
+            final int maxThreads = Runtime.getRuntime().availableProcessors();
+            final ThreadPoolExecutor pool = new ThreadPoolExecutor(0, maxThreads, 5, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new BlockingHandler());
+
             while (true) {
 
                 final AnnotatedSequence fullSequence = reader.readSequence();
+
                 if (fullSequence == null) {
                     break;
                 }
@@ -108,14 +132,25 @@ public class SequenceFinder {
                     throw new FileFormatException("Sequence doesn't fit to model");
                 }
 
-                System.out.println("genome search results:");
-                SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
-                printHits(fullSequence, new SoftMax(searches, maxHits), calibration);
+                pool.execute(new Runnable() {
+                    public void run() {
+                        final SubSequenceSearch searches = new SubSequenceSearch(model, baseModel, fullSequence);
+                        final List<SubSequence> subSequences = fullSequence.getSubSequences();
 
-                System.out.println("coding sequences:");
-                final List<SubSequence> subSequences = fullSequence.getSubSequences();
-                printHits(fullSequence, new SoftMax(subSequences, model, baseModel, maxHits), calibration);
+                        final SoftMax softmax = new SoftMax(searches, maxHits);
+                        final SoftMax softmax2 = new SoftMax(subSequences, model, baseModel, maxHits);
+                        synchronized(System.out) {
+                            System.out.println("genome search results:");
+                            printHits(fullSequence, softmax, calibration);
+
+                            System.out.println("coding sequences:");
+                            printHits(fullSequence, softmax2, calibration);
+                        }
+                    }
+                });
+
             }
+            pool.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
