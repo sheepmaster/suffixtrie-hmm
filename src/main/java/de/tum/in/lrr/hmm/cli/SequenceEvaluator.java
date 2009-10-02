@@ -52,7 +52,7 @@ public class SequenceEvaluator {
         new SequenceEvaluator().doMain(args);
     }
 
-    public void doMain(String[] args) {
+    private void doMain(String[] args) {
         final CmdLineParser parser = new CmdLineParser(this);
         try {
             parser.parseArgument(args);
@@ -107,7 +107,7 @@ public class SequenceEvaluator {
                     s += baseModelIterator.next() - modelIterator.next();
                 }
 
-                System.out.println(fullSequence+"\t"+(s/LOG_2));
+                System.out.println(fullSequence+"\t"+(s/LOG_2)+"\t"+fullSequence.length());
                 //                subSequences.add(new SubSequence(fullSequence, 0, fullSequence.length()));
             }
 
