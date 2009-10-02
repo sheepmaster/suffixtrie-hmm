@@ -17,11 +17,9 @@ import org.kohsuke.args4j.Option;
 
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.Sequence;
-import de.tum.in.lrr.hmm.SubSequence;
 import de.tum.in.lrr.hmm.UniformModel;
 import de.tum.in.lrr.hmm.gene.AbstractSequenceReader;
 import de.tum.in.lrr.hmm.gene.FileFormatException;
-import de.tum.in.lrr.hmm.gene.ModelCalibration;
 import de.tum.in.lrr.hmm.gene.SequenceReader;
 
 /**
@@ -51,7 +49,7 @@ public class SequenceEvaluator {
      * @param args
      */
     public static void main(String[] args) {
-        new SequenceFinder().doMain(args);
+        new SequenceEvaluator().doMain(args);
     }
 
     public void doMain(String[] args) {
@@ -81,15 +79,15 @@ public class SequenceEvaluator {
 
             final UniformModel baseModel = new UniformModel(model.numCharacters());
 
-            System.err.print("Calibrating...");
-
-            final ModelCalibration calibration = new ModelCalibration(model, baseModel);
-
-            System.err.println("done");
+            //            System.err.print("Calibrating...");
+            //
+            //            final ModelCalibration calibration = new ModelCalibration(model, baseModel);
+            //
+            //            System.err.println("done");
 
             final SequenceReader reader = AbstractSequenceReader.create(r, format);
 
-            final List<SubSequence> subSequences = new ArrayList<SubSequence>();
+            //            final List<SubSequence> subSequences = new ArrayList<SubSequence>();
             while (true) {
 
                 final Sequence fullSequence = reader.readSequence();
@@ -109,7 +107,7 @@ public class SequenceEvaluator {
                     s += baseModelIterator.next() - modelIterator.next();
                 }
 
-                System.out.println(fullSequence+"\t"+(s/Math.log(2)));
+                System.out.println(fullSequence+"\t"+(s/LOG_2));
                 //                subSequences.add(new SubSequence(fullSequence, 0, fullSequence.length()));
             }
 
