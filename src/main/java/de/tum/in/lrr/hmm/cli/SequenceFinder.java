@@ -42,12 +42,17 @@ public class SequenceFinder {
     @Option(name = "--pthreshold", usage = "probability threshold")
     double pThreshold = 0;
 
+    enum Mode {
+        Genome,
+        Gene
+    }
+
+    @Option(name = "--mode", usage = "genome or gene")
+    Mode mode = Mode.Genome;
+
     @Argument
     protected List<String> arguments = new ArrayList<String>();
 
-    /**
-     * 
-     */
     private static final double LOG_2 = Math.log(2);
 
     /**
