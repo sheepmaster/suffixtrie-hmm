@@ -156,15 +156,16 @@ public class GSSequenceFinder {
     }
 
     void printHits(ISequence fullSequence, SoftMax m, ModelCalibration c) {
+        final String targetSequence = goldStandard.get(fullSequence.getIdentifier());
         for (ScoredSequence sequence : m) {
-            if (sequence.getRange().equals(goldStandard.get(fullSequence.getIdentifier()))) {
+            if (sequence.getRange().equals(targetSequence)) {
                 final double p = m.probability(sequence);
                 final double score = sequence.score() / LOG_2;
                 System.out.println(fullSequence+"\t"+sequence.getRange()+"\t"+score+"\t"+p+"\t"+c.bitScore(sequence)+"\t"+c.eValue(sequence)+"\t"+c.pValue(sequence));
                 return;
             }
         }
-        System.out.println(fullSequence+"\tGold standard not found!");
+        System.out.println(fullSequence+"\tGold standard "+targetSequence+"not found!");
     }
 
     public void readGoldStandard(BufferedReader r) throws IOException {
@@ -174,7 +175,7 @@ public class GSSequenceFinder {
                 return;
             }
             String[] fields = line.split("\t");
-            goldStandard.put(fields[0], fields[1]+".."+fields[2]);
+            goldStandard.put(fields[0], fields[1]);
         }
     }
 
