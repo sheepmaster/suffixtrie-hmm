@@ -175,7 +175,11 @@ public class GSSequenceFinder {
                 return;
             }
             String[] fields = line.split("\t");
+		if (fields.length < 2) {
+System.err.println("Invalid gold standard line: \""+line+"\"");
+} else {
             goldStandard.put(fields[0], fields[1]);
+}
         }
     }
 
