@@ -17,20 +17,6 @@ public abstract class AbstractSequence extends AbstractList<Byte> implements ISe
         return length();
     }
 
-    public ISequence subSequencePreceding(SubSequence s) {
-        if (s.containingSequence != this) {
-            throw new IllegalArgumentException();
-        }
-        return new SubSequence(this, 0, s.getStartIndex());
-    }
-
-    public ISequence subSequenceFollowing(SubSequence s) {
-        if (s.containingSequence != this) {
-            throw new IllegalArgumentException();
-        }
-        return new SubSequence(this, s.getEndIndex(), length());
-    }
-
     /**
      * @param sequences
      */

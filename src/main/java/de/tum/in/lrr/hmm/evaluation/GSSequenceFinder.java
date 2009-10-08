@@ -164,7 +164,7 @@ public class GSSequenceFinder {
                 return;
             }
         }
-        System.out.println(fullSequence+"\tNo gold standard defined!");
+        System.out.println(fullSequence+"\tGold standard not found!");
     }
 
     public void readGoldStandard(BufferedReader r) throws IOException {

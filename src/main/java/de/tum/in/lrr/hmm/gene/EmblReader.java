@@ -60,7 +60,7 @@ public class EmblReader extends AbstractSequenceReader {
             if (m1.matches()) {
                 final int start = Integer.parseInt(m1.group(1));
                 final int end = Integer.parseInt(m1.group(2));
-                subseq = new SubSequence(seq, start-1, end);
+                subseq = new SubSequence(seq, start-1, end, false);
             } else {
                 final Matcher m2 = CDS_COMPLEMENT_MATCHER.matcher(s);
                 if (m2.matches()) {

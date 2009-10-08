@@ -17,8 +17,8 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
 
     protected final double score;
 
-    ScoredSequence(ISequence sequence, int startIndex, int endIndex, double score) {
-        super(sequence, startIndex, endIndex);
+    ScoredSequence(ISequence sequence, int startIndex, int endIndex, boolean isComplement, double score) {
+        super(sequence, startIndex, endIndex, isComplement);
         this.score = score;
     }
 
@@ -27,7 +27,7 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
     }
 
     public ScoredSequence(ISequence sequence, int startIndex, int endIndex, boolean complement, SequenceIterable model, SequenceIterable baseModel) {
-        super(sequence, startIndex, endIndex);
+        super(sequence, startIndex, endIndex, complement);
         double s = 0;
         Iterator<Double> modelIterator = model.scoringIterator(this.iterator());
         Iterator<Double> baseModelIterator = baseModel.scoringIterator(this.iterator());
@@ -65,7 +65,7 @@ public class ScoredSequence extends SubSequence implements Comparable<ScoredSequ
                 maxEndIndex = endIndex;
             }
         }
-        return new ScoredSequence(sequence, maxStartIndex, maxEndIndex, maxSum);
+        return new ScoredSequence(sequence, maxStartIndex, maxEndIndex, false, maxSum);
     }
 
     /**

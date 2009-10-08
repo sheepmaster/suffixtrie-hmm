@@ -11,8 +11,5 @@ public interface ISequence extends List<Byte> {
 
     String getIdentifier();
 
-    ISequence subSequencePreceding(SubSequence s);
-    ISequence subSequenceFollowing(SubSequence s);
-
     public Alphabet getAlphabet();
 }

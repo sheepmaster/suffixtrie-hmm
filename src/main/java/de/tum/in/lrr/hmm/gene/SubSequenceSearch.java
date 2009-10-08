@@ -63,7 +63,7 @@ public class SubSequenceSearch extends GeneratingIterator<ScoredSequence> {
      * @param endTotal
      */
     private void addSequence(int start, int end, double startTotal, double endTotal) {
-        final ScoredSequence seq = new ScoredSequence(sequence, start, end, endTotal-startTotal);
+        final ScoredSequence seq = new ScoredSequence(sequence, start, end, false, endTotal-startTotal);
         subSequences.add(seq);
         startTotals.add(startTotal);
         endTotals.add(endTotal);

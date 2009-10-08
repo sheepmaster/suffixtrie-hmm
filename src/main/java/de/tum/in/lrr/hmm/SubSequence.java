@@ -13,10 +13,6 @@ public class SubSequence extends AbstractSequence {
     protected final int end;
     protected final boolean complement;
 
-    public SubSequence(ISequence containingSequence, int start, int end) {
-        this(containingSequence, start, end, false);
-    }
-
     public SubSequence(ISequence containingSequence, int start, int end, boolean complement) {
         if (complement && containingSequence.getAlphabet() != Alphabet.DNA) {
             throw new IllegalArgumentException("Only DNA sequences support complements");
