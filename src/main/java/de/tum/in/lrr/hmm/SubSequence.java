@@ -98,7 +98,12 @@ public class SubSequence extends AbstractSequence {
         if (index<0 || index>=size) {
             throw new IndexOutOfBoundsException("Index: "+index+",Size: "+size);
         }
-        return complement ? (byte)(5 - containingSequence.get(end - index - 1)) : containingSequence.get(index + start);
+        if (complement) {
+            final int character = containingSequence.get(end - index - 1);
+            return (byte)((character == Model.BACK) ? character : (5 - character));
+        } else {
+            return containingSequence.get(index + start);
+        }
 
     }
 
