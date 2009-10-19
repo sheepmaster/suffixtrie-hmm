@@ -3,6 +3,7 @@ package de.tum.in.lrr.hmm.gene;
 import de.tum.in.lrr.hmm.ISequence;
 import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.SequenceIterable;
+import de.tum.in.lrr.hmm.util.Stats;
 
 /**
  * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
@@ -14,8 +15,8 @@ public class ModelCalibration {
      * 
      */
     private static final double LOG_2 = Math.log(2);
-    private static final int DEFAULT_NUM_SEQUENCES = 1000;
-    private static final int DEFAULT_SEQUENCE_LENGTH = 4000;
+    public static final int DEFAULT_NUM_SEQUENCES = 1000;
+    public static final int DEFAULT_SEQUENCE_LENGTH = 4000;
 
     private static final double DELTA = 0.000001;
 
@@ -26,17 +27,17 @@ public class ModelCalibration {
     protected final SequenceIterable baseModel;
 
     public ModelCalibration(Model m, SequenceIterable baseModel) {
-        this(m, baseModel, DEFAULT_NUM_SEQUENCES, DEFAULT_SEQUENCE_LENGTH);
+        this(m, baseModel, DEFAULT_NUM_SEQUENCES, DEFAULT_SEQUENCE_LENGTH, false);
     }
 
-    public ModelCalibration(Model m, SequenceIterable baseModel, int numSequences, int sequenceLength) {
+    public ModelCalibration(Model m, SequenceIterable baseModel, int numSequences, int sequenceLength, boolean calibrateLambda) {
         this.model = m;
         this.baseModel = baseModel;
 
-        calibrate(numSequences, sequenceLength);
+        calibrate(numSequences, sequenceLength, calibrateLambda);
     }
 
-    private void calibrate(int numSequences, int sequenceLength) {
+    private void calibrate(int numSequences, int sequenceLength, boolean calibrateLambda) {
         final double[] scores = new double[numSequences];
         for (int i=0; i<scores.length; i++) {
             final ISequence seq = new RandomSequence(model.getAlphabet()).generateSequence(sequenceLength);
@@ -44,7 +45,7 @@ public class ModelCalibration {
             scores[i] = s.score();
         }
 
-        calibrateDirect(scores, sequenceLength);
+        calibrateDirect(scores, sequenceLength, calibrateLambda);
     }
 
     private static double mu(double[] randomScores, double lambda) {
@@ -83,11 +84,14 @@ public class ModelCalibration {
         }
     }
 
-    private void calibrateDirect(double[] randomScores, int sequenceLength) {
-        //        final Stats stats = new Stats(randomScores);
-        //        final double lambdaStart = Math.PI/Math.sqrt(6 * stats.getVariance());
-        //        lambda = lambdaML(randomScores, lambdaStart);
-        lambda = 1.0;
+    private void calibrateDirect(double[] randomScores, int sequenceLength, boolean calibrateLambda) {
+        if (calibrateLambda) {
+            final Stats stats = new Stats(randomScores);
+            lambda = Math.PI/Math.sqrt(6 * stats.getVariance());
+            //        lambda = lambdaML(randomScores, lambdaStart);
+        } else {
+            lambda = 1.0;
+        }
 
         final double mu = mu(randomScores, lambda);
         k = Math.exp(lambda*mu)/sequenceLength;

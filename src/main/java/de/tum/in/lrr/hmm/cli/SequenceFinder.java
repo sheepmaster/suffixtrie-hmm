@@ -39,6 +39,9 @@ import de.tum.in.lrr.hmm.gene.SubSequenceSearch;
  */
 public class SequenceFinder {
 
+    private static final int DEFAULT_SEQUENCE_LENGTH = ModelCalibration.DEFAULT_SEQUENCE_LENGTH;
+    private static final int DEFAULT_NUM_SEQUENCES = ModelCalibration.DEFAULT_NUM_SEQUENCES;
+
     /**
      * @author <a href="bauerb@in.tum.de">Bernhard Bauer</a>
      *
@@ -54,6 +57,15 @@ public class SequenceFinder {
             }
         }
     }
+
+    @Option(name = "--calibratelambda", usage = "calibrate lambda value")
+    boolean calibrateLambda = false;
+
+    @Option(name = "--calibrationseqlength", usage = "length of sequences used for calibration (default: "+DEFAULT_SEQUENCE_LENGTH+")")
+    int calibrationSeqLength = DEFAULT_SEQUENCE_LENGTH;
+
+    @Option(name = "--calibrationnumseqs", usage = "number of sequences used for calibration (default: "+DEFAULT_NUM_SEQUENCES+")")
+    int calibrationNumSeqs = DEFAULT_NUM_SEQUENCES;
 
     @Option(name = "--maxhits", usage = "maximum number of hits to output")
     int maxHits = Integer.MAX_VALUE;
@@ -108,7 +120,7 @@ public class SequenceFinder {
 
             System.err.print("Calibrating...");
 
-            final ModelCalibration calibration = new ModelCalibration(model, baseModel);
+            final ModelCalibration calibration = new ModelCalibration(model, baseModel, calibrationNumSeqs, calibrationSeqLength, calibrateLambda);
 
             System.err.println("done");
 
