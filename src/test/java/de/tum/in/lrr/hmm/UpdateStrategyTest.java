@@ -3,8 +3,6 @@ package de.tum.in.lrr.hmm;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
-import de.tum.in.lrr.hmm.Alphabet;
-import de.tum.in.lrr.hmm.Model;
 import de.tum.in.lrr.hmm.t9.NumberKey;
 
 /**
@@ -36,7 +34,7 @@ public class UpdateStrategyTest extends TestCase {
 
         for (String w : words) {
             model1.learn(NumberKey.sequenceForWord(w), Integer.MAX_VALUE, Integer.MAX_VALUE);
-            model2.learn(NumberKey.sequenceForWord(w), Integer.MAX_VALUE, 0);
+            model2.learn(NumberKey.sequenceForWord(w), Integer.MAX_VALUE, 1);
         }
 
         assertTrue(Arrays.deepEquals(model1.transitions, model2.transitions));

@@ -190,11 +190,11 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
                 alpha_mid = alpha_mid.alpha(this, word[i], maxDepth, useSmoothing);
                 alpha_mid.normalize();
             }
-            final StateDistribution beta_mid = learnStep(word, alpha_mid, beta_end, mid, end, maxDepth, linearThreshold, useSmoothing);
+            final StateDistribution beta_mid = learn(word, alpha_mid, beta_end, mid, end, maxDepth, linearThreshold, useSmoothing);
 
-            return (start >= mid) ? beta_mid : learnStep(word, alpha_start, beta_mid, start, mid, maxDepth, linearThreshold, useSmoothing);
+            return (start >= mid) ? beta_mid : learn(word, alpha_start, beta_mid, start, mid, maxDepth, linearThreshold, useSmoothing);
         } else {
-            return learnStep(word, alpha_start, beta_end, start, end, maxDepth, linearThreshold, useSmoothing);
+            return learnLinear(word, alpha_start, beta_end, start, end, maxDepth, useSmoothing);
         }
     }
 
@@ -220,12 +220,12 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
      * 
      * @see #learn(int[], StateDistribution, StateDistribution, int, int, int, int)
      */
-    private StateDistribution learnStep(byte[] word, StateDistribution alpha_i, StateDistribution beta_j, int i, int j, int maxDepth, int linearThreshold, boolean useSmoothing) {
+    private StateDistribution learnLinear(byte[] word, StateDistribution alpha_i, StateDistribution beta_j, int i, int j, int maxDepth, boolean useSmoothing) {
         final byte c = (i < word.length) ? word[i] : StateDistribution.INVALID;
         final StateDistribution alpha_i1 = alpha_i.alpha(this, c, maxDepth, useSmoothing);
         final double scalingFactor = 1 / alpha_i1.totalProbability();
         alpha_i1.scale(scalingFactor);
-        final StateDistribution beta_i1 = (i + 1 >= j) ? beta_j : learn(word, alpha_i1, beta_j, i + 1, j, maxDepth, linearThreshold, useSmoothing);
+        final StateDistribution beta_i1 = (i + 1 >= j) ? beta_j : learnLinear(word, alpha_i1, beta_j, i + 1, j, maxDepth, useSmoothing);
         beta_i1.scale(scalingFactor);
         alpha_i.update(this, beta_i1, c);
         final StateDistribution beta_i = alpha_i.beta(beta_i1, c, useSmoothing);
@@ -234,6 +234,9 @@ public class Model extends Trainable implements SequenceIterable, Serializable {
 
     @Override
     public void learn(byte[] word, int maxDepth, int linearThreshold) {
+        if (linearThreshold < 1) {
+            throw new IllegalArgumentException("linearThreshold must be greater than zero");
+        }
         final Model m = new Model(this);
         m.deepCopyFrequenciesFrom(this);
         m.learn(word, startingDistribution, startingDistribution, 0, word.length+1, maxDepth, linearThreshold, true);
