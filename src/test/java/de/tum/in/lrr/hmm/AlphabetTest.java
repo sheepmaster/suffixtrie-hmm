@@ -1,6 +1,5 @@
 package de.tum.in.lrr.hmm;
 
-import de.tum.in.lrr.hmm.Alphabet;
 import junit.framework.TestCase;
 
 /**
@@ -31,8 +30,8 @@ public class AlphabetTest extends TestCase {
      */
     protected void checkSymbolIndices(final String alphabetString) {
         final Alphabet a = new Alphabet(alphabetString);
-        for (int i=0; i<alphabetString.length(); i++) {
-            assertEquals(i+1, a.indexOfSymbol(alphabetString.charAt(i)));
+        for (int i=1; i<alphabetString.length(); i++) {
+            assertEquals(i, a.indexOfSymbol(alphabetString.charAt(i)));
         }
     }
 
