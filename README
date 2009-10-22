@@ -4,6 +4,13 @@ javac -cp args4j-2.0.12.jar:src/main/java -d bin src/main/java/de/tum/in/lrr/hmm
 
 **********
 
+Testing:
+
+javac -cp args4j-2.0.12.jar:test/junit_3.8.2.v20080602-1318.jar:src/main/java:src/test/java -d test src/test/java/de/tum/in/lrr/hmm/AllTests.java 
+java -cp args4j-2.0.12.jar:test/junit_3.8.2.v20080602-1318.jar:test junit.textui.TestRunner de.tum.in.lrr.hmm.AllTests
+
+**********
+
 Runnning: 
 
 java -cp args4j-2.0.12.jar:bin de.tum.in.lrr.hmm.cli.SequenceTrainer
