@@ -1,17 +1,16 @@
-package de.tum.in.lrr.hmm.t9;
+package de.tum.in.lrr.hmm;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import de.tum.in.lrr.hmm.AlphabetTest;
-import de.tum.in.lrr.hmm.BatchTrainerTest;
-import de.tum.in.lrr.hmm.ModelTest;
-import de.tum.in.lrr.hmm.UpdateStrategyTest;
+import de.tum.in.lrr.hmm.t9.NumberKeyTest;
+import de.tum.in.lrr.hmm.t9.TextTest;
+import de.tum.in.lrr.hmm.t9.WordTest;
 import de.tum.in.lrr.hmm.util.ByteBufferTest;
 
 public class AllTests {
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("Test for de.blacksheepsoftware.t9");
+        TestSuite suite = new TestSuite("Test for de.tum.in.lrr.hmm");
         //$JUnit-BEGIN$
         suite.addTestSuite(AlphabetTest.class);
         suite.addTestSuite(BatchTrainerTest.class);
