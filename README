@@ -16,6 +16,8 @@ Creates a new model from the sequence files and writes it to the HMM output file
 
 Sequence files can be either in EMBL or FASTA format.
 
+Example sequences files are example/hpv_e1.fasta, example/hpv_e1_test_full.embl, or example/hpv_e1_training.embl. 
+
 
 java -cp args4j-2.0.12.jar:bin de.tum.in.lrr.hmm.cli.SequenceFinder
 
