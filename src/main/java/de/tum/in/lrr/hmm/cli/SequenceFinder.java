@@ -176,7 +176,7 @@ public class SequenceFinder {
     }
 
     void printHits(ISequence fullSequence, SoftMax m, ModelCalibration c) {
-        System.out.println("sequence\trange\tscore\tprobability");
+        System.out.println("sequence\trange\tscore\tprobability\tmodified score\tE-value\tP-value");
         for (ScoredSequence sequence : m) {
             final double p = m.probability(sequence);
             if (p < pThreshold) {
